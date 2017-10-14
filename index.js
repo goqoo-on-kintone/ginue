@@ -9,7 +9,7 @@ const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
 const loadKintoneCommands = async () => {
   const file = await fs.readFile('./commands.conf', 'utf8')
-  return file.replace(/\n$/, '').split('\n')
+  return file.replace(/\n+$/, '').split('\n')
 }
 
 const createDirPath = (appId) => {
