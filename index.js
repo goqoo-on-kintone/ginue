@@ -12,6 +12,10 @@ const loadKintoneCommands = async () => {
   return file.replace(/\n$/, '').split('\n')
 }
 
+const createUrl = (kSubDomain, kCommand, kAppId) => {
+  return `https://${kSubDomain}.cybozu.com/k/v1/${kCommand}?app=${kAppId}`
+}
+
 const createDirPath = (kAppId) => {
   return `tmp/kintone_jsons/${kAppId}`
 }
@@ -34,7 +38,7 @@ const main = async () => {
 
   const kCommands = await loadKintoneCommands()
   kCommands.forEach(async (kCommand) => {
-    const url = `https://${kSubDomain}.cybozu.com/k/v1/${kCommand}?app=${kAppId}`
+    const url = createUrl(kSubDomain, kCommand, kAppId)
     const headers = {
       'X-Cybozu-Authorization': kBase64Account
     }
