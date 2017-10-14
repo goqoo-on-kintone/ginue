@@ -41,7 +41,7 @@ const fetchKintoneInfo = async (ktn) => {
   return request(options)
 }
 
-;(async () => {
+(async () => {
   const argv = process.argv.slice(2)
   const [type, subDomain, appId, base64Account] = argv
 
