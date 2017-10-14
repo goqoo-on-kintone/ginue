@@ -2,28 +2,51 @@
 'use strict'
 
 const fs = require('mz/fs')
+const mkdirp = require('mkdirp')
 const rp = require('request-promise')
 
 const pretty = (obj) => JSON.stringify(obj, null, '    ')
 
-const getCommands = async () => {
+const loadKintoneCommands = async () => {
   const file = await fs.readFile('./commands.conf', 'utf8')
   return file.replace(/\n$/, '').split('\n')
 }
 
+const createDirPath = (kAppId) => {
+  return `tmp/kintone_jsons/${kAppId}`
+}
+
+const createFilePath = (kCommand, kAppId) => {
+  const dirPath = createDirPath(kAppId)
+  const fileName = `${kCommand.replace(/\//g, '_')}`
+  return `${dirPath}/${fileName}`
+}
+
 const main = async () => {
   const argv = process.argv.slice(2)
-  const url = argv[0]
-  const base64account = argv[1]
-  const headers = {
-    'X-Cybozu-Authorization': base64account
+  const [type, kSubDomain, kAppId, kBase64Account] = argv
+
+  if (type !== 'pull') {
+    return
   }
-  const options = { url, headers, json: true }
-  try {
-    const resp = await rp(options)
-    console.log(pretty(resp))
-  } catch (error) {
-    console.error(error)
-  }
+
+  mkdirp.sync(createDirPath(kAppId))
+
+  const kCommands = await loadKintoneCommands()
+  kCommands.forEach(async (kCommand) => {
+    const url = `https://${kSubDomain}.cybozu.com/k/v1/${kCommand}?app=${kAppId}`
+    const headers = {
+      'X-Cybozu-Authorization': kBase64Account
+    }
+    const options = { url, headers, json: true }
+    try {
+      const resp = await rp(options)
+      const filename = createFilePath(kCommand, kAppId)
+      console.log(filename)
+      fs.writeFile(filename, pretty(resp))
+    } catch (error) {
+      console.error(error)
+    }
+  })
 }
 main()
