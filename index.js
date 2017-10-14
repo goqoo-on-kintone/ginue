@@ -26,7 +26,7 @@ const createFilePath = (kCommand, kAppId) => {
   return `${dirPath}/${fileName}`
 }
 
-const main = async () => {
+;(async () => {
   const argv = process.argv.slice(2)
   const [type, kSubDomain, kAppId, kBase64Account] = argv
 
@@ -52,5 +52,4 @@ const main = async () => {
       console.error(error)
     }
   })
-}
-main()
+})()
