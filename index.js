@@ -3,7 +3,7 @@
 
 const fs = require('mz/fs')
 const mkdirp = require('mkdirp')
-const rp = require('request-promise')
+const request = require('request-promise')
 
 const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
@@ -12,42 +12,58 @@ const loadKintoneCommands = async () => {
   return file.replace(/\n$/, '').split('\n')
 }
 
-const createUrl = (kSubDomain, kCommand, kAppId) => {
-  return `https://${kSubDomain}.cybozu.com/k/v1/${kCommand}?app=${kAppId}`
+const createDirPath = (appId) => {
+  return `tmp/kintone_jsons/${appId}`
 }
 
-const createDirPath = (kAppId) => {
-  return `tmp/kintone_jsons/${kAppId}`
-}
-
-const createFilePath = (kCommand, kAppId) => {
-  const dirPath = createDirPath(kAppId)
-  const fileName = `${kCommand.replace(/\//g, '_')}`
+const createFilePath = (ktn) => {
+  const dirPath = createDirPath(ktn.appId)
+  const fileName = `${ktn.command.replace(/\//g, '_')}`
   return `${dirPath}/${fileName}`
+}
+
+const createUrl = (ktn) => {
+  return `https://${ktn.subDomain}.cybozu.com/k/v1/${ktn.command}?app=${ktn.appId}`
+}
+
+const createHeaders = (ktn) => {
+  return {
+    'X-Cybozu-Authorization': ktn.base64Account
+  }
+}
+
+const fetchKintoneInfo = async (ktn) => {
+  const options = {
+    url: createUrl(ktn),
+    headers: createHeaders(ktn),
+    json: true,
+  }
+  return request(options)
 }
 
 ;(async () => {
   const argv = process.argv.slice(2)
-  const [type, kSubDomain, kAppId, kBase64Account] = argv
+  const [type, subDomain, appId, base64Account] = argv
 
   if (type !== 'pull') {
     return
   }
 
-  mkdirp.sync(createDirPath(kAppId))
+  mkdirp.sync(createDirPath(appId))
 
-  const kCommands = await loadKintoneCommands()
-  kCommands.forEach(async (kCommand) => {
-    const url = createUrl(kSubDomain, kCommand, kAppId)
-    const headers = {
-      'X-Cybozu-Authorization': kBase64Account
+  const kintoneCommands = await loadKintoneCommands()
+  kintoneCommands.forEach(async (command) => {
+    const ktn = {
+      subDomain,
+      appId,
+      base64Account,
+      command,
     }
-    const options = { url, headers, json: true }
     try {
-      const resp = await rp(options)
-      const filename = createFilePath(kCommand, kAppId)
-      console.log(filename)
-      fs.writeFile(filename, pretty(resp))
+      const kintoneInfo = await fetchKintoneInfo(ktn)
+      const filePath = createFilePath(ktn)
+      console.log(filePath)
+      fs.writeFile(filePath, pretty(kintoneInfo))
     } catch (error) {
       console.error(error)
     }
