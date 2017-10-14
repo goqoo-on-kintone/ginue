@@ -5,7 +5,7 @@ const fs = require('mz/fs')
 const mkdirp = require('mkdirp')
 const rp = require('request-promise')
 
-const pretty = (obj) => JSON.stringify(obj, null, '    ')
+const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
 const loadKintoneCommands = async () => {
   const file = await fs.readFile('./commands.conf', 'utf8')
