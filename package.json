@@ -25,6 +25,7 @@
     "eslint-plugin-standard": "^3.0.1"
   },
   "dependencies": {
+    "mz": "^2.7.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   }
