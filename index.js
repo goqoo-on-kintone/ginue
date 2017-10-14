@@ -1,9 +1,15 @@
 #!/usr/bin/env node
 'use strict'
 
+const fs = require('mz/fs')
 const rp = require('request-promise')
 
 const pretty = (obj) => JSON.stringify(obj, null, '    ')
+
+const getCommands = async () => {
+  const file = await fs.readFile('./commands.conf', 'utf8')
+  return file.replace(/\n$/, '').split('\n')
+}
 
 const main = async () => {
   const argv = process.argv.slice(2)
