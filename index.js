@@ -3,6 +3,8 @@
 
 const request = require('request')
 
+const pretty = (obj) => JSON.stringify(obj, null, '    ')
+
 const argv = process.argv.slice(2)
 const url = argv[0]
 const base64account = argv[1]
@@ -15,5 +17,6 @@ request.get(options, (error, res, body) => {
     console.error(error)
     return
   }
-  console.log(body)
+  const bodyObj = JSON.parse(body)
+  console.log(pretty(bodyObj))
 })
