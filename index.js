@@ -43,7 +43,8 @@ const fetchKintoneInfo = async (ktn) => {
 
 (async () => {
   const argv = process.argv.slice(2)
-  const [type, subDomain, appId, base64Account] = argv
+  const [type, subDomain, appId, username, password] = argv
+  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
 
   if (type !== 'pull') {
     console.error('ERROR: Invalid argument!')
