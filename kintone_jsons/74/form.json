@@ -121,7 +121,7 @@
     },
     {
       "type": "SINGLE_LINE_TEXT",
-      "label": "備考だよ。",
+      "label": "備考だよん。",
       "noLabel": "false",
       "code": "文字列__1行_",
       "required": "false",

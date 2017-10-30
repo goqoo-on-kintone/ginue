@@ -1,5 +1,5 @@
 {
-  "revision": "8",
+  "revision": "9",
   "properties": {
     "Status": {
       "type": "DROP_DOWN",
@@ -83,7 +83,7 @@
     "文字列__1行_": {
       "type": "SINGLE_LINE_TEXT",
       "code": "文字列__1行_",
-      "label": "備考だよ。",
+      "label": "備考だよん。",
       "noLabel": false,
       "required": false,
       "minLength": "",
