@@ -13,7 +13,7 @@ const loadKintoneCommands = async () => {
 }
 
 const createDirPath = (appId) => {
-  return `tmp/kintone_jsons/${appId}`
+  return `kintone_jsons/${appId}`
 }
 
 const createFilePath = (ktn) => {
