@@ -1,0 +1,122 @@
+{
+  "layout": [
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "Customer",
+          "size": {
+            "width": "222"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "文字列__1行__0",
+          "size": {
+            "width": "193"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "文字列__1行_",
+          "size": {
+            "width": "193"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "USER_SELECT",
+          "code": "Person",
+          "size": {
+            "width": "344"
+          }
+        },
+        {
+          "type": "DATETIME",
+          "code": "ReceptionDate",
+          "size": {
+            "width": "196"
+          }
+        },
+        {
+          "type": "DROP_DOWN",
+          "code": "Status",
+          "size": {
+            "width": "142"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "RADIO_BUTTON",
+          "code": "QType",
+          "size": {
+            "width": "604"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "MULTI_LINE_TEXT",
+          "code": "Detail",
+          "size": {
+            "width": "549",
+            "innerHeight": "84"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "DATE",
+          "code": "LimitDay",
+          "size": {
+            "width": "117"
+          }
+        }
+      ]
+    },
+    {
+      "type": "SUBTABLE",
+      "code": "対応詳細",
+      "fields": [
+        {
+          "type": "DATETIME",
+          "code": "日時_0",
+          "size": {
+            "width": "196"
+          }
+        },
+        {
+          "type": "MULTI_LINE_TEXT",
+          "code": "文字列__複数行__1",
+          "size": {
+            "width": "364",
+            "innerHeight": "84"
+          }
+        },
+        {
+          "type": "FILE",
+          "code": "添付ファイル",
+          "size": {
+            "width": "207"
+          }
+        }
+      ]
+    }
+  ],
+  "revision": "8"
+}
