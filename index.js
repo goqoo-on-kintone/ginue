@@ -46,7 +46,8 @@ const fetchKintoneInfo = async (ktn) => {
   const [type, subDomain, appId, base64Account] = argv
 
   if (type !== 'pull') {
-    return
+    console.error('ERROR: Invalid argument!')
+    process.exit(1)
   }
 
   mkdirp.sync(createDirPath(appId))
