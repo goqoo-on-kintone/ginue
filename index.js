@@ -42,37 +42,29 @@ const fetchKintoneInfo = async (ktn) => {
   return request(options)
 }
 
+const inputKintoneAccount = async (name, type) => {
+  const value = await inquirer.prompt([{
+    name,
+    type,
+    message: `Enter your kintone ${name}:`,
+    validate: (value) => {
+      if (value.length) {
+        return true
+      } else {
+        return `Please enter your ${name}`
+      }
+    }
+  }])
+  return value
+}
+
 const createBase64Account = async (username, password) => {
   if (!username) {
-    ({ username } = await inquirer.prompt([{
-      name: 'username',
-      type: 'input',
-      message: 'Enter your kintone username:',
-      validate: (value) => {
-        if (value.length) {
-          return true
-        } else {
-          return 'Please enter your username'
-        }
-      }
-    }]))
+    ({ username } = await inputKintoneAccount('username', 'input'))
   }
-
   if (!password) {
-    ({ password } = await inquirer.prompt([{
-      name: 'password',
-      type: 'password',
-      message: 'Enter your password:',
-      validate: (value) => {
-        if (value.length) {
-          return true
-        } else {
-          return 'Please enter your password'
-        }
-      }
-    }]))
+    ({ password } = await inputKintoneAccount('password', 'password'))
   }
-
   const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
   return base64Account
 }
