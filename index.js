@@ -4,6 +4,7 @@
 const fs = require('mz/fs')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
+const inquirer = require('inquirer')
 
 const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
@@ -41,10 +42,45 @@ const fetchKintoneInfo = async (ktn) => {
   return request(options)
 }
 
+const createBase64Account = async (username, password) => {
+  if (!username) {
+    ({ username } = await inquirer.prompt([{
+      name: 'username',
+      type: 'input',
+      message: 'Enter your kintone username:',
+      validate: (value) => {
+        if (value.length) {
+          return true
+        } else {
+          return 'Please enter your username'
+        }
+      }
+    }]))
+  }
+
+  if (!password) {
+    ({ password } = await inquirer.prompt([{
+      name: 'password',
+      type: 'password',
+      message: 'Enter your password:',
+      validate: (value) => {
+        if (value.length) {
+          return true
+        } else {
+          return 'Please enter your password'
+        }
+      }
+    }]))
+  }
+
+  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
+  return base64Account
+}
+
 (async () => {
   const argv = process.argv.slice(2)
   const [type, subDomain, appId, username, password] = argv
-  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
+  const base64Account = await createBase64Account(username, password)
 
   if (type !== 'pull') {
     console.error('ERROR: Invalid argument!')
