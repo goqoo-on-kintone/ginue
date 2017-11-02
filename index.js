@@ -6,6 +6,7 @@ const mkdirp = require('mkdirp')
 const request = require('request-promise')
 const inquirer = require('inquirer')
 const path = require('path')
+const minimist = require('minimist')
 
 const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
@@ -71,7 +72,7 @@ const createBase64Account = async (username, password) => {
 }
 
 const parseArgumentOptions = () => {
-  const argv = require('minimist')(process.argv.slice(2), {
+  const argv = minimist(process.argv.slice(2), {
     string: [
       'domain',
       'app',
