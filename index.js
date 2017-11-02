@@ -5,16 +5,17 @@ const fs = require('mz/fs')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
 const inquirer = require('inquirer')
+const path = require('path')
 
 const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
 const loadKintoneCommands = async () => {
-  const file = await fs.readFile('./commands.conf', 'utf8')
+  const file = await fs.readFile(path.join(__dirname, 'commands.conf'), 'utf8')
   return file.replace(/\n+$/, '').split('\n')
 }
 
 const createDirPath = (appId) => {
-  return `kintone_jsons/${appId}`
+  return `${appId}`
 }
 
 const createFilePath = (ktn) => {
