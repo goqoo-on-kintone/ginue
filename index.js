@@ -70,21 +70,46 @@ const createBase64Account = async (username, password) => {
   return base64Account
 }
 
+const parseArgumentOptions = () => {
+  const argv = require('minimist')(process.argv.slice(2), {
+    string: [
+      'domain',
+      'app',
+      'username',
+      'password',
+    ],
+    alias: {
+      d: 'domain',
+      a: 'app',
+      u: 'username',
+      p: 'password',
+    }
+  })
+
+  return {
+    type: argv._[0],
+    subDomain: argv.domain,
+    appId: argv.app,
+    username: argv.username,
+    password: argv.password,
+  }
+}
+
 (async () => {
-  const argv = require('minimist')(process.argv.slice(2))
-  const type = argv._[0]
   const {
-    d: subDomain,
-    a: appId,
-    u: username,
-    p: password,
-  } = argv
-  const base64Account = await createBase64Account(username, password)
+    type,
+    subDomain,
+    appId,
+    username,
+    password,
+  } = parseArgumentOptions()
 
   if (type !== 'pull') {
     console.error('ERROR: Invalid argument!')
     process.exit(1)
   }
+
+  const base64Account = await createBase64Account(username, password)
 
   mkdirp.sync(createDirPath(appId))
 
