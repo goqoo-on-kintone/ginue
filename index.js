@@ -15,6 +15,12 @@ const loadKintoneCommands = async () => {
   return file.replace(/\n+$/, '').split('\n')
 }
 
+const loadGinuerc = async () => {
+  const file = await fs.readFile('./.ginuerc.json', 'utf8')
+  const obj = JSON.parse(file)
+  return obj
+}
+
 const createDirPath = (appId) => {
   return `${appId}`
 }
@@ -71,7 +77,7 @@ const createBase64Account = async (username, password) => {
   return base64Account
 }
 
-const parseArgumentOptions = () => {
+const parseArgumentOptions = (opts) => {
   const argv = minimist(process.argv.slice(2), {
     string: [
       'domain',
@@ -87,23 +93,33 @@ const parseArgumentOptions = () => {
     }
   })
 
-  return {
-    type: argv._[0],
-    subDomain: argv.domain,
-    appId: argv.app,
-    username: argv.username,
-    password: argv.password,
-  }
+  // TODO: もっとスマートに書けないものか・・・
+  if (argv._[0]) { opts.type = argv._[0] }
+  if (argv.domain) { opts.subDomain = argv.domain }
+  if (argv.app) { opts.appId = argv.app }
+  if (argv.username) { opts.username = argv.username }
+  if (argv.password) { opts.password = argv.password }
+
+  return opts
 }
 
 (async () => {
+  const opts = await loadGinuerc()
   const {
     type,
     subDomain,
     appId,
     username,
     password,
-  } = parseArgumentOptions()
+  } = parseArgumentOptions(opts)
+  console.log(opts)
+  console.log({
+    type,
+    subDomain,
+    appId,
+    username,
+    password,
+  })
 
   if (type !== 'pull') {
     console.error('ERROR: Invalid argument!')
