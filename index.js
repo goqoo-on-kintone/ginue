@@ -16,8 +16,15 @@ const loadKintoneCommands = () => {
 }
 
 const loadGinuerc = () => {
-  const file = fs.readFileSync('./.ginuerc.json', 'utf8')
-  let obj
+  let file
+  let obj = {}
+  try {
+    file = fs.readFileSync('./.ginuerc.json', 'utf8')
+  } catch (e) {
+    console.error('NOTE: .ginuerc.json is not found.')
+    return obj
+  }
+
   try {
     obj = JSON.parse(file)
   } catch (e) {
