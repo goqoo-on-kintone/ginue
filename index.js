@@ -149,13 +149,6 @@ const main = async () => {
     username,
     password,
   } = await createOptionValues()
-  console.log({
-    type,
-    subDomain,
-    appIds,
-    username,
-    password,
-  })
 
   if (type !== 'pull') {
     usageExit(1)
@@ -164,7 +157,6 @@ const main = async () => {
   const base64Account = await createBase64Account(username, password)
 
   appIds.forEach(async appId => {
-    console.log('appId: ', appId)
     mkdirp.sync(createDirPath(appId))
 
     const kintoneCommands = loadKintoneCommands()
