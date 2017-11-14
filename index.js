@@ -55,6 +55,11 @@ const createHeaders = (ktn) => {
   }
 }
 
+const createBase64Account = async (username, password) => {
+  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
+  return base64Account
+}
+
 const fetchKintoneInfo = async (ktn) => {
   const options = {
     url: createUrl(ktn),
@@ -64,7 +69,7 @@ const fetchKintoneInfo = async (ktn) => {
   return request(options)
 }
 
-const inputKintoneAccount = async (name, type) => {
+const inputKintoneInfo = async (name, type) => {
   const value = await inquirer.prompt([{
     name,
     type,
@@ -80,15 +85,11 @@ const inputKintoneAccount = async (name, type) => {
   return value
 }
 
-const createBase64Account = async (username, password) => {
-  if (!username) {
-    ({ username } = await inputKintoneAccount('username', 'input'))
-  }
-  if (!password) {
-    ({ password } = await inputKintoneAccount('password', 'password'))
-  }
-  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
-  return base64Account
+const stdInputOptions = async (opts) => {
+  opts.subDomain = opts.subDomain || (await inputKintoneInfo('subdomain', 'input')).subdomain
+  opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
+  opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
+  opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
 }
 
 const parseArgumentOptions = (opts) => {
@@ -113,6 +114,12 @@ const parseArgumentOptions = (opts) => {
   if (argv.app) { opts.appId = argv.app }
   if (argv.username) { opts.username = argv.username }
   if (argv.password) { opts.password = argv.password }
+}
+
+const createOptionValues = async () => {
+  const opts = loadGinuerc()
+  parseArgumentOptions(opts)
+  await stdInputOptions(opts)
 
   return opts
 }
@@ -134,15 +141,13 @@ options:
 }
 
 const main = async () => {
-  const opts = loadGinuerc()
   const {
     type,
     subDomain,
     appId,
     username,
     password,
-  } = parseArgumentOptions(opts)
-  console.log(opts)
+  } = await createOptionValues()
   console.log({
     type,
     subDomain,
