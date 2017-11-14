@@ -8,7 +8,7 @@ const inquirer = require('inquirer')
 const path = require('path')
 const minimist = require('minimist')
 
-const pretty = obj => JSON.stringify(obj, null, '  ')
+const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
 const loadKintoneCommands = () => {
