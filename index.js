@@ -66,7 +66,11 @@ const fetchKintoneInfo = async (ktn) => {
     headers: createHeaders(ktn),
     json: true,
   }
-  return request(options)
+  const kintoneInfo = await request(options)
+  if (!['app/settings.json', 'preview/app/settings.json'].includes(ktn.command)) {
+    delete kintoneInfo.revision
+  }
+  return pretty(kintoneInfo)
 }
 
 const inputKintoneInfo = async (name, type) => {
@@ -171,7 +175,7 @@ const main = async () => {
         const kintoneInfo = await fetchKintoneInfo(ktn)
         const filePath = createFilePath(ktn)
         console.log(filePath)
-        fs.writeFileSync(filePath, pretty(kintoneInfo))
+        fs.writeFileSync(filePath, kintoneInfo)
       } catch (error) {
         console.error(error)
       }
