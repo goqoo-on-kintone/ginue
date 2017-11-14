@@ -103,7 +103,7 @@ const parseArgumentOptions = (opts) => {
   return opts
 }
 
-(async () => {
+const main = async () => {
   const opts = await loadGinuerc()
   const {
     type,
@@ -147,4 +147,6 @@ const parseArgumentOptions = (opts) => {
       console.error(error)
     }
   })
-})()
+}
+
+main()
