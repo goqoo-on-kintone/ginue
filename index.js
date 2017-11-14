@@ -17,7 +17,13 @@ const loadKintoneCommands = async () => {
 
 const loadGinuerc = async () => {
   const file = await fs.readFile('./.ginuerc.json', 'utf8')
-  const obj = JSON.parse(file)
+  let obj
+  try {
+    obj = JSON.parse(file)
+  } catch (e) {
+    console.error('ERROR: Invalid .ginuerc.json!')
+    process.exit(1)
+  }
   return obj
 }
 
