@@ -8,7 +8,8 @@ const inquirer = require('inquirer')
 const path = require('path')
 const minimist = require('minimist')
 
-const pretty = (obj) => JSON.stringify(obj, null, '  ')
+const pretty = obj => JSON.stringify(obj, null, '  ')
+const trim = str => str.replace(/^\n|\n$/g, '')
 
 const loadKintoneCommands = () => {
   const file = fs.readFileSync(path.join(__dirname, 'commands.conf'), 'utf8')
@@ -116,6 +117,22 @@ const parseArgumentOptions = (opts) => {
   return opts
 }
 
+const usageExit = (returnCode = 0) => {
+  const message = trim(`
+usage: ginue [-v, --version] [-h, --help]
+             show <command.json> [<options>]
+             pull [<optons>]
+
+options:
+  -d, --domain=<domain>      kintone sub domain name
+  -a, --app=<app-id>         kintone app ids
+  -u, --user=<username>      kintone username
+  -p, --password=<password>  kintone password
+`)
+  console.error(message)
+  process.exit(returnCode)
+}
+
 const main = async () => {
   const opts = loadGinuerc()
   const {
@@ -135,8 +152,7 @@ const main = async () => {
   })
 
   if (type !== 'pull') {
-    console.error('ERROR: Invalid argument!')
-    process.exit(1)
+    usageExit(1)
   }
 
   const base64Account = await createBase64Account(username, password)
