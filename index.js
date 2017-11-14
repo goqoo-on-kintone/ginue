@@ -120,6 +120,7 @@ const createOptionValues = async () => {
   const opts = loadGinuerc()
   parseArgumentOptions(opts)
   await stdInputOptions(opts)
+  opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(' ')
 
   return opts
 }
@@ -144,14 +145,14 @@ const main = async () => {
   const {
     type,
     subDomain,
-    appId,
+    appIds,
     username,
     password,
   } = await createOptionValues()
   console.log({
     type,
     subDomain,
-    appId,
+    appIds,
     username,
     password,
   })
@@ -162,24 +163,27 @@ const main = async () => {
 
   const base64Account = await createBase64Account(username, password)
 
-  mkdirp.sync(createDirPath(appId))
+  appIds.forEach(async appId => {
+    console.log('appId: ', appId)
+    mkdirp.sync(createDirPath(appId))
 
-  const kintoneCommands = loadKintoneCommands()
-  kintoneCommands.forEach(async (command) => {
-    const ktn = {
-      subDomain,
-      appId,
-      base64Account,
-      command,
-    }
-    try {
-      const kintoneInfo = await fetchKintoneInfo(ktn)
-      const filePath = createFilePath(ktn)
-      console.log(filePath)
-      fs.writeFileSync(filePath, pretty(kintoneInfo))
-    } catch (error) {
-      console.error(error)
-    }
+    const kintoneCommands = loadKintoneCommands()
+    kintoneCommands.forEach(async (command) => {
+      const ktn = {
+        subDomain,
+        appId,
+        base64Account,
+        command,
+      }
+      try {
+        const kintoneInfo = await fetchKintoneInfo(ktn)
+        const filePath = createFilePath(ktn)
+        console.log(filePath)
+        fs.writeFileSync(filePath, pretty(kintoneInfo))
+      } catch (error) {
+        console.error(error)
+      }
+    })
   })
 }
 
