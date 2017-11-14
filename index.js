@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const fs = require('mz/fs')
+const fs = require('fs')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
 const inquirer = require('inquirer')
@@ -10,13 +10,13 @@ const minimist = require('minimist')
 
 const pretty = (obj) => JSON.stringify(obj, null, '  ')
 
-const loadKintoneCommands = async () => {
-  const file = await fs.readFile(path.join(__dirname, 'commands.conf'), 'utf8')
+const loadKintoneCommands = () => {
+  const file = fs.readFileSync(path.join(__dirname, 'commands.conf'), 'utf8')
   return file.replace(/\n+$/, '').split('\n')
 }
 
-const loadGinuerc = async () => {
-  const file = await fs.readFile('./.ginuerc.json', 'utf8')
+const loadGinuerc = () => {
+  const file = fs.readFileSync('./.ginuerc.json', 'utf8')
   let obj
   try {
     obj = JSON.parse(file)
@@ -110,7 +110,7 @@ const parseArgumentOptions = (opts) => {
 }
 
 const main = async () => {
-  const opts = await loadGinuerc()
+  const opts = loadGinuerc()
   const {
     type,
     subDomain,
@@ -136,7 +136,7 @@ const main = async () => {
 
   mkdirp.sync(createDirPath(appId))
 
-  const kintoneCommands = await loadKintoneCommands()
+  const kintoneCommands = loadKintoneCommands()
   kintoneCommands.forEach(async (command) => {
     const ktn = {
       subDomain,
@@ -148,7 +148,7 @@ const main = async () => {
       const kintoneInfo = await fetchKintoneInfo(ktn)
       const filePath = createFilePath(ktn)
       console.log(filePath)
-      fs.writeFile(filePath, pretty(kintoneInfo))
+      fs.writeFileSync(filePath, pretty(kintoneInfo))
     } catch (error) {
       console.error(error)
     }
