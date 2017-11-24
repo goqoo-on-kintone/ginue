@@ -125,7 +125,7 @@ const stdInputOptions = async (opts) => {
   // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
 }
 
-const parseArgumentOptions = (opts) => {
+const parseArgumentOptions = () => {
   const argv = minimist(process.argv.slice(2), {
     string: [
       'domain',
@@ -143,20 +143,23 @@ const parseArgumentOptions = (opts) => {
     }
   })
 
-  if (argv._[0]) { opts.type = argv._[0] }
-  if (argv.domain) { opts.subDomain = argv.domain }
-  if (argv.username) { opts.username = argv.username }
-  if (argv.password) { opts.password = argv.password }
-  if (argv.app) { opts.appId = argv.app }
-  if (argv.guest) { opts.guestSpaceId = argv.guest }
+  if (argv._[0]) { argv.type = argv._[0] }
+  return argv
 }
 
 const createOptionValues = async () => {
-  const opts = loadGinuerc()
-  parseArgumentOptions(opts)
-
-  if (opts.type !== 'pull') {
+  const argv = parseArgumentOptions()
+  if (argv.type !== 'pull') {
     usageExit(1)
+  }
+
+  const ginuerc = loadGinuerc()
+  const opts = {
+    subDomain: argv.domain || ginuerc.domain,
+    username: argv.username || ginuerc.username,
+    password: argv.password || ginuerc.password,
+    appId: argv.app || ginuerc.app,
+    guestSpaceId: argv.guest || ginuerc.guest,
   }
 
   await stdInputOptions(opts)
