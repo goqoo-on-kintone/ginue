@@ -8,7 +8,11 @@ kintoneアプリの設定情報を取得するCLI版ツールです。[kintone R
 
 ## インストール方法
 ```
-$ npm install -g ginue
+$ npm install ginue
+```
+or
+```
+$ yarn add ginue
 ```
 
 ## 使い方
