@@ -72,7 +72,7 @@ const createFilePath = (ktn) => {
 
 const createUrl = (ktn) => {
   const basePath = ktn.guestSpaceId ? `k/guest/${ktn.guestSpaceId}/v1` : 'k/v1'
-  return `https://${ktn.subDomain}.cybozu.com/${basePath}/${ktn.command}?${ktn.appParam}=${ktn.appId}`
+  return `https://${ktn.domain}/${basePath}/${ktn.command}?${ktn.appParam}=${ktn.appId}`
 }
 
 // 今後push機能を実装する場合にPOST/PUT向けの複雑なヘッダーを作成するために用意した関数
@@ -117,7 +117,7 @@ const inputKintoneInfo = async (name, type) => {
 }
 
 const stdInputOptions = async (opts) => {
-  opts.subDomain = opts.subDomain || (await inputKintoneInfo('subdomain', 'input')).subdomain
+  opts.domain = opts.domain || (await inputKintoneInfo('domain', 'input')).domain
   opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
   opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
   opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
@@ -155,7 +155,7 @@ const createOptionValues = async () => {
 
   const ginuerc = loadGinuerc()
   const opts = {
-    subDomain: argv.domain || ginuerc.domain,
+    domain: argv.domain || ginuerc.domain,
     username: argv.username || ginuerc.username,
     password: argv.password || ginuerc.password,
     appId: argv.app || ginuerc.app,
@@ -186,7 +186,7 @@ const main = async () => {
       // 運用環境・テスト環境単位ループ
       commands.forEach(async command => {
         const ktn = {
-          subDomain: opts.subDomain,
+          domain: opts.domain,
           guestSpaceId: opts.guestSpaceId,
           base64Account,
           appId,
