@@ -81,7 +81,7 @@ const fetchKintoneInfo = async (ktn) => {
     json: true,
   }
   const kintoneInfo = await request(options)
-  if (!['app/settings.json', 'preview/app/settings.json'].includes(ktn.command)) {
+  if (ktn.skipRevision) {
     delete kintoneInfo.revision
   }
   return pretty(kintoneInfo)
@@ -187,6 +187,7 @@ const main = async () => {
           base64Account,
           command,
           appParam: commProp.appParam,
+          skipRevision: commProp.skipRevision,
         }
         try {
           const kintoneInfo = await fetchKintoneInfo(ktn)
