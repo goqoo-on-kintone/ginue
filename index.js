@@ -46,6 +46,7 @@ const loadJsonFile = (fileName, dirName, callback) => {
 }
 
 const loadKintoneCommands = () => {
+  // TODO: ローカルにcommands.jsonが存在したらそれを優先して使いたい
   return loadJsonFile('commands.json', __dirname, (e) => {
     console.error(`ERROR: commands.json not found!`, e)
     process.exit(1)
