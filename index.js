@@ -60,7 +60,8 @@ const createFilePath = (ktn) => {
 }
 
 const createUrl = (ktn) => {
-  return `https://${ktn.subDomain}.cybozu.com/k/v1/${ktn.command}?${ktn.appParam}=${ktn.appId}`
+  const basePath = ktn.guestSpaceId ? `k/guest/${ktn.guestSpaceId}/v1` : 'k/v1'
+  return `https://${ktn.subDomain}.cybozu.com/${basePath}/${ktn.command}?${ktn.appParam}=${ktn.appId}`
 }
 
 const createHeaders = (ktn) => {
@@ -105,33 +106,38 @@ const inputKintoneInfo = async (name, type) => {
 
 const stdInputOptions = async (opts) => {
   opts.subDomain = opts.subDomain || (await inputKintoneInfo('subdomain', 'input')).subdomain
-  opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
   opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
   opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
+  opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
+  // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
+  // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
 }
 
 const parseArgumentOptions = (opts) => {
   const argv = minimist(process.argv.slice(2), {
     string: [
       'domain',
-      'app',
       'username',
       'password',
+      'app',
+      'guest',
     ],
     alias: {
       d: 'domain',
-      a: 'app',
       u: 'username',
       p: 'password',
+      a: 'app',
+      g: 'guest',
     }
   })
 
   // TODO: もっとスマートに書けないものか・・・
   if (argv._[0]) { opts.type = argv._[0] }
   if (argv.domain) { opts.subDomain = argv.domain }
-  if (argv.app) { opts.appId = argv.app }
   if (argv.username) { opts.username = argv.username }
   if (argv.password) { opts.password = argv.password }
+  if (argv.app) { opts.appId = argv.app }
+  if (argv.guest) { opts.guestSpaceId = argv.guest }
 }
 
 const createOptionValues = async () => {
@@ -150,10 +156,11 @@ usage: ginue [-v, --version] [-h, --help]
              pull [<optons>]
 
 options:
-  -d, --domain=<domain>      kintone sub domain name
-  -a, --app=<app-id>         kintone app ids
-  -u, --user=<username>      kintone username
-  -p, --password=<password>  kintone password
+  -d, --domain=<domain>         kintone sub domain name
+  -u, --user=<username>         kintone username
+  -p, --password=<password>     kintone password
+  -a, --app=<app-id>            kintone app ids
+  -g, --guest=<guest-space-id>  kintone app ids
 `)
   console.error(message)
   process.exit(returnCode)
@@ -163,9 +170,10 @@ const main = async () => {
   const {
     type,
     subDomain,
-    appIds,
     username,
     password,
+    appIds,
+    guestSpaceId,
   } = await createOptionValues()
 
   if (type !== 'pull') {
@@ -183,8 +191,9 @@ const main = async () => {
       commands.forEach(async command => {
         const ktn = {
           subDomain,
-          appId,
           base64Account,
+          appId,
+          guestSpaceId,
           command,
           appParam: commProp.appParam,
           skipRevision: commProp.skipRevision,
