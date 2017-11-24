@@ -12,8 +12,22 @@ const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
 const loadKintoneCommands = () => {
-  const file = fs.readFileSync(path.join(__dirname, 'commands.conf'), 'utf8')
-  return file.replace(/\n+$/, '').split('\n')
+  let file
+  let obj = {}
+  try {
+    file = fs.readFileSync(path.join(__dirname, 'commands.json'), 'utf8')
+  } catch (e) {
+    console.error('ERROR: commands.json not found!')
+    process.exit(1)
+  }
+
+  try {
+    obj = JSON.parse(file)
+  } catch (e) {
+    console.error('ERROR: Invalid commands.json!')
+    process.exit(1)
+  }
+  return obj
 }
 
 const loadGinuerc = () => {
@@ -46,7 +60,7 @@ const createFilePath = (ktn) => {
 }
 
 const createUrl = (ktn) => {
-  return `https://${ktn.subDomain}.cybozu.com/k/v1/${ktn.command}?app=${ktn.appId}`
+  return `https://${ktn.subDomain}.cybozu.com/k/v1/${ktn.command}?${ktn.appParam}=${ktn.appId}`
 }
 
 const createHeaders = (ktn) => {
@@ -160,26 +174,30 @@ const main = async () => {
 
   const base64Account = await createBase64Account(username, password)
 
-  appIds.forEach(async appId => {
+  appIds.forEach(appId => {
     mkdirp.sync(createDirPath(appId))
 
     const kintoneCommands = loadKintoneCommands()
-    kintoneCommands.forEach(async (command) => {
-      const ktn = {
-        subDomain,
-        appId,
-        base64Account,
-        command,
-      }
-      try {
-        const kintoneInfo = await fetchKintoneInfo(ktn)
-        const filePath = createFilePath(ktn)
-        console.log(filePath)
-        fs.writeFileSync(filePath, kintoneInfo)
-      } catch (error) {
-        console.error(error)
-      }
-    })
+    for (const [commName, commProp] of Object.entries(kintoneCommands)) {
+      const commands = commProp.hasPreview ? [`preview/${commName}`, commName] : [commName]
+      commands.forEach(async command => {
+        const ktn = {
+          subDomain,
+          appId,
+          base64Account,
+          command,
+          appParam: commProp.appParam,
+        }
+        try {
+          const kintoneInfo = await fetchKintoneInfo(ktn)
+          const filePath = createFilePath(ktn)
+          console.log(filePath)
+          fs.writeFileSync(filePath, kintoneInfo)
+        } catch (error) {
+          console.error(error)
+        }
+      })
+    }
   })
 }
 

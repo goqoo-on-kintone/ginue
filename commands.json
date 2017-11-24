@@ -1,0 +1,53 @@
+{
+  "form.json": {
+    "appParam": "app",
+    "hasPreview": true
+  },
+  "app/form/fields.json": {
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": true
+  },
+  "app/form/layout.json": {
+    "appParam": "app",
+    "hasPreview": true
+  },
+  "app.json": {
+    "appParam": "id"
+  },
+  "preview/app/deploy.json": {
+    "appParam": "apps"
+  },
+  "app/acl.json": {
+    "appParam": "app",
+    "hasPreview": true
+  },
+  "app/status.json": {
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": true
+  },
+  "record/acl.json": {
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": true
+  },
+  "field/acl.json": {
+    "appParam": "app",
+    "hasPreview": true
+  },
+  "app/views.json": {
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": true
+  },
+  "app/settings.json": {
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": true
+  },
+  "app/customize.json": {
+    "appParam": "app",
+    "hasPreview": true
+  }
+}
