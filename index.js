@@ -54,7 +54,6 @@ const loadKintoneCommands = () => {
 
 const loadGinuerc = () => {
   return loadJsonFile('.ginuerc.json', '.', (e) => {
-    console.error('NOTE: .ginuerc.json is not found.')
     return {}
   })
 }
