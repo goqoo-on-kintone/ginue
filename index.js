@@ -11,45 +11,56 @@ const minimist = require('minimist')
 const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
-const loadKintoneCommands = () => {
+const usageExit = (returnCode = 0) => {
+  const message = trim(`
+usage: ginue [-v, --version] [-h, --help]
+             show <command.json> [<options>]
+             pull [<optons>]
+
+options:
+  -d, --domain=<domain>         kintone sub domain name
+  -u, --user=<username>         kintone username
+  -p, --password=<password>     kintone password
+  -a, --app=<app-id>            kintone app ids
+  -g, --guest=<guest-space-id>  kintone app ids
+`)
+  console.error(message)
+  process.exit(returnCode)
+}
+
+const loadJsonFile = (fileName, dirName, callback) => {
   let file
-  let obj = {}
   try {
-    file = fs.readFileSync(path.join(__dirname, 'commands.json'), 'utf8')
+    file = fs.readFileSync(path.join(dirName, fileName), 'utf8')
   } catch (e) {
-    console.error('ERROR: commands.json not found!')
-    process.exit(1)
+    return callback(e)
   }
 
   try {
-    obj = JSON.parse(file)
+    const obj = JSON.parse(file)
+    return obj
   } catch (e) {
-    console.error('ERROR: Invalid commands.json!')
+    console.error(`ERROR: Invalid ${fileName}!`)
     process.exit(1)
   }
-  return obj
+}
+
+const loadKintoneCommands = () => {
+  return loadJsonFile('commands.json', __dirname, (e) => {
+    console.error(`ERROR: commands.json not found!`, e)
+    process.exit(1)
+  })
 }
 
 const loadGinuerc = () => {
-  let file
-  let obj = {}
-  try {
-    file = fs.readFileSync('./.ginuerc.json', 'utf8')
-  } catch (e) {
+  return loadJsonFile('.ginuerc.json', '.', (e) => {
     console.error('NOTE: .ginuerc.json is not found.')
-    return obj
-  }
-
-  try {
-    obj = JSON.parse(file)
-  } catch (e) {
-    console.error('ERROR: Invalid .ginuerc.json!')
-    process.exit(1)
-  }
-  return obj
+    return {}
+  })
 }
 
 const createDirPath = (appId) => {
+  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
   return `${appId}`
 }
 
@@ -64,6 +75,7 @@ const createUrl = (ktn) => {
   return `https://${ktn.subDomain}.cybozu.com/${basePath}/${ktn.command}?${ktn.appParam}=${ktn.appId}`
 }
 
+// 今後push機能を実装する場合にPOST/PUT向けの複雑なヘッダーを作成するために用意した関数
 const createHeaders = (ktn) => {
   return {
     'X-Cybozu-Authorization': ktn.base64Account
@@ -131,7 +143,6 @@ const parseArgumentOptions = (opts) => {
     }
   })
 
-  // TODO: もっとスマートに書けないものか・・・
   if (argv._[0]) { opts.type = argv._[0] }
   if (argv.domain) { opts.subDomain = argv.domain }
   if (argv.username) { opts.username = argv.username }
@@ -143,57 +154,39 @@ const parseArgumentOptions = (opts) => {
 const createOptionValues = async () => {
   const opts = loadGinuerc()
   parseArgumentOptions(opts)
+
+  if (opts.type !== 'pull') {
+    usageExit(1)
+  }
+
   await stdInputOptions(opts)
   opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(' ')
 
   return opts
 }
 
-const usageExit = (returnCode = 0) => {
-  const message = trim(`
-usage: ginue [-v, --version] [-h, --help]
-             show <command.json> [<options>]
-             pull [<optons>]
-
-options:
-  -d, --domain=<domain>         kintone sub domain name
-  -u, --user=<username>         kintone username
-  -p, --password=<password>     kintone password
-  -a, --app=<app-id>            kintone app ids
-  -g, --guest=<guest-space-id>  kintone app ids
-`)
-  console.error(message)
-  process.exit(returnCode)
-}
-
 const main = async () => {
-  const {
-    type,
-    subDomain,
-    username,
-    password,
-    appIds,
-    guestSpaceId,
-  } = await createOptionValues()
+  const opts = await createOptionValues()
+  const base64Account = await createBase64Account(opts.username, opts.password)
 
-  if (type !== 'pull') {
-    usageExit(1)
-  }
-
-  const base64Account = await createBase64Account(username, password)
-
-  appIds.forEach(appId => {
+  // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
+  // アプリ単位ループ
+  opts.appIds.forEach(appId => {
     mkdirp.sync(createDirPath(appId))
-
     const kintoneCommands = loadKintoneCommands()
+    // APIコマンド単位ループ
     for (const [commName, commProp] of Object.entries(kintoneCommands)) {
-      const commands = commProp.hasPreview ? [`preview/${commName}`, commName] : [commName]
+      const commands = [commName]
+      if (commProp.hasPreview) {
+        commands.push(`preview/${commName}`)
+      }
+      // 運用環境・テスト環境単位ループ
       commands.forEach(async command => {
         const ktn = {
-          subDomain,
+          subDomain: opts.subDomain,
+          guestSpaceId: opts.guestSpaceId,
           base64Account,
           appId,
-          guestSpaceId,
           command,
           appParam: commProp.appParam,
           skipRevision: commProp.skipRevision,
