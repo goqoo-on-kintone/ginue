@@ -42,12 +42,13 @@ $ ginue pull [OPTIONS]
 実行例
 
 ```
-$ ginue pull -d ginue.cybozu.com -g 5 -a "10 11 12" -u Administrator
+$ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
 ```
 
 ## 共通仕様
 * オプション引数を指定せずに起動した場合、標準入力を求められます。（`-g`オプション以外）
 * ゲストスペース内のアプリ情報を取得する場合は`-g`オプションが必須です。
+* アプリID（`-a`オプション or 標準入力）はカンマ区切りで複数指定可能です。
 
 コマンドを実行するディレクトリに`.ginuerc.json`という設定ファイルを作成すると、`ginue`実行時に自動的に読み込まれてオプション指定を省略できます。プロジェクト単位で`.ginuerc.json`を作成すると便利です。
 

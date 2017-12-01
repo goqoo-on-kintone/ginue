@@ -163,7 +163,7 @@ const createOptionValues = async () => {
   }
 
   await stdInputOptions(opts)
-  opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(' ')
+  opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(',')
 
   return opts
 }
