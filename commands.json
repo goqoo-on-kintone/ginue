@@ -1,0 +1,67 @@
+{
+  "form.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "hasPreview": false
+  },
+  "app/form/fields.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": false
+  },
+  "app/form/layout.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "hasPreview": false
+  },
+  "app.json": {
+    "skipRevision": true,
+    "appParam": "id",
+    "hasPreview": false
+  },
+  "preview/app/deploy.json": {
+    "skipRevision": true,
+    "appParam": "apps",
+    "hasPreview": false
+  },
+  "app/acl.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "hasPreview": false
+  },
+  "app/status.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": false
+  },
+  "record/acl.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": false
+  },
+  "field/acl.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "hasPreview": false
+  },
+  "app/views.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": false
+  },
+  "app/settings.json": {
+    "skipRevision": false,
+    "appParam": "app",
+    "langParam": "lang",
+    "hasPreview": true
+  },
+  "app/customize.json": {
+    "skipRevision": true,
+    "appParam": "app",
+    "hasPreview": false
+  }
+}
