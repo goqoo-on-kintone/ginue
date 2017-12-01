@@ -61,6 +61,19 @@ const loadGinuerc = () => {
 
 const createDirPath = (appId) => {
   // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
+  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
+  // イメージ
+  // "app": [
+  //   {
+  //     "name": "order",
+  //     "id": 10,
+  //     "guest": 5
+  //   },
+  //   {
+  //     "name": "bill",
+  //     "id": 11
+  //   }
+  // ]
   return `${appId}`
 }
 
