@@ -1,7 +1,7 @@
 {
   "name": "ginue",
   "version": "1.0.0",
-  "description": "",
+  "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
   "main": "index.js",
   "bin": {
     "ginue": "./index.js"
