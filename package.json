@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/TailsGarden/ginue.git"
   },
-  "author": "",
+  "author": "tailsgarden",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/TailsGarden/ginue/issues"
