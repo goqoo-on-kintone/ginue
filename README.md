@@ -5,7 +5,7 @@ ginue is the CLI tool to get settings of kintone via kintone REST API.
 kintoneアプリの設定情報を取得するCLI版ツールです。[kintone REST API](https://developer.cybozu.io/hc/ja/articles/201941834)で情報を取得します。
 
 以下で動作確認済み
-* Mac OS X El Capitan (Node.js v8.2.1)
+* macOS Sierra (Node.js v8.2.1)
 * Windows 10 (Node.js v8.2.1)
 
 ## インストール方法
