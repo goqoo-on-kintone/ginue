@@ -19,6 +19,9 @@
     "url": "https://github.com/TailsGarden/ginue/issues"
   },
   "homepage": "https://github.com/TailsGarden/ginue#readme",
+  "engines": {
+    "node": ">=7.6"
+  },
   "devDependencies": {
     "eslint": "^4.8.0",
     "eslint-config-standard": "^10.2.1",
