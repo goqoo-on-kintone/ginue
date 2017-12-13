@@ -2,11 +2,11 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
+const inquirer = require('inquirer')
+const minimist = require('minimist')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
-const inquirer = require('inquirer')
-const path = require('path')
-const minimist = require('minimist')
 
 const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
