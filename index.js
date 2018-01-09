@@ -182,24 +182,24 @@ const createOptionValues = async () => {
 
   const ginuerc = await loadGinuerc()
 
-  let optsArray
+  let allOpts
   if (argv.priority) {
     // argvにオプションが指定された場合はginurecよりも優先するが、
     // 条件によりginuercを「無視する」「一部だけ使う」を変化させる
     if (ginuerc.length === 1) {
       // ginuercに単一環境だけ指定されている場合は、
       // argvを優先し、argvに存在しないオプションだけginuercを使う
-      optsArray = [pluckOpts(argv, ginuerc[0])]
+      allOpts = [pluckOpts(argv, ginuerc[0])]
     } else {
       // ginuercに複数環境が指定されている場合は、ginuercを無視してargvのオプションだけ使う
       // argvには1種類の環境しか指定できず、ginuercの一部だけ使うことが難しいため
-      optsArray = [pluckOpts(argv)]
+      allOpts = [pluckOpts(argv)]
     }
   } else {
-    optsArray = ginuerc.map(g => pluckOpts(g))
+    allOpts = ginuerc.map(g => pluckOpts(g))
   }
 
-  return Promise.all(optsArray.map(async opts => {
+  return Promise.all(allOpts.map(async opts => {
     await stdInputOptions(opts)
     opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(',')
     return opts
@@ -207,8 +207,8 @@ const createOptionValues = async () => {
 }
 
 const main = async () => {
-  const optsArray = await createOptionValues()
-  for (const opts of optsArray) {
+  const allOpts = await createOptionValues()
+  allOpts.forEach(async opts => {
     console.log(opts)
     const base64Account = await createBase64Account(opts.username, opts.password)
     // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
@@ -244,7 +244,7 @@ const main = async () => {
         })
       }
     })
-  }
+  })
 }
 
 main()
