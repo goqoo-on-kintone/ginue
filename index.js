@@ -49,12 +49,13 @@ const loadKintoneCommands = async () => {
 }
 
 const loadGinuerc = async () => {
-  return loadJsonFile('.ginuerc.json', '.').catch((e) => {
+  const ginuerc = await loadJsonFile('.ginuerc.json', '.').catch((e) => {
     return {}
   })
+  return ginuerc instanceof Array ? ginuerc : [ginuerc]
 }
 
-const createDirPath = (appId) => {
+const createDirPath = (appId, opts) => {
   // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
   // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
   // イメージ
@@ -69,11 +70,15 @@ const createDirPath = (appId) => {
   //     "id": 11
   //   }
   // ]
-  return `${appId}`
+  let envPath = ''
+  if (opts && opts.environment) {
+    envPath = `${opts.environment}/`
+  }
+  return `${envPath}${appId}`
 }
 
-const createFilePath = (ktn) => {
-  const dirPath = createDirPath(ktn.appId)
+const createFilePath = (ktn, opts) => {
+  const dirPath = createDirPath(ktn.appId, opts)
   const fileName = `${ktn.command.replace(/\//g, '_')}`
   return `${dirPath}/${fileName}`
 }
@@ -150,10 +155,24 @@ const parseArgumentOptions = () => {
       g: 'guest',
     }
   })
+  if (argv.domain || argv.username || argv.password || argv.app || argv.guest) {
+    argv.priority = true
+  }
 
   if (argv._[0]) { argv.type = argv._[0] }
   return argv
 }
+
+const selectExistProp = (firstObj, secondObj, prop) => firstObj[prop] || secondObj[prop]
+
+const pluckOpts = (firstObj, secondObj = {}) => ({
+  environment: selectExistProp(firstObj, secondObj, 'environment'),
+  domain: selectExistProp(firstObj, secondObj, 'domain'),
+  username: selectExistProp(firstObj, secondObj, 'username'),
+  password: selectExistProp(firstObj, secondObj, 'password'),
+  appId: selectExistProp(firstObj, secondObj, 'app'),
+  guestSpaceId: selectExistProp(firstObj, secondObj, 'guest'),
+})
 
 const createOptionValues = async () => {
   const argv = parseArgumentOptions()
@@ -162,57 +181,70 @@ const createOptionValues = async () => {
   }
 
   const ginuerc = await loadGinuerc()
-  const opts = {
-    domain: argv.domain || ginuerc.domain,
-    username: argv.username || ginuerc.username,
-    password: argv.password || ginuerc.password,
-    appId: argv.app || ginuerc.app,
-    guestSpaceId: argv.guest || ginuerc.guest,
+
+  let optsArray
+  if (argv.priority) {
+    // argvにオプションが指定された場合はginurecよりも優先するが、
+    // 条件によりginuercを「無視する」「一部だけ使う」を変化させる
+    if (ginuerc.length === 1) {
+      // ginuercに単一環境だけ指定されている場合は、
+      // argvを優先し、argvに存在しないオプションだけginuercを使う
+      optsArray = [pluckOpts(argv, ginuerc[0])]
+    } else {
+      // ginuercに複数環境が指定されている場合は、ginuercを無視してargvのオプションだけ使う
+      // argvには1種類の環境しか指定できず、ginuercの一部だけ使うことが難しいため
+      optsArray = [pluckOpts(argv)]
+    }
+  } else {
+    optsArray = ginuerc.map(g => pluckOpts(g))
   }
 
-  await stdInputOptions(opts)
-  opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(',')
-
-  return opts
+  return Promise.all(optsArray.map(async opts => {
+    await stdInputOptions(opts)
+    opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(',')
+    return opts
+  }))
 }
 
 const main = async () => {
-  const opts = await createOptionValues()
-  const base64Account = await createBase64Account(opts.username, opts.password)
-
-  // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
-  // アプリ単位ループ
-  opts.appIds.forEach(async appId => {
-    mkdirp.sync(createDirPath(appId))
-    const kintoneCommands = await loadKintoneCommands()
-    // APIコマンド単位ループ
-    for (const [commName, commProp] of Object.entries(kintoneCommands)) {
-      const commands = [commName]
-      if (commProp.hasPreview) {
-        commands.push(`preview/${commName}`)
+  const optsArray = await createOptionValues()
+  for (const opts of optsArray) {
+    console.log(opts)
+    const base64Account = await createBase64Account(opts.username, opts.password)
+    // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
+    // アプリ単位ループ
+    opts.appIds.forEach(async appId => {
+      mkdirp.sync(createDirPath(appId, opts))
+      const kintoneCommands = await loadKintoneCommands()
+      // APIコマンド単位ループ
+      for (const [commName, commProp] of Object.entries(kintoneCommands)) {
+        const commands = [commName]
+        if (commProp.hasPreview) {
+          commands.push(`preview/${commName}`)
+        }
+        // 運用環境・テスト環境単位ループ
+        commands.forEach(async command => {
+          const ktn = {
+            domain: opts.domain,
+            guestSpaceId: opts.guestSpaceId,
+            base64Account,
+            appId,
+            command,
+            appParam: commProp.appParam,
+            skipRevision: commProp.skipRevision,
+          }
+          try {
+            const kintoneInfo = await fetchKintoneInfo(ktn)
+            const filePath = createFilePath(ktn, opts)
+            console.log(filePath)
+            fs.writeFileSync(filePath, kintoneInfo)
+          } catch (error) {
+            console.error(error)
+          }
+        })
       }
-      // 運用環境・テスト環境単位ループ
-      commands.forEach(async command => {
-        const ktn = {
-          domain: opts.domain,
-          guestSpaceId: opts.guestSpaceId,
-          base64Account,
-          appId,
-          command,
-          appParam: commProp.appParam,
-          skipRevision: commProp.skipRevision,
-        }
-        try {
-          const kintoneInfo = await fetchKintoneInfo(ktn)
-          const filePath = createFilePath(ktn)
-          console.log(filePath)
-          fs.writeFileSync(filePath, kintoneInfo)
-        } catch (error) {
-          console.error(error)
-        }
-      })
-    }
-  })
+    })
+  }
 }
 
 main()
