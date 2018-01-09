@@ -56,20 +56,6 @@ const loadGinuerc = async () => {
 }
 
 const createDirPath = (appId, opts) => {
-  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
-  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
-  // イメージ
-  // "app": [
-  //   {
-  //     "name": "order",
-  //     "id": 10,
-  //     "guest": 5
-  //   },
-  //   {
-  //     "name": "bill",
-  //     "id": 11
-  //   }
-  // ]
   let envPath = ''
   if (opts && opts.environment) {
     envPath = `${opts.environment}/`
@@ -174,6 +160,24 @@ const pluckOpts = (firstObj, secondObj = {}) => ({
   guestSpaceId: selectExistProp(firstObj, secondObj, 'guest'),
 })
 
+const createAppDic = (appId) => {
+  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
+  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
+  // TODO: appがオブジェクトの場合もそうでない場合も以下の形式に整えて、ディレクトリ作成処理も統一する
+  // "app": [
+  //   {
+  //     "name": "order",
+  //     "id": 10,
+  //     "guest": 5
+  //   },
+  //   {
+  //     "name": "bill",
+  //     "id": 11
+  //   }
+  // ]
+  return (appId instanceof Array) ? appId : appId.split(',')
+}
+
 const createOptionValues = async () => {
   const argv = parseArgumentOptions()
   if (argv.type !== 'pull') {
@@ -201,7 +205,7 @@ const createOptionValues = async () => {
 
   return Promise.all(allOpts.map(async opts => {
     await stdInputOptions(opts)
-    opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(',')
+    opts.appIds = createAppDic(opts.appId)
     return opts
   }))
 }
