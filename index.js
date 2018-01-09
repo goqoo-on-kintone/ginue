@@ -204,6 +204,8 @@ const createOptionValues = async () => {
   }
 
   return Promise.all(allOpts.map(async opts => {
+    // TODO: 複数環境の標準入力をそれぞれ行う場合に同じ値が入ってしまうバグを直す
+    // まずは標準入力でない非同期処理でも挙動は同じか試す
     await stdInputOptions(opts)
     opts.appIds = createAppDic(opts.appId)
     return opts
