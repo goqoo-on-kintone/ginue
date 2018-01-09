@@ -9,12 +9,18 @@ kintoneアプリの設定情報を取得するCLI版ツールです。[kintone R
 * Windows 10 (Node.js v8.2.1)
 
 ## インストール方法
+グローバルにインストールする場合
 ```
-$ npm install ginue
+$ npm install -g ginue
+ or
+$ yarn global add ginue
 ```
-or
+
+プロジェクトごとにインストールする場合
 ```
-$ yarn add ginue
+$ npm install --save-dev ginue
+ or
+$ yarn add --dev ginue
 ```
 
 ## 使い方
