@@ -163,7 +163,7 @@ const pluckOpts = (firstObj, secondObj = {}) => ({
 const createAppDic = (appId) => {
   // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
   // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
-  // TODO: appがオブジェクトの場合もそうでない場合も以下の形式に整えて、ディレクトリ作成処理も統一する
+  // TODO: appがオブジェクトの場合もそうでない場合も以下の形式に整えて、ディレクトリ作成処理など統一する
   // "app": [
   //   {
   //     "name": "order",
