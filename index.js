@@ -3,6 +3,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const promisify = require('util').promisify
 const inquirer = require('inquirer')
 const minimist = require('minimist')
 const mkdirp = require('mkdirp')
@@ -28,14 +29,8 @@ options:
   process.exit(returnCode)
 }
 
-const loadJsonFile = (fileName, dirName, callback) => {
-  let file
-  try {
-    file = fs.readFileSync(path.join(dirName, fileName), 'utf8')
-  } catch (e) {
-    return callback(e)
-  }
-
+const loadJsonFile = async (fileName, dirName) => {
+  const file = await promisify(fs.readFile)(path.join(dirName, fileName), 'utf8')
   try {
     const obj = JSON.parse(file)
     return obj
@@ -45,16 +40,16 @@ const loadJsonFile = (fileName, dirName, callback) => {
   }
 }
 
-const loadKintoneCommands = () => {
+const loadKintoneCommands = async () => {
   // TODO: ローカルにcommands.jsonが存在したらそれを優先して使いたい
-  return loadJsonFile('commands.json', __dirname, (e) => {
-    console.error(`ERROR: commands.json not found!`, e)
+  return loadJsonFile('commands.json', __dirname).catch((e) => {
+    console.error(`ERROR: commands.json not found!\n`, e.message)
     process.exit(1)
   })
 }
 
-const loadGinuerc = () => {
-  return loadJsonFile('.ginuerc.json', '.', (e) => {
+const loadGinuerc = async () => {
+  return loadJsonFile('.ginuerc.json', '.').catch((e) => {
     return {}
   })
 }
@@ -166,7 +161,7 @@ const createOptionValues = async () => {
     usageExit(1)
   }
 
-  const ginuerc = loadGinuerc()
+  const ginuerc = await loadGinuerc()
   const opts = {
     domain: argv.domain || ginuerc.domain,
     username: argv.username || ginuerc.username,
@@ -187,9 +182,9 @@ const main = async () => {
 
   // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
   // アプリ単位ループ
-  opts.appIds.forEach(appId => {
+  opts.appIds.forEach(async appId => {
     mkdirp.sync(createDirPath(appId))
-    const kintoneCommands = loadKintoneCommands()
+    const kintoneCommands = await loadKintoneCommands()
     // APIコマンド単位ループ
     for (const [commName, commProp] of Object.entries(kintoneCommands)) {
       const commands = [commName]
