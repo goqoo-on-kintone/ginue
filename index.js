@@ -116,10 +116,20 @@ const inputKintoneInfo = async (name, type) => {
 }
 
 const stdInputOptions = async (opts) => {
+  // 標準入力しないオプションを画面表示(複数環境のアカウント情報入力などで間違えないため)
+  for (const [optName, optValue] of Object.entries(opts)) {
+    if (optValue) {
+      // TODO: chalkなど使って色をつけたい
+      const dispValue = optName === 'password' ? '[hidden]' : optValue
+      console.log(`${optName}: ${dispValue}`)
+    }
+  }
+
   opts.domain = opts.domain || (await inputKintoneInfo('domain', 'input')).domain
   opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
   opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
   opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
+  console.log()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
   // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
 }
@@ -203,19 +213,16 @@ const createOptionValues = async () => {
     allOpts = ginuerc.map(g => pluckOpts(g))
   }
 
-  return Promise.all(allOpts.map(async opts => {
-    // TODO: 複数環境の標準入力をそれぞれ行う場合に同じ値が入ってしまうバグを直す
-    // まずは標準入力でない非同期処理でも挙動は同じか試す
+  for (const opts of allOpts) {
     await stdInputOptions(opts)
     opts.appIds = createAppDic(opts.appId)
-    return opts
-  }))
+  }
+  return allOpts
 }
 
 const main = async () => {
   const allOpts = await createOptionValues()
   allOpts.forEach(async opts => {
-    console.log(opts)
     const base64Account = await createBase64Account(opts.username, opts.password)
     // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
     // アプリ単位ループ
