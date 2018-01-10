@@ -55,16 +55,16 @@ const loadGinuerc = async () => {
   return ginuerc instanceof Array ? ginuerc : [ginuerc]
 }
 
-const createDirPath = (appId, opts) => {
+const createDirPath = (appName, opts) => {
   let envPath = ''
   if (opts && opts.environment) {
     envPath = `${opts.environment}/`
   }
-  return `${envPath}${appId}`
+  return `${envPath}${appName}`
 }
 
 const createFilePath = (ktn, opts) => {
-  const dirPath = createDirPath(ktn.appId, opts)
+  const dirPath = createDirPath(ktn.appName, opts)
   const fileName = `${ktn.command.replace(/\//g, '_')}`
   return `${dirPath}/${fileName}`
 }
@@ -120,6 +120,7 @@ const stdInputOptions = async (opts) => {
   for (const [optName, optValue] of Object.entries(opts)) {
     if (optValue) {
       // TODO: chalkなど使って色をつけたい
+      // TODO: appがハッシュの時dispValueが[object Object]になるのを修正
       const dispValue = optName === 'password' ? '[hidden]' : optValue
       console.log(`${optName}: ${dispValue}`)
     }
@@ -128,7 +129,7 @@ const stdInputOptions = async (opts) => {
   opts.domain = opts.domain || (await inputKintoneInfo('domain', 'input')).domain
   opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
   opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
-  opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
+  opts.app = opts.app || (await inputKintoneInfo('app', 'input')).app
   console.log()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
   // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
@@ -166,26 +167,21 @@ const pluckOpts = (firstObj, secondObj = {}) => ({
   domain: selectExistProp(firstObj, secondObj, 'domain'),
   username: selectExistProp(firstObj, secondObj, 'username'),
   password: selectExistProp(firstObj, secondObj, 'password'),
-  appId: selectExistProp(firstObj, secondObj, 'app'),
+  app: selectExistProp(firstObj, secondObj, 'app'),
   guestSpaceId: selectExistProp(firstObj, secondObj, 'guest'),
 })
 
-const createAppDic = (appId) => {
-  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
-  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
-  // TODO: appがオブジェクトの場合もそうでない場合も以下の形式に整えて、ディレクトリ作成処理など統一する
-  // "app": [
-  //   {
-  //     "name": "order",
-  //     "id": 10,
-  //     "guest": 5
-  //   },
-  //   {
-  //     "name": "bill",
-  //     "id": 11
-  //   }
-  // ]
-  return (appId instanceof Array) ? appId : appId.split(',')
+const createAppDic = (app) => {
+  if (app instanceof Array) {
+    return app.reduce((obj, id) => {
+      obj[id.toString()] = id
+      return obj
+    }, {})
+  } else if (app instanceof Object) {
+    return app
+  } else {
+    return { [app.toString()]: app }
+  }
 }
 
 const createOptionValues = async () => {
@@ -215,7 +211,7 @@ const createOptionValues = async () => {
 
   for (const opts of allOpts) {
     await stdInputOptions(opts)
-    opts.appIds = createAppDic(opts.appId)
+    opts.apps = createAppDic(opts.app)
   }
   return allOpts
 }
@@ -226,8 +222,8 @@ const main = async () => {
     const base64Account = await createBase64Account(opts.username, opts.password)
     // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
     // アプリ単位ループ
-    opts.appIds.forEach(async appId => {
-      mkdirp.sync(createDirPath(appId, opts))
+    for (const [appName, appId] of Object.entries(opts.apps)) {
+      mkdirp.sync(createDirPath(appName, opts))
       const kintoneCommands = await loadKintoneCommands()
       // APIコマンド単位ループ
       for (const [commName, commProp] of Object.entries(kintoneCommands)) {
@@ -241,6 +237,7 @@ const main = async () => {
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
             base64Account,
+            appName,
             appId,
             command,
             appParam: commProp.appParam,
@@ -256,7 +253,7 @@ const main = async () => {
           }
         })
       }
-    })
+    }
   })
 }
 
