@@ -173,16 +173,16 @@ const pluckOpts = (firstObj, secondObj) => {
 }
 
 const createAppDic = (app) => {
+  if (typeof app === 'string') {
+    app = app.split(',').map(str => str.trim())
+  }
   if (Array.isArray(app)) {
     return app.reduce((obj, id) => {
       obj[id.toString()] = id
       return obj
     }, {})
-  } else if (app instanceof Object) {
-    return app
-  } else {
-    return { [app.toString()]: app }
   }
+  return app
 }
 
 const createOptionValues = async () => {
