@@ -49,10 +49,8 @@ const loadKintoneCommands = async () => {
 }
 
 const loadGinuerc = async () => {
-  const ginuerc = await loadJsonFile('.ginuerc.json', '.').catch((e) => {
-    return {}
-  })
-  return ginuerc instanceof Array ? ginuerc : [ginuerc]
+  const ginuerc = await loadJsonFile('.ginuerc.json', '.').catch((e) => {})
+  return Array.isArray(ginuerc) ? ginuerc : [ginuerc]
 }
 
 const createDirPath = (appId, opts) => {
@@ -159,16 +157,19 @@ const parseArgumentOptions = () => {
   return argv
 }
 
-const selectExistProp = (firstObj, secondObj, prop) => firstObj[prop] || secondObj[prop]
-
-const pluckOpts = (firstObj, secondObj = {}) => ({
-  environment: selectExistProp(firstObj, secondObj, 'environment'),
-  domain: selectExistProp(firstObj, secondObj, 'domain'),
-  username: selectExistProp(firstObj, secondObj, 'username'),
-  password: selectExistProp(firstObj, secondObj, 'password'),
-  appId: selectExistProp(firstObj, secondObj, 'app'),
-  guestSpaceId: selectExistProp(firstObj, secondObj, 'guest'),
-})
+// 引数や設定ファイルの組み合わせからオプション値を抽出
+// firstObjを優先し、firstObjに存在しないプロパティはsecondObjを使用
+const pluckOpts = (firstObj, secondObj) => {
+  const obj = Object.assign({}, secondObj, firstObj)
+  return {
+    environment: obj.environment,
+    domain: obj.domain,
+    username: obj.username,
+    password: obj.password,
+    appId: obj.app,
+    guestSpaceId: obj.guest,
+  }
+}
 
 const createAppDic = (appId) => {
   // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
@@ -185,7 +186,7 @@ const createAppDic = (appId) => {
   //     "id": 11
   //   }
   // ]
-  return (appId instanceof Array) ? appId : appId.split(',')
+  return Array.isArray(appId) ? appId : appId.split(',')
 }
 
 const createOptionValues = async () => {
