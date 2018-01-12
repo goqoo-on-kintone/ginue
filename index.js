@@ -9,7 +9,8 @@ const minimist = require('minimist')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
 
-const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
+const pretty = obj => JSON.stringify(obj, null, '  ')
+const prettyln = obj => pretty(obj) + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
 const usageExit = (returnCode = 0) => {
@@ -94,7 +95,7 @@ const fetchKintoneInfo = async (ktn) => {
   if (ktn.skipRevision) {
     delete kintoneInfo.revision
   }
-  return pretty(kintoneInfo)
+  return prettyln(kintoneInfo)
 }
 
 const inputKintoneInfo = async (name, type) => {
@@ -118,8 +119,7 @@ const stdInputOptions = async (opts) => {
   for (const [optName, optValue] of Object.entries(opts)) {
     if (optValue) {
       // TODO: chalkなど使って色をつけたい
-      // TODO: appがハッシュの時dispValueが[object Object]になるのを修正
-      const dispValue = optName === 'password' ? '[hidden]' : optValue
+      const dispValue = optName === 'password' ? '[hidden]' : pretty(optValue)
       console.log(`${optName}: ${dispValue}`)
     }
   }
