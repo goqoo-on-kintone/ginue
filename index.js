@@ -202,16 +202,13 @@ const createOptionValues = async () => {
     // ginuercに単一環境だけ指定されている場合は、
     // argvを優先し、argvに存在しないオプションだけginuercを使う
     allOpts = [pluckOpts(argv, ginuerc[0])]
+  } else if (argv.priority) {
+    // argvにオプションがある場合は、ginuercを無視してargvのオプションだけ使う
+    // argvには1種類の環境しか指定できず、ginuercの一部だけ使うことが難しいため
+    allOpts = [pluckOpts(argv)]
   } else {
-    // ginuercに複数環境が指定されている場合
-    if (argv.priority) {
-      // argvにオプションがある場合は、ginuercを無視してargvのオプションだけ使う
-      // argvには1種類の環境しか指定できず、ginuercの一部だけ使うことが難しいため
-      allOpts = [pluckOpts(argv)]
-    } else {
-      // argvにオプションがなければ、ginuercの複数環境を全て使用
-      allOpts = ginuerc.map(g => pluckOpts(g))
-    }
+    // argvにオプションがなければ、ginuercの複数環境を全て使用
+    allOpts = ginuerc.map(g => pluckOpts(g))
   }
 
   for (const opts of allOpts) {
