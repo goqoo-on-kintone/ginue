@@ -13,6 +13,7 @@ const pretty = obj => JSON.stringify(obj, null, '  ')
 const prettyln = obj => pretty(obj) + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
+// TODO: -vと-hは早く実装する！
 const usageExit = (returnCode = 0) => {
   const message = trim(`
 usage: ginue [-v, --version] [-h, --help]
