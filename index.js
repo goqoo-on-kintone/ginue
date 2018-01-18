@@ -2,11 +2,12 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
+const promisify = require('util').promisify
+const inquirer = require('inquirer')
+const minimist = require('minimist')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
-const inquirer = require('inquirer')
-const path = require('path')
-const minimist = require('minimist')
 
 const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
@@ -28,14 +29,8 @@ options:
   process.exit(returnCode)
 }
 
-const loadJsonFile = (fileName, dirName, callback) => {
-  let file
-  try {
-    file = fs.readFileSync(path.join(dirName, fileName), 'utf8')
-  } catch (e) {
-    return callback(e)
-  }
-
+const loadJsonFile = async (fileName, dirName) => {
+  const file = await promisify(fs.readFile)(path.join(dirName, fileName), 'utf8')
   try {
     const obj = JSON.parse(file)
     return obj
@@ -45,40 +40,29 @@ const loadJsonFile = (fileName, dirName, callback) => {
   }
 }
 
-const loadKintoneCommands = () => {
+const loadKintoneCommands = async () => {
   // TODO: ローカルにcommands.jsonが存在したらそれを優先して使いたい
-  return loadJsonFile('commands.json', __dirname, (e) => {
-    console.error(`ERROR: commands.json not found!`, e)
+  return loadJsonFile('commands.json', __dirname).catch((e) => {
+    console.error(`ERROR: commands.json not found!\n`, e.message)
     process.exit(1)
   })
 }
 
-const loadGinuerc = () => {
-  return loadJsonFile('.ginuerc.json', '.', (e) => {
-    return {}
-  })
+const loadGinuerc = async () => {
+  const ginuerc = await loadJsonFile('.ginuerc.json', '.').catch((e) => {})
+  return Array.isArray(ginuerc) ? ginuerc : [ginuerc]
 }
 
-const createDirPath = (appId) => {
-  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
-  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
-  // イメージ
-  // "app": [
-  //   {
-  //     "name": "order",
-  //     "id": 10,
-  //     "guest": 5
-  //   },
-  //   {
-  //     "name": "bill",
-  //     "id": 11
-  //   }
-  // ]
-  return `${appId}`
+const createDirPath = (appId, opts) => {
+  let envPath = ''
+  if (opts && opts.environment) {
+    envPath = `${opts.environment}/`
+  }
+  return `${envPath}${appId}`
 }
 
-const createFilePath = (ktn) => {
-  const dirPath = createDirPath(ktn.appId)
+const createFilePath = (ktn, opts) => {
+  const dirPath = createDirPath(ktn.appId, opts)
   const fileName = `${ktn.command.replace(/\//g, '_')}`
   return `${dirPath}/${fileName}`
 }
@@ -130,10 +114,20 @@ const inputKintoneInfo = async (name, type) => {
 }
 
 const stdInputOptions = async (opts) => {
+  // 標準入力しないオプションを画面表示(複数環境のアカウント情報入力などで間違えないため)
+  for (const [optName, optValue] of Object.entries(opts)) {
+    if (optValue) {
+      // TODO: chalkなど使って色をつけたい
+      const dispValue = optName === 'password' ? '[hidden]' : optValue
+      console.log(`${optName}: ${dispValue}`)
+    }
+  }
+
   opts.domain = opts.domain || (await inputKintoneInfo('domain', 'input')).domain
   opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
   opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
   opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
+  console.log()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
   // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
 }
@@ -155,9 +149,44 @@ const parseArgumentOptions = () => {
       g: 'guest',
     }
   })
+  if (argv.domain || argv.username || argv.password || argv.app || argv.guest) {
+    argv.priority = true
+  }
 
   if (argv._[0]) { argv.type = argv._[0] }
   return argv
+}
+
+// 引数や設定ファイルの組み合わせからオプション値を抽出
+// firstObjを優先し、firstObjに存在しないプロパティはsecondObjを使用
+const pluckOpts = (firstObj, secondObj) => {
+  const obj = Object.assign({}, secondObj, firstObj)
+  return {
+    environment: obj.environment,
+    domain: obj.domain,
+    username: obj.username,
+    password: obj.password,
+    appId: obj.app,
+    guestSpaceId: obj.guest,
+  }
+}
+
+const createAppDic = (appId) => {
+  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
+  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
+  // TODO: appがオブジェクトの場合もそうでない場合も以下の形式に整えて、ディレクトリ作成処理など統一する
+  // "app": [
+  //   {
+  //     "name": "order",
+  //     "id": 10,
+  //     "guest": 5
+  //   },
+  //   {
+  //     "name": "bill",
+  //     "id": 11
+  //   }
+  // ]
+  return Array.isArray(appId) ? appId : appId.split(',')
 }
 
 const createOptionValues = async () => {
@@ -166,57 +195,66 @@ const createOptionValues = async () => {
     usageExit(1)
   }
 
-  const ginuerc = loadGinuerc()
-  const opts = {
-    domain: argv.domain || ginuerc.domain,
-    username: argv.username || ginuerc.username,
-    password: argv.password || ginuerc.password,
-    appId: argv.app || ginuerc.app,
-    guestSpaceId: argv.guest || ginuerc.guest,
+  const ginuerc = await loadGinuerc()
+
+  let allOpts
+  if (ginuerc.length === 1) {
+    // ginuercに単一環境だけ指定されている場合は、
+    // argvを優先し、argvに存在しないオプションだけginuercを使う
+    allOpts = [pluckOpts(argv, ginuerc[0])]
+  } else if (argv.priority) {
+    // argvにオプションがある場合は、ginuercを無視してargvのオプションだけ使う
+    // argvには1種類の環境しか指定できず、ginuercの一部だけ使うことが難しいため
+    allOpts = [pluckOpts(argv)]
+  } else {
+    // argvにオプションがなければ、ginuercの複数環境を全て使用
+    allOpts = ginuerc.map(g => pluckOpts(g))
   }
 
-  await stdInputOptions(opts)
-  opts.appIds = (opts.appId instanceof Array) ? opts.appId : opts.appId.split(',')
-
-  return opts
+  for (const opts of allOpts) {
+    await stdInputOptions(opts)
+    opts.appIds = createAppDic(opts.appId)
+  }
+  return allOpts
 }
 
 const main = async () => {
-  const opts = await createOptionValues()
-  const base64Account = await createBase64Account(opts.username, opts.password)
-
-  // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
-  // アプリ単位ループ
-  opts.appIds.forEach(appId => {
-    mkdirp.sync(createDirPath(appId))
-    const kintoneCommands = loadKintoneCommands()
-    // APIコマンド単位ループ
-    for (const [commName, commProp] of Object.entries(kintoneCommands)) {
-      const commands = [commName]
-      if (commProp.hasPreview) {
-        commands.push(`preview/${commName}`)
+  const allOpts = await createOptionValues()
+  allOpts.forEach(async opts => {
+    const base64Account = await createBase64Account(opts.username, opts.password)
+    // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
+    // アプリ単位ループ
+    opts.appIds.forEach(async appId => {
+      mkdirp.sync(createDirPath(appId, opts))
+      const kintoneCommands = await loadKintoneCommands()
+      // APIコマンド単位ループ
+      for (const [commName, commProp] of Object.entries(kintoneCommands)) {
+        const commands = [commName]
+        if (commProp.hasPreview) {
+          commands.push(`preview/${commName}`)
+        }
+        // 運用環境・テスト環境単位ループ
+        commands.forEach(async command => {
+          const ktn = {
+            domain: opts.domain,
+            guestSpaceId: opts.guestSpaceId,
+            base64Account,
+            appId,
+            command,
+            appParam: commProp.appParam,
+            skipRevision: commProp.skipRevision,
+          }
+          try {
+            const kintoneInfo = await fetchKintoneInfo(ktn)
+            const filePath = createFilePath(ktn, opts)
+            console.log(filePath)
+            fs.writeFileSync(filePath, kintoneInfo)
+          } catch (error) {
+            console.error(error)
+          }
+        })
       }
-      // 運用環境・テスト環境単位ループ
-      commands.forEach(async command => {
-        const ktn = {
-          domain: opts.domain,
-          guestSpaceId: opts.guestSpaceId,
-          base64Account,
-          appId,
-          command,
-          appParam: commProp.appParam,
-          skipRevision: commProp.skipRevision,
-        }
-        try {
-          const kintoneInfo = await fetchKintoneInfo(ktn)
-          const filePath = createFilePath(ktn)
-          console.log(filePath)
-          fs.writeFileSync(filePath, kintoneInfo)
-        } catch (error) {
-          console.error(error)
-        }
-      })
-    }
+    })
   })
 }
 

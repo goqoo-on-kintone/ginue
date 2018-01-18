@@ -1,6 +1,6 @@
 {
   "name": "ginue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
   "main": "index.js",
   "bin": {
@@ -19,6 +19,9 @@
     "url": "https://github.com/TailsGarden/ginue/issues"
   },
   "homepage": "https://github.com/TailsGarden/ginue#readme",
+  "engines": {
+    "node": ">=7.6"
+  },
   "devDependencies": {
     "eslint": "^4.8.0",
     "eslint-config-standard": "^10.2.1",
@@ -30,6 +33,7 @@
   "dependencies": {
     "inquirer": "^4.0.0",
     "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   }

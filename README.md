@@ -5,16 +5,22 @@ ginue is the CLI tool to get settings of kintone via kintone REST API.
 kintoneアプリの設定情報を取得するCLI版ツールです。[kintone REST API](https://developer.cybozu.io/hc/ja/articles/201941834)で情報を取得します。
 
 以下で動作確認済み
-* Mac OS X El Capitan (Node.js v8.2.1)
+* macOS Sierra (Node.js v8.2.1)
 * Windows 10 (Node.js v8.2.1)
 
 ## インストール方法
+グローバルにインストールする場合
 ```
-$ npm install ginue
+$ npm install -g ginue
+ or
+$ yarn global add ginue
 ```
-or
+
+プロジェクトごとにインストールする場合
 ```
-$ yarn add ginue
+$ npm install --save-dev ginue
+ or
+$ yarn add --dev ginue
 ```
 
 ## 使い方
@@ -52,9 +58,9 @@ $ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
 * ゲストスペース内のアプリ情報を取得する場合は`-g`オプションが必須です。
 * アプリID（`-a`オプション or 標準入力）はカンマ区切りで複数指定可能です。
 
+### .ginuerc.json
 コマンドを実行するディレクトリに`.ginuerc.json`という設定ファイルを作成すると、`ginue`実行時に自動的に読み込まれてオプション指定を省略できます。プロジェクト単位で`.ginuerc.json`を作成すると便利です。
 
-`.ginuerc.json`記述例
 ```
 {
   "domain": "ginue.cybozu.com",
@@ -63,4 +69,28 @@ $ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
   "app": [10, 11, 12],
   "guest": 5
 }
+```
+
+トップレベルを配列にすると、異なる環境のアプリを複数指定して一括取得できます。
+
+`environment`プロパティで各環境に名前を付けることができ、その名前のディレクトリ内にJSONが保存されます。
+
+```
+[
+  {
+    "environment": "development",
+    "domain": "ginue-dev.cybozu.com",
+    "username": "Administrator",
+    "password": "myKintonePassword",
+    "app": [128, 129, 130]
+  },
+  {
+    "environment": "production",
+    "domain": "ginue.cybozu.com",
+    "username": "Administrator",
+    "password": "myKintonePassword",
+    "app": [10, 11, 12],
+    "guest": 5
+  }
+]
 ```
