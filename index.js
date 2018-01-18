@@ -16,7 +16,6 @@ const trim = str => str.replace(/^\n|\n$/g, '')
 const usageExit = (returnCode = 0) => {
   const message = trim(`
 usage: ginue [-v, --version] [-h, --help]
-             show <command.json> [<options>]
              pull [<optons>]
 
 options:
