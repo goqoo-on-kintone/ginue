@@ -24,7 +24,7 @@ options:
   -u, --user=<username>         kintone username
   -p, --password=<password>     kintone password
   -a, --app=<app-id>            kintone app ids
-  -g, --guest=<guest-space-id>  kintone app ids
+  -g, --guest=<guest-space-id>  kintone guest space id
 `)
   console.error(message)
   process.exit(returnCode)
