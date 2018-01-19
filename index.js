@@ -252,7 +252,7 @@ const main = async () => {
   allOpts.forEach(async opts => {
     const base64Basic = await createBase64Account(opts.basic)
     const base64Account = await createBase64Account(opts.username, opts.password)
-    // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
+    // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
     // アプリ単位ループ
     for (const [appName, appId] of Object.entries(opts.apps)) {
       mkdirp.sync(createDirPath(appName, opts))
