@@ -75,9 +75,11 @@ const createUrl = (ktn) => {
 
 // 今後push機能を実装する場合にPOST/PUT向けの複雑なヘッダーを作成するために用意した関数
 const createHeaders = (ktn) => {
-  return {
-    'X-Cybozu-Authorization': ktn.base64Account
+  const header = {
+    'X-Cybozu-Authorization': ktn.base64Account,
+    'Authorization': `Basic ${ktn.base64Basic}`
   }
+  return header
 }
 
 const createBase64Account = async (username, password) => {
@@ -218,6 +220,7 @@ const main = async () => {
   const allOpts = await createOptionValues()
   allOpts.forEach(async opts => {
     const base64Account = await createBase64Account(opts.username, opts.password)
+    const base64Basic = await createBase64Account('Administrator', 'cybozu')
     // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
     // アプリ単位ループ
     for (const [appName, appId] of Object.entries(opts.apps)) {
@@ -235,6 +238,7 @@ const main = async () => {
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
             base64Account,
+            base64Basic,
             appName,
             appId,
             command,
