@@ -20,12 +20,12 @@ usage: ginue [-v, --version] [-h, --help]
              pull [<optons>]
 
 options:
-  -d, --domain=<domain>             kintone sub domain name
-  -u, --user=<username>             kintone username
-  -p, --password=<password>         kintone password
-  -a, --app=<app-id>                kintone app ids
-  -g, --guest=<guest-space-id>      kintone guest space id
-  -b, --basic=<username[:password]> kintone basic-auth username & password
+  -d, --domain=<DOMAIN>         kintone sub domain name
+  -u, --user=<USER>             kintone username
+  -p, --password=<PASSWORD>     kintone password
+  -a, --app=<APP-ID>            kintone app IDs
+  -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
+  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
 `)
   console.error(message)
   process.exit(returnCode)
@@ -105,7 +105,7 @@ const fetchKintoneInfo = async (ktn) => {
   return prettyln(kintoneInfo)
 }
 
-const inputKintoneInfo = async (name, type) => {
+const inputKintoneInfo = async (name, type = 'input') => {
   const value = await inquirer.prompt([{
     name,
     type,
@@ -118,7 +118,7 @@ const inputKintoneInfo = async (name, type) => {
       }
     }
   }])
-  return value
+  return value[name]
 }
 
 const stdInputOptions = async (opts) => {
@@ -126,18 +126,30 @@ const stdInputOptions = async (opts) => {
   for (const [optName, optValue] of Object.entries(opts)) {
     if (optValue) {
       // TODO: chalkなど使って色をつけたい
-      const dispValue = optName === 'password' ? '[hidden]' : pretty(optValue)
+      let dispValue = pretty(optValue)
+      switch (optName) {
+        case 'password':
+        case 'basic':
+          dispValue = '[hidden]'
+          break
+      }
       console.log(`${optName}: ${dispValue}`)
     }
   }
-
-  opts.domain = opts.domain || (await inputKintoneInfo('domain', 'input')).domain
-  opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
-  opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
-  opts.app = opts.app || (await inputKintoneInfo('app', 'input')).app
+  const TYPE_PASSWORD = 'password'
+  opts.domain = opts.domain || await inputKintoneInfo('domain')
+  if (opts.basic_user) {
+    // Basic認証のパスワードが省略された時だけ標準入力で問い合わせ
+    // そもそもbasicオプションが指定されなかった場合は無視
+    const basicPassword = await inputKintoneInfo('Basic Authentication password', TYPE_PASSWORD)
+    opts.basic = `${opts.basic_user}:${basicPassword}`
+  }
+  opts.username = opts.username || await inputKintoneInfo('username')
+  opts.password = opts.password || await inputKintoneInfo('password', TYPE_PASSWORD)
+  opts.app = opts.app || await inputKintoneInfo('app')
   console.log()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
-  // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
+  // opts.guestSpaceId = opts.guestSpaceId || await inputKintoneInfo('guestSpaceID')
 }
 
 const parseArgumentOptions = () => {
@@ -171,15 +183,26 @@ const parseArgumentOptions = () => {
 // firstObjを優先し、firstObjに存在しないプロパティはsecondObjを使用
 const pluckOpts = (firstObj, secondObj) => {
   const obj = Object.assign({}, secondObj, firstObj)
-  return {
+  const opts = {
     environment: obj.environment,
     domain: obj.domain,
     username: obj.username,
     password: obj.password,
     app: obj.app,
     guestSpaceId: obj.guest,
-    basic: obj.basic,
   }
+
+  // Basic認証のパスワード有無でプロパティ名を変えておく
+  const basic = obj.basic
+  if (basic) {
+    if (basic.includes(':')) {
+      opts.basic = basic
+    } else {
+      opts.basic_user = basic
+    }
+  }
+
+  return opts
 }
 
 const createAppDic = (app) => {
