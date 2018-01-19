@@ -52,6 +52,7 @@ $ ginue pull [OPTIONS]
 
 ```
 $ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
+$ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
 ```
 
 ## 共通仕様
