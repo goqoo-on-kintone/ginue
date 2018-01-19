@@ -9,21 +9,23 @@ const minimist = require('minimist')
 const mkdirp = require('mkdirp')
 const request = require('request-promise')
 
-const pretty = obj => JSON.stringify(obj, null, '  ') + '\n'
+const pretty = obj => JSON.stringify(obj, null, '  ')
+const prettyln = obj => pretty(obj) + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
+// TODO: -vと-hは早く実装する！
 const usageExit = (returnCode = 0) => {
   const message = trim(`
 usage: ginue [-v, --version] [-h, --help]
-             show <command.json> [<options>]
              pull [<optons>]
 
 options:
-  -d, --domain=<domain>         kintone sub domain name
-  -u, --user=<username>         kintone username
-  -p, --password=<password>     kintone password
-  -a, --app=<app-id>            kintone app ids
-  -g, --guest=<guest-space-id>  kintone app ids
+  -d, --domain=<DOMAIN>         kintone sub domain name
+  -u, --user=<USER>             kintone username
+  -p, --password=<PASSWORD>     kintone password
+  -a, --app=<APP-ID>            kintone app IDs
+  -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
+  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
 `)
   console.error(message)
   process.exit(returnCode)
@@ -53,16 +55,16 @@ const loadGinuerc = async () => {
   return Array.isArray(ginuerc) ? ginuerc : [ginuerc]
 }
 
-const createDirPath = (appId, opts) => {
+const createDirPath = (appName, opts) => {
   let envPath = ''
   if (opts && opts.environment) {
     envPath = `${opts.environment}/`
   }
-  return `${envPath}${appId}`
+  return `${envPath}${appName}`
 }
 
 const createFilePath = (ktn, opts) => {
-  const dirPath = createDirPath(ktn.appId, opts)
+  const dirPath = createDirPath(ktn.appName, opts)
   const fileName = `${ktn.command.replace(/\//g, '_')}`
   return `${dirPath}/${fileName}`
 }
@@ -74,13 +76,19 @@ const createUrl = (ktn) => {
 
 // 今後push機能を実装する場合にPOST/PUT向けの複雑なヘッダーを作成するために用意した関数
 const createHeaders = (ktn) => {
-  return {
-    'X-Cybozu-Authorization': ktn.base64Account
+  const header = {
+    'X-Cybozu-Authorization': ktn.base64Account,
+    'Authorization': `Basic ${ktn.base64Basic}`
   }
+  return header
 }
 
-const createBase64Account = async (username, password) => {
-  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
+// ユーザー名・パスワードをBase64エンコードする関数
+// 呼び出し方は2通り
+// 引数1つ：(ユーザー名:パスワード)コロン区切り文字列
+// 引数2つ：(ユーザー名, パスワード)それぞれの文字列
+const createBase64Account = async (...account) => {
+  const base64Account = Buffer.from(account.join(':')).toString('base64')
   return base64Account
 }
 
@@ -94,10 +102,10 @@ const fetchKintoneInfo = async (ktn) => {
   if (ktn.skipRevision) {
     delete kintoneInfo.revision
   }
-  return pretty(kintoneInfo)
+  return prettyln(kintoneInfo)
 }
 
-const inputKintoneInfo = async (name, type) => {
+const inputKintoneInfo = async (name, type = 'input') => {
   const value = await inquirer.prompt([{
     name,
     type,
@@ -110,7 +118,7 @@ const inputKintoneInfo = async (name, type) => {
       }
     }
   }])
-  return value
+  return value[name]
 }
 
 const stdInputOptions = async (opts) => {
@@ -118,18 +126,30 @@ const stdInputOptions = async (opts) => {
   for (const [optName, optValue] of Object.entries(opts)) {
     if (optValue) {
       // TODO: chalkなど使って色をつけたい
-      const dispValue = optName === 'password' ? '[hidden]' : optValue
+      let dispValue = pretty(optValue)
+      switch (optName) {
+        case 'password':
+        case 'basic':
+          dispValue = '[hidden]'
+          break
+      }
       console.log(`${optName}: ${dispValue}`)
     }
   }
-
-  opts.domain = opts.domain || (await inputKintoneInfo('domain', 'input')).domain
-  opts.username = opts.username || (await inputKintoneInfo('username', 'input')).username
-  opts.password = opts.password || (await inputKintoneInfo('password', 'password')).password
-  opts.appId = opts.appId || (await inputKintoneInfo('appID', 'input')).appID
+  const TYPE_PASSWORD = 'password'
+  opts.domain = opts.domain || await inputKintoneInfo('domain')
+  if (opts.basic_user) {
+    // Basic認証のパスワードが省略された時だけ標準入力で問い合わせ
+    // そもそもbasicオプションが指定されなかった場合は無視
+    const basicPassword = await inputKintoneInfo('Basic Authentication password', TYPE_PASSWORD)
+    opts.basic = `${opts.basic_user}:${basicPassword}`
+  }
+  opts.username = opts.username || await inputKintoneInfo('username')
+  opts.password = opts.password || await inputKintoneInfo('password', TYPE_PASSWORD)
+  opts.app = opts.app || await inputKintoneInfo('app')
   console.log()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
-  // opts.guestSpaceId = opts.guestSpaceId || (await inputKintoneInfo('guestSpaceID', 'input')).guestSpaceID
+  // opts.guestSpaceId = opts.guestSpaceId || await inputKintoneInfo('guestSpaceID')
 }
 
 const parseArgumentOptions = () => {
@@ -140,6 +160,7 @@ const parseArgumentOptions = () => {
       'password',
       'app',
       'guest',
+      'basic',
     ],
     alias: {
       d: 'domain',
@@ -147,6 +168,7 @@ const parseArgumentOptions = () => {
       p: 'password',
       a: 'app',
       g: 'guest',
+      b: 'basic',
     }
   })
   if (argv.domain || argv.username || argv.password || argv.app || argv.guest) {
@@ -161,32 +183,39 @@ const parseArgumentOptions = () => {
 // firstObjを優先し、firstObjに存在しないプロパティはsecondObjを使用
 const pluckOpts = (firstObj, secondObj) => {
   const obj = Object.assign({}, secondObj, firstObj)
-  return {
+  const opts = {
     environment: obj.environment,
     domain: obj.domain,
     username: obj.username,
     password: obj.password,
-    appId: obj.app,
+    app: obj.app,
     guestSpaceId: obj.guest,
   }
+
+  // Basic認証のパスワード有無でプロパティ名を変えておく
+  const basic = obj.basic
+  if (basic) {
+    if (basic.includes(':')) {
+      opts.basic = basic
+    } else {
+      opts.basic_user = basic
+    }
+  }
+
+  return opts
 }
 
-const createAppDic = (appId) => {
-  // TODO: .ginuerc.jsonでアプリ名が定義されていればIDではなくアプリ名にする
-  // TODO: .ginuerc.jsonでゲストスペースIDが定義されていればゲストスペースから取得する
-  // TODO: appがオブジェクトの場合もそうでない場合も以下の形式に整えて、ディレクトリ作成処理など統一する
-  // "app": [
-  //   {
-  //     "name": "order",
-  //     "id": 10,
-  //     "guest": 5
-  //   },
-  //   {
-  //     "name": "bill",
-  //     "id": 11
-  //   }
-  // ]
-  return Array.isArray(appId) ? appId : appId.split(',')
+const createAppDic = (app) => {
+  if (typeof app === 'string') {
+    app = app.split(',').map(str => str.trim())
+  }
+  if (Array.isArray(app)) {
+    return app.reduce((obj, id) => {
+      obj[id.toString()] = id
+      return obj
+    }, {})
+  }
+  return app
 }
 
 const createOptionValues = async () => {
@@ -213,7 +242,7 @@ const createOptionValues = async () => {
 
   for (const opts of allOpts) {
     await stdInputOptions(opts)
-    opts.appIds = createAppDic(opts.appId)
+    opts.apps = createAppDic(opts.app)
   }
   return allOpts
 }
@@ -221,11 +250,12 @@ const createOptionValues = async () => {
 const main = async () => {
   const allOpts = await createOptionValues()
   allOpts.forEach(async opts => {
+    const base64Basic = await createBase64Account(opts.basic)
     const base64Account = await createBase64Account(opts.username, opts.password)
-    // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
+    // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
     // アプリ単位ループ
-    opts.appIds.forEach(async appId => {
-      mkdirp.sync(createDirPath(appId, opts))
+    for (const [appName, appId] of Object.entries(opts.apps)) {
+      mkdirp.sync(createDirPath(appName, opts))
       const kintoneCommands = await loadKintoneCommands()
       // APIコマンド単位ループ
       for (const [commName, commProp] of Object.entries(kintoneCommands)) {
@@ -239,6 +269,8 @@ const main = async () => {
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
             base64Account,
+            base64Basic,
+            appName,
             appId,
             command,
             appParam: commProp.appParam,
@@ -254,7 +286,7 @@ const main = async () => {
           }
         })
       }
-    })
+    }
   })
 }
 
