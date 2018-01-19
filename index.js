@@ -20,11 +20,12 @@ usage: ginue [-v, --version] [-h, --help]
              pull [<optons>]
 
 options:
-  -d, --domain=<domain>         kintone sub domain name
-  -u, --user=<username>         kintone username
-  -p, --password=<password>     kintone password
-  -a, --app=<app-id>            kintone app ids
-  -g, --guest=<guest-space-id>  kintone guest space id
+  -d, --domain=<domain>             kintone sub domain name
+  -u, --user=<username>             kintone username
+  -p, --password=<password>         kintone password
+  -a, --app=<app-id>                kintone app ids
+  -g, --guest=<guest-space-id>      kintone guest space id
+  -b, --basic=<username[:password]> kintone basic-auth username & password
 `)
   console.error(message)
   process.exit(returnCode)
@@ -82,8 +83,12 @@ const createHeaders = (ktn) => {
   return header
 }
 
-const createBase64Account = async (username, password) => {
-  const base64Account = Buffer.from(`${username}:${password}`).toString('base64')
+// ユーザー名・パスワードをBase64エンコードする関数
+// 呼び出し方は2通り
+// 引数1つ：(ユーザー名:パスワード)コロン区切り文字列
+// 引数2つ：(ユーザー名, パスワード)それぞれの文字列
+const createBase64Account = async (...account) => {
+  const base64Account = Buffer.from(account.join(':')).toString('base64')
   return base64Account
 }
 
@@ -143,6 +148,7 @@ const parseArgumentOptions = () => {
       'password',
       'app',
       'guest',
+      'basic',
     ],
     alias: {
       d: 'domain',
@@ -150,6 +156,7 @@ const parseArgumentOptions = () => {
       p: 'password',
       a: 'app',
       g: 'guest',
+      b: 'basic',
     }
   })
   if (argv.domain || argv.username || argv.password || argv.app || argv.guest) {
@@ -171,6 +178,7 @@ const pluckOpts = (firstObj, secondObj) => {
     password: obj.password,
     app: obj.app,
     guestSpaceId: obj.guest,
+    basic: obj.basic,
   }
 }
 
@@ -219,8 +227,8 @@ const createOptionValues = async () => {
 const main = async () => {
   const allOpts = await createOptionValues()
   allOpts.forEach(async opts => {
+    const base64Basic = await createBase64Account(opts.basic)
     const base64Account = await createBase64Account(opts.username, opts.password)
-    const base64Basic = await createBase64Account('Administrator', 'cybozu')
     // TODO: グループ単位ループを可能にする(グループ内全アプリをpull)
     // アプリ単位ループ
     for (const [appName, appId] of Object.entries(opts.apps)) {
