@@ -247,6 +247,13 @@ const createOptionValues = async () => {
   return allOpts
 }
 
+const ginuePull = async (ktn, opts) => {
+  const kintoneInfo = await fetchKintoneInfo(ktn)
+  const filePath = createFilePath(ktn, opts)
+  console.log(filePath)
+  fs.writeFileSync(filePath, kintoneInfo)
+}
+
 const main = async () => {
   const allOpts = await createOptionValues()
   allOpts.forEach(async opts => {
@@ -277,10 +284,7 @@ const main = async () => {
             skipRevision: commProp.skipRevision,
           }
           try {
-            const kintoneInfo = await fetchKintoneInfo(ktn)
-            const filePath = createFilePath(ktn, opts)
-            console.log(filePath)
-            fs.writeFileSync(filePath, kintoneInfo)
+            await ginuePull(ktn, opts)
           } catch (error) {
             console.error(error)
           }
