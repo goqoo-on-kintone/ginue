@@ -30,6 +30,7 @@ $ yarn add --dev ginue
 
 ```
 $ ginue pull [OPTIONS]
+$ ginue push [OPTIONS]
 ```
 
 オプション一覧

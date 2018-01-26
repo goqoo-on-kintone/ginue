@@ -17,9 +17,10 @@ const trim = str => str.replace(/^\n|\n$/g, '')
 const usageExit = (returnCode = 0) => {
   const message = trim(`
 usage: ginue [-v, --version] [-h, --help]
-             pull [<optons>]
+             pull [<OPTIONS>]
+             push [<OPTIONS>]
 
-options:
+OPTIONS:
   -d, --domain=<DOMAIN>         kintone sub domain name
   -u, --user=<USER>             kintone username
   -p, --password=<PASSWORD>     kintone password
@@ -220,7 +221,7 @@ const createAppDic = (app) => {
 
 const createOptionValues = async () => {
   const argv = parseArgumentOptions()
-  if (argv.type !== 'pull') {
+  if (!['pull', 'push'].includes(argv.type)) {
     usageExit(1)
   }
 
@@ -243,6 +244,7 @@ const createOptionValues = async () => {
   for (const opts of allOpts) {
     await stdInputOptions(opts)
     opts.apps = createAppDic(opts.app)
+    opts.type = argv.type
   }
   return allOpts
 }
@@ -252,6 +254,10 @@ const ginuePull = async (ktn, opts) => {
   const filePath = createFilePath(ktn, opts)
   console.log(filePath)
   fs.writeFileSync(filePath, kintoneInfo)
+}
+
+const ginuePush = async (ktn, opts) => {
+  console.log('Exec push!', ktn.appId, ktn.command)
 }
 
 const main = async () => {
@@ -284,7 +290,14 @@ const main = async () => {
             skipRevision: commProp.skipRevision,
           }
           try {
-            await ginuePull(ktn, opts)
+            switch (opts.type) {
+              case 'pull':
+                await ginuePull(ktn, opts)
+                break
+              case 'push':
+                await ginuePush(ktn, opts)
+                break
+            }
           } catch (error) {
             console.error(error)
           }
