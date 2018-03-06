@@ -3,3 +3,4 @@ rules:
   comma-dangle:
     - error
     - only-multiline
+  no-debugger: off
