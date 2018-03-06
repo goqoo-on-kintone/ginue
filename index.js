@@ -72,7 +72,12 @@ const createFilePath = (ktn, opts) => {
 
 const createUrl = (ktn) => {
   const basePath = ktn.guestSpaceId ? `k/guest/${ktn.guestSpaceId}/v1` : 'k/v1'
-  return `https://${ktn.domain}/${basePath}/${ktn.command}?${ktn.appParam}=${ktn.appId}`
+  return `https://${ktn.domain}/${basePath}/${ktn.command}`
+}
+
+const createGetUrl = (ktn) => {
+  const baseUrl = createUrl(ktn)
+  return `${baseUrl}?${ktn.appParam}=${ktn.appId}`
 }
 
 // 今後push機能を実装する場合にPOST/PUT向けの複雑なヘッダーを作成するために用意した関数
@@ -95,7 +100,7 @@ const createBase64Account = async (...account) => {
 
 const fetchKintoneInfo = async (ktn) => {
   const options = {
-    url: createUrl(ktn),
+    url: createGetUrl(ktn),
     headers: createHeaders(ktn),
     json: true,
   }
@@ -249,15 +254,50 @@ const createOptionValues = async () => {
   return allOpts
 }
 
+const loadKintoneJson = async (filePath, appId) => {
+  const kintoneJson = await loadJsonFile(filePath, '.').catch((e) => { })
+  kintoneJson.app = appId
+  return kintoneJson
+}
+
+const createPutHeaders = (ktn) => {
+  const headers = createHeaders(ktn)
+  // TODO: do something
+  return headers
+}
+
+// TODO: このメソッドでPUTリクエストを送信
+const sendKintoneInfo = async (ktn, kintoneJson) => {
+  const options = {
+    method: 'PUT',
+    url: createUrl(ktn),
+    headers: createPutHeaders(ktn),
+    body: kintoneJson,
+    json: true,
+  }
+  const kintoneInfo = await request(options)
+  if (ktn.skipRevision) {
+    delete kintoneInfo.revision
+  }
+  return prettyln(kintoneInfo)
+}
+
+const ginuePush = async (ktn, opts) => {
+  if (ktn.command !== 'app/form/fields.json') {
+    return
+  }
+  const filePath = createFilePath(ktn, opts)
+  const kintoneJson = await loadKintoneJson(filePath, ktn.appId)
+  ktn.command = 'preview/app/form/fields.json'
+  console.log('Exec push!', ktn.appId, ktn.command, filePath)
+  await sendKintoneInfo(ktn, kintoneJson)
+}
+
 const ginuePull = async (ktn, opts) => {
   const kintoneInfo = await fetchKintoneInfo(ktn)
   const filePath = createFilePath(ktn, opts)
   console.log(filePath)
   fs.writeFileSync(filePath, kintoneInfo)
-}
-
-const ginuePush = async (ktn, opts) => {
-  console.log('Exec push!', ktn.appId, ktn.command)
 }
 
 const main = async () => {
