@@ -285,7 +285,14 @@ const sendKintoneInfo = async (ktn, kintoneJson) => {
 const ginuePush = async (ktn, opts) => {
   if (![
     // 'app/form/fields.json',
-    'app/form/layout.json',
+    // 'app/form/layout.json',
+    // 'app/acl.json',
+    // 'record/acl.json',
+    // 'field/acl.json',
+    // 'app/customize.json',
+    // 'app/settings.json',
+    // 'app/status.json',
+    'app/views.json',
   ].includes(ktn.command)) {
     return
   }
