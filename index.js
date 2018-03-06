@@ -266,7 +266,6 @@ const createPutHeaders = (ktn) => {
   return headers
 }
 
-// TODO: このメソッドでPUTリクエストを送信
 const sendKintoneInfo = async (ktn, kintoneJson) => {
   const options = {
     method: 'PUT',
@@ -283,6 +282,7 @@ const sendKintoneInfo = async (ktn, kintoneJson) => {
 }
 
 const ginuePush = async (ktn, opts) => {
+  // TODO: 複数JSONの一括pushに失敗するバグを修正
   if (![
     // 'app/form/fields.json',
     // 'app/form/layout.json',
