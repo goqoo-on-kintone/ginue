@@ -283,12 +283,15 @@ const sendKintoneInfo = async (ktn, kintoneJson) => {
 }
 
 const ginuePush = async (ktn, opts) => {
-  if (ktn.command !== 'app/form/fields.json') {
+  if (![
+    // 'app/form/fields.json',
+    'app/form/layout.json',
+  ].includes(ktn.command)) {
     return
   }
   const filePath = createFilePath(ktn, opts)
   const kintoneJson = await loadKintoneJson(filePath, ktn.appId)
-  ktn.command = 'preview/app/form/fields.json'
+  ktn.command = `preview/${ktn.command}`
   console.log('Exec push!', ktn.appId, ktn.command, filePath)
   await sendKintoneInfo(ktn, kintoneJson)
 }
