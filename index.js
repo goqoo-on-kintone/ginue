@@ -32,7 +32,7 @@ usage: ginue pull [<target environment>] [<options>]
       break
     case 'push':
       message = trim(`
-usage: ginue push [<target environment>] [<options>]
+usage: ginue push [<target environment>[:<target environment>]] [<options>]
 
   -h, --help                    output usage information
   -d, --domain=<DOMAIN>         kintone sub domain name
@@ -222,6 +222,7 @@ const pluckOpts = (firstObj, secondObj) => {
     password: obj.password,
     app: obj.app,
     guestSpaceId: obj.guest,
+    pushTarget: obj.pushTarget,
   }
 
   // Basic認証のパスワード有無でプロパティ名を変えておく
@@ -267,11 +268,31 @@ const createOptionValues = async () => {
 
   let allOpts
   if (argv.target) {
-    const targetGinuercElem = ginuerc.find(g => g.environment === argv.target)
+    const [target, pushTarget] = argv.target.split(':')
+
+    // push先target(コロンの右側)はginue pushの場合のみ指定可能
+    if (pushTarget && argv.type !== 'push') {
+      usageExit(1, argv.type)
+    }
+
+    const targetGinuercElem = ginuerc.find(g => g.environment === target)
     if (!targetGinuercElem) {
-      console.error(`error: environment '${argv.target}' not found.`)
+      console.error(`error: environment '${target}' not found.`)
       process.exit(1)
     }
+    if (pushTarget) {
+      const pushTargetGinuercElem = ginuerc.find(g => g.environment === pushTarget)
+      if (!pushTargetGinuercElem) {
+        console.error(`error: environment '${pushTarget}' not found.`)
+        process.exit(1)
+      }
+      if (Array.isArray(pushTargetGinuercElem.app) || Array.isArray(targetGinuercElem.app)) {
+        console.error(`error: 'app' should be Object if 'ginue push <env>:<env>' is specified.`)
+        usageExit(1, 'push')
+      }
+      targetGinuercElem.pushTarget = pushTargetGinuercElem
+    }
+
     allOpts = [pluckOpts(argv, targetGinuercElem)]
   } else if (ginuerc.length === 1) {
     // ginuercに単一環境だけ指定されている場合は、
@@ -299,9 +320,8 @@ const createOptionValues = async () => {
   return allOpts
 }
 
-const loadKintoneJson = async (filePath, appId) => {
+const loadKintoneJson = async (filePath) => {
   const kintoneJson = await loadJsonFile(filePath, '.').catch((e) => { })
-  kintoneJson.app = appId
   return kintoneJson
 }
 
@@ -326,7 +346,7 @@ const sendKintoneInfo = async (ktn, kintoneJson) => {
   return prettyln(kintoneInfo)
 }
 
-const ginuePush = async (ktn, opts) => {
+const ginuePush = async (ktn, opts, pushTarget) => {
   if (![
     'app/form/fields.json',
     'app/form/layout.json',
@@ -341,9 +361,19 @@ const ginuePush = async (ktn, opts) => {
     return
   }
   const filePath = createFilePath(ktn, opts)
-  const kintoneJson = await loadKintoneJson(filePath, ktn.appId)
-  ktn.command = `preview/${ktn.command}`
   console.log(filePath)
+  const kintoneJson = await loadKintoneJson(filePath)
+  ktn.command = `preview/${ktn.command}`
+
+  if (pushTarget) {
+    ktn.domain = pushTarget.domain
+    ktn.guestSpaceId = pushTarget.guestSpaceId
+    ktn.base64Basic = pushTarget.base64Basic
+    ktn.base64Account = pushTarget.base64Account
+    ktn.appId = pushTarget.appId
+  }
+
+  kintoneJson.app = ktn.appId
   await sendKintoneInfo(ktn, kintoneJson)
 }
 
@@ -361,6 +391,14 @@ const main = async () => {
     try {
       const base64Basic = await createBase64Account(opts.basic)
       const base64Account = await createBase64Account(opts.username, opts.password)
+
+      const pushTargetKtn = opts.pushTarget && {
+        domain: opts.pushTarget.domain,
+        guestSpaceId: opts.pushTarget.guestSpaceId,
+        base64Basic: await createBase64Account(opts.pushTarget.basic),
+        base64Account: await createBase64Account(opts.pushTarget.username, opts.pushTarget.password),
+      }
+
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
       // アプリ単位ループ
       for (const [appName, appId] of Object.entries(opts.apps)) {
@@ -391,7 +429,10 @@ const main = async () => {
                 requestPromises.push(ginuePull(ktn, opts))
                 break
               case 'push':
-                await ginuePush(ktn, opts)
+                if (pushTargetKtn) {
+                  pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
+                }
+                await ginuePush(ktn, opts, pushTargetKtn)
                 break
             }
           }
