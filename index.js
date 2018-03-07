@@ -13,21 +13,40 @@ const pretty = obj => JSON.stringify(obj, null, '  ')
 const prettyln = obj => pretty(obj) + '\n'
 const trim = str => str.replace(/^\n|\n$/g, '')
 
-// TODO: -vと-hは早く実装する！
-const usageExit = (returnCode = 0) => {
-  const message = trim(`
-usage: ginue [-v, --version] [-h, --help]
-             pull [<OPTIONS>]
-             push [<OPTIONS>]
+// TODO: -vは早く実装する！
+const usageExit = (returnCode = 0, command) => {
+  let message
+  switch (command) {
+    case 'pull':
+      message = trim(`
+usage: ginue pull [<options>]
 
-OPTIONS:
+  -h, --help                    output usage information
   -d, --domain=<DOMAIN>         kintone sub domain name
   -u, --user=<USER>             kintone username
   -p, --password=<PASSWORD>     kintone password
   -a, --app=<APP-ID>            kintone app IDs
   -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
-  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
-`)
+  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password`)
+      break
+    case 'push':
+      message = trim(`
+usage: ginue push [<target environment>] [<options>]
+
+  -h, --help                    output usage information
+  -d, --domain=<DOMAIN>         kintone sub domain name
+  -u, --user=<USER>             kintone username
+  -p, --password=<PASSWORD>     kintone password
+  -a, --app=<APP-ID>            kintone app IDs
+  -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
+  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password`)
+      break
+    default:
+      message = trim(`
+usage: ginue [-v, --version] [-h, --help]
+              pull [<options>]
+              push [<options>]`)
+  }
   console.error(message)
   process.exit(returnCode)
 }
@@ -160,6 +179,9 @@ const stdInputOptions = async (opts) => {
 
 const parseArgumentOptions = () => {
   const argv = minimist(process.argv.slice(2), {
+    boolean: [
+      'help',
+    ],
     string: [
       'domain',
       'username',
@@ -169,6 +191,7 @@ const parseArgumentOptions = () => {
       'basic',
     ],
     alias: {
+      h: 'help',
       d: 'domain',
       u: 'username',
       p: 'password',
@@ -226,8 +249,15 @@ const createAppDic = (app) => {
 
 const createOptionValues = async () => {
   const argv = parseArgumentOptions()
-  if (!['pull', 'push'].includes(argv.type)) {
+
+  if (
+    (!argv.type && !argv.help) ||
+    (argv.type && !['pull', 'push'].includes(argv.type))
+  ) {
     usageExit(1)
+  }
+  if (argv.help) {
+    usageExit(0, argv.type)
   }
 
   const ginuerc = await loadGinuerc()
