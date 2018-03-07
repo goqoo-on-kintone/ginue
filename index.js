@@ -312,24 +312,23 @@ const sendKintoneInfo = async (ktn, kintoneJson) => {
 }
 
 const ginuePush = async (ktn, opts) => {
-  // TODO: 複数JSONの一括pushに失敗するバグを修正
   if (![
-    // 'app/form/fields.json',
-    // 'app/form/layout.json',
-    // 'app/acl.json',
-    // 'record/acl.json',
-    // 'field/acl.json',
-    // 'app/customize.json',
-    // 'app/settings.json',
-    // 'app/status.json',
+    'app/form/fields.json',
+    'app/form/layout.json',
+    'app/acl.json',
+    'record/acl.json',
+    'field/acl.json',
+    'app/status.json',
     'app/views.json',
+    // 'app/settings.json', // TODO: リビジョンを含むので工夫する（設定ファイルでの切替必要？）
+    // 'app/customize.json',  // TODO: ファイルアップロードが伴うので工夫する
   ].includes(ktn.command)) {
     return
   }
   const filePath = createFilePath(ktn, opts)
   const kintoneJson = await loadKintoneJson(filePath, ktn.appId)
   ktn.command = `preview/${ktn.command}`
-  console.log('Exec push!', ktn.appId, ktn.command, filePath)
+  console.log(filePath)
   await sendKintoneInfo(ktn, kintoneJson)
 }
 
@@ -342,47 +341,50 @@ const ginuePull = async (ktn, opts) => {
 
 const main = async () => {
   const allOpts = await createOptionValues()
+  // 環境単位ループ
   allOpts.forEach(async opts => {
-    const base64Basic = await createBase64Account(opts.basic)
-    const base64Account = await createBase64Account(opts.username, opts.password)
-    // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
-    // アプリ単位ループ
-    for (const [appName, appId] of Object.entries(opts.apps)) {
-      mkdirp.sync(createDirPath(appName, opts))
-      const kintoneCommands = await loadKintoneCommands()
-      // APIコマンド単位ループ
-      for (const [commName, commProp] of Object.entries(kintoneCommands)) {
-        const commands = [commName]
-        if (commProp.hasPreview) {
-          commands.push(`preview/${commName}`)
-        }
-        // 運用環境・テスト環境単位ループ
-        commands.forEach(async command => {
-          const ktn = {
-            domain: opts.domain,
-            guestSpaceId: opts.guestSpaceId,
-            base64Account,
-            base64Basic,
-            appName,
-            appId,
-            command,
-            appParam: commProp.appParam,
-            skipRevision: commProp.skipRevision,
+    try {
+      const base64Basic = await createBase64Account(opts.basic)
+      const base64Account = await createBase64Account(opts.username, opts.password)
+      // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
+      // アプリ単位ループ
+      for (const [appName, appId] of Object.entries(opts.apps)) {
+        mkdirp.sync(createDirPath(appName, opts))
+        const kintoneCommands = await loadKintoneCommands()
+        const requestPromises = []
+        // APIコマンド単位ループ
+        for (const [commName, commProp] of Object.entries(kintoneCommands)) {
+          const commands = [commName]
+          if (commProp.hasPreview) {
+            commands.push(`preview/${commName}`)
           }
-          try {
+          // 運用環境・テスト環境単位ループ
+          for (const command of commands) {
+            const ktn = {
+              domain: opts.domain,
+              guestSpaceId: opts.guestSpaceId,
+              base64Account,
+              base64Basic,
+              appName,
+              appId,
+              command,
+              appParam: commProp.appParam,
+              skipRevision: commProp.skipRevision,
+            }
             switch (opts.type) {
               case 'pull':
-                await ginuePull(ktn, opts)
+                requestPromises.push(ginuePull(ktn, opts))
                 break
               case 'push':
                 await ginuePush(ktn, opts)
                 break
             }
-          } catch (error) {
-            console.error(error)
           }
-        })
+        }
+        await Promise.all(requestPromises)
       }
+    } catch (error) {
+      console.error(error)
     }
   })
 }
