@@ -19,7 +19,7 @@ const usageExit = (returnCode = 0, command) => {
   switch (command) {
     case 'pull':
       message = trim(`
-usage: ginue pull [<options>]
+usage: ginue pull [<target environment>] [<options>]
 
   -h, --help                    output usage information
   -d, --domain=<DOMAIN>         kintone sub domain name
@@ -205,6 +205,8 @@ const parseArgumentOptions = () => {
   }
 
   if (argv._[0]) { argv.type = argv._[0] }
+  if (argv._[1]) { argv.target = argv._[1] }
+
   return argv
 }
 
@@ -263,7 +265,14 @@ const createOptionValues = async () => {
   const ginuerc = await loadGinuerc()
 
   let allOpts
-  if (ginuerc.length === 1) {
+  if (argv.target) {
+    const targetGinuercElem = ginuerc.find(g => g.environment === argv.target)
+    if (!targetGinuercElem) {
+      console.error(`error: environment '${argv.target}' not found.`)
+      process.exit(1)
+    }
+    allOpts = [pluckOpts(argv, targetGinuercElem)]
+  } else if (ginuerc.length === 1) {
     // ginuercに単一環境だけ指定されている場合は、
     // argvを優先し、argvに存在しないオプションだけginuercを使う
     allOpts = [pluckOpts(argv, ginuerc[0])]
@@ -271,6 +280,11 @@ const createOptionValues = async () => {
     // argvにオプションがある場合は、ginuercを無視してargvのオプションだけ使う
     // argvには1種類の環境しか指定できず、ginuercの一部だけ使うことが難しいため
     allOpts = [pluckOpts(argv)]
+  } else if (argv.type === 'push') {
+    // pushは単一環境のみを対象にするため、ここまでの条件に合致しなければエラー
+    // 複数環境への一括pushも技術的には難しくないけど、ヒューマンエラー防止のため非対応
+    console.error('error: <target environment> is required if .ginuerc has multiple environments.')
+    usageExit(1, argv.type)
   } else {
     // argvにオプションがなければ、ginuercの複数環境を全て使用
     allOpts = ginuerc.map(g => pluckOpts(g))
