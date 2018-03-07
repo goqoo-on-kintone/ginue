@@ -283,6 +283,7 @@ const createOptionValues = async () => {
       process.exit(1)
     }
     if (pushTarget) {
+      // TODO: コマンドライン引数と組み合わさった場合の各種パターンを要テスト
       const pushTargetGinuercElem = ginuerc.find(g => g.environment === pushTarget)
       if (!pushTargetGinuercElem) {
         console.error(`error: environment '${pushTarget}' not found.`)
@@ -294,7 +295,6 @@ const createOptionValues = async () => {
       }
       targetGinuercElem.pushTarget = pushTargetGinuercElem
     }
-
     allOpts = [pluckOpts(argv, targetGinuercElem)]
   } else if (ginuerc.length === 1) {
     // ginuercに単一環境だけ指定されている場合は、
