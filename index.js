@@ -158,6 +158,8 @@ const stdInputOptions = async (opts) => {
         case 'basic':
           dispValue = '[hidden]'
           break
+        case 'pushTarget':
+          continue
       }
       console.log(`${optName}: ${dispValue}`)
     }
