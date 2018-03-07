@@ -314,6 +314,9 @@ const createOptionValues = async () => {
 
   for (const opts of allOpts) {
     await stdInputOptions(opts)
+    if (opts.pushTarget) {
+      await stdInputOptions(opts.pushTarget)
+    }
     opts.apps = createAppDic(opts.app)
     opts.type = argv.type
   }
