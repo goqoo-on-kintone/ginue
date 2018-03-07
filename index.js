@@ -7,6 +7,7 @@ const promisify = require('util').promisify
 const inquirer = require('inquirer')
 const minimist = require('minimist')
 const mkdirp = require('mkdirp')
+const rcfile = require('rc-config-loader')
 const request = require('request-promise')
 
 const pretty = obj => JSON.stringify(obj, null, '  ')
@@ -71,7 +72,7 @@ const loadKintoneCommands = async () => {
 }
 
 const loadGinuerc = async () => {
-  const ginuerc = await loadJsonFile('.ginuerc.json', '.').catch((e) => {})
+  const ginuerc = rcfile('ginue').config
   return Array.isArray(ginuerc) ? ginuerc : [ginuerc]
 }
 
