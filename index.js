@@ -371,11 +371,9 @@ const ginuePush = async (ktn, opts, pushTarget) => {
   ktn.command = `preview/${ktn.command}`
 
   if (pushTarget) {
-    ktn.domain = pushTarget.domain
-    ktn.guestSpaceId = pushTarget.guestSpaceId
-    ktn.base64Basic = pushTarget.base64Basic
-    ktn.base64Account = pushTarget.base64Account
-    ktn.appId = pushTarget.appId
+    for (const key of ['domain', 'guestSpaceId', 'base64Basic', 'base64Account', 'appId']) {
+      ktn[key] = pushTarget[key]
+    }
   }
 
   kintoneJson.app = ktn.appId
