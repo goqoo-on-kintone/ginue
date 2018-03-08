@@ -2,18 +2,18 @@
   "form.json": {
     "skipRevision": true,
     "appParam": "app",
-    "hasPreview": false
+    "hasPreview": true
   },
   "app/form/fields.json": {
     "skipRevision": true,
     "appParam": "app",
     "langParam": "lang",
-    "hasPreview": false
+    "hasPreview": true
   },
   "app/form/layout.json": {
     "skipRevision": true,
     "appParam": "app",
-    "hasPreview": false
+    "hasPreview": true
   },
   "app.json": {
     "skipRevision": true,
@@ -28,30 +28,30 @@
   "app/acl.json": {
     "skipRevision": true,
     "appParam": "app",
-    "hasPreview": false
+    "hasPreview": true
   },
   "app/status.json": {
     "skipRevision": true,
     "appParam": "app",
     "langParam": "lang",
-    "hasPreview": false
+    "hasPreview": true
   },
   "record/acl.json": {
     "skipRevision": true,
     "appParam": "app",
     "langParam": "lang",
-    "hasPreview": false
+    "hasPreview": true
   },
   "field/acl.json": {
     "skipRevision": true,
     "appParam": "app",
-    "hasPreview": false
+    "hasPreview": true
   },
   "app/views.json": {
     "skipRevision": true,
     "appParam": "app",
     "langParam": "lang",
-    "hasPreview": false
+    "hasPreview": true
   },
   "app/settings.json": {
     "skipRevision": false,
@@ -62,6 +62,6 @@
   "app/customize.json": {
     "skipRevision": true,
     "appParam": "app",
-    "hasPreview": false
+    "hasPreview": true
   }
 }
