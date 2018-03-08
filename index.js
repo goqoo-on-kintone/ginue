@@ -76,16 +76,18 @@ const loadGinuerc = async () => {
   return Array.isArray(ginuerc) ? ginuerc : [ginuerc]
 }
 
-const createDirPath = (appName, opts) => {
+const createDirPath = (ktn, opts) => {
   let envPath = ''
   if (opts && opts.environment) {
     envPath = `${opts.environment}/`
   }
-  return `${envPath}${appName}`
+  const previewPath = ktn.preview ? '-preview' : ''
+  return `${envPath}${ktn.appName}${previewPath}`
 }
 
 const createFilePath = (ktn, opts) => {
-  const dirPath = createDirPath(ktn.appName, opts)
+  const dirPath = createDirPath(ktn, opts)
+  mkdirp.sync(dirPath)
   const fileName = `${ktn.command.replace(/\//g, '_')}`
   return `${dirPath}/${fileName}`
 }
@@ -96,6 +98,11 @@ const createUrl = (ktn) => {
 }
 
 const createGetUrl = (ktn) => {
+  // TODO: 保存ファイル名に影響を与えないための処理だけどイマイチ。今後直す。
+  ktn = Object.assign({}, ktn)
+  if (ktn.preview) {
+    ktn.command = `preview/${ktn.command}`
+  }
   const baseUrl = createUrl(ktn)
   return `${baseUrl}?${ktn.appParam}=${ktn.appId}`
 }
@@ -184,6 +191,7 @@ const parseArgumentOptions = () => {
   const argv = minimist(process.argv.slice(2), {
     boolean: [
       'help',
+      'preview',
     ],
     string: [
       'domain',
@@ -225,6 +233,9 @@ const pluckOpts = (firstObj, secondObj) => {
     app: obj.app,
     guestSpaceId: obj.guest,
     pushTarget: obj.pushTarget,
+    // TODO: previewオプションを受け付けない場合のエラー処理
+    // TODO: ginue diffコマンドを叩くとpreviewと運用環境との差分を表示したい（diffコマンドへのエイリアス？）
+    preview: obj.preview,
   }
 
   // Basic認証のパスワード有無でプロパティ名を変えておく
@@ -405,39 +416,37 @@ const main = async () => {
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
       // アプリ単位ループ
       for (const [appName, appId] of Object.entries(opts.apps)) {
-        mkdirp.sync(createDirPath(appName, opts))
         const kintoneCommands = await loadKintoneCommands()
         const requestPromises = []
         // APIコマンド単位ループ
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
-          const commands = [commName]
-          if (commProp.hasPreview) {
-            commands.push(`preview/${commName}`)
+          const preview = Boolean(commProp.hasPreview && opts.preview)
+          const ktn = {
+            domain: opts.domain,
+            guestSpaceId: opts.guestSpaceId,
+            base64Account,
+            base64Basic,
+            appName,
+            appId,
+            command: commName,
+            preview: false,
+            appParam: commProp.appParam,
+            skipRevision: commProp.skipRevision,
           }
-          // 運用環境・テスト環境単位ループ
-          for (const command of commands) {
-            const ktn = {
-              domain: opts.domain,
-              guestSpaceId: opts.guestSpaceId,
-              base64Account,
-              base64Basic,
-              appName,
-              appId,
-              command,
-              appParam: commProp.appParam,
-              skipRevision: commProp.skipRevision,
-            }
-            switch (opts.type) {
-              case 'pull':
+          switch (opts.type) {
+            case 'pull':
+              requestPromises.push(ginuePull(ktn, opts))
+              if (preview) {
+                ktn.preview = true
                 requestPromises.push(ginuePull(ktn, opts))
-                break
-              case 'push':
-                if (pushTargetKtn) {
-                  pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
-                }
-                await ginuePush(ktn, opts, pushTargetKtn)
-                break
-            }
+              }
+              break
+            case 'push':
+              if (pushTargetKtn) {
+                pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
+              }
+              await ginuePush(ktn, opts, pushTargetKtn)
+              break
           }
         }
         await Promise.all(requestPromises)
