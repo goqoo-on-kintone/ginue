@@ -437,8 +437,9 @@ const main = async () => {
             case 'pull':
               requestPromises.push(ginuePull(ktn, opts))
               if (preview) {
-                ktn.preview = true
-                requestPromises.push(ginuePull(ktn, opts))
+                const ktnPreview = Object.assign({}, ktn)
+                ktnPreview.preview = true
+                requestPromises.push(ginuePull(ktnPreview, opts))
               }
               break
             case 'push':
