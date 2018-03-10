@@ -41,8 +41,10 @@
     "inquirer": "^4.0.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
+    "netrc-parser": "^3.1.0",
     "rc-config-loader": "^2.0.1",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "tslib": "^1.9.0"
   }
 }
