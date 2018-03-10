@@ -1,6 +1,10 @@
-extends: 'standard'
+extends: standard
+plugins:
+  - mocha
 rules:
   comma-dangle:
     - error
     - only-multiline
   no-debugger: off
+  no-var: error
+  prefer-const: error
