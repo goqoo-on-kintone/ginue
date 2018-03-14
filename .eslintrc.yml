@@ -1,6 +1,12 @@
 extends: standard
 plugins:
   - mocha
+env:
+  mocha: true
+# テスト用のグローバル変数 # TODO: 自動的にglobalを認識させたい
+globals:
+  assert: true
+  ginue: true
 rules:
   comma-dangle:
     - error
