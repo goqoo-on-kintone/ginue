@@ -20,11 +20,6 @@
     "appParam": "id",
     "hasPreview": false
   },
-  "preview/app/deploy.json": {
-    "skipRevision": true,
-    "appParam": "apps",
-    "hasPreview": false
-  },
   "app/acl.json": {
     "skipRevision": true,
     "appParam": "app",
