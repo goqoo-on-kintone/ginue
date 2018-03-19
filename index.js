@@ -68,6 +68,10 @@ const main = async () => {
               }
               break
             case 'push':
+              if (commName.includes('/acl.json') && !opts.acl) {
+                console.log(`[SKIP] ${commName}`)
+                break
+              }
               if (pushTargetKtn) {
                 pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
               }
