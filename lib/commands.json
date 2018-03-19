@@ -54,7 +54,7 @@
     "hasPreview": true
   },
   "app/settings.json": {
-    "skipRevision": false,
+    "skipRevision": true,
     "appParam": "app",
     "langParam": "lang",
     "hasPreview": true
