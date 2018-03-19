@@ -56,6 +56,7 @@ const main = async () => {
             command: commName,
             preview: false,
             appParam: commProp.appParam,
+            methods: commProp.methods,
           }
           switch (opts.type) {
             case 'pull':
