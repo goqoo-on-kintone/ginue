@@ -43,7 +43,6 @@ const main = async () => {
             command: commName,
             preview: false,
             appParam: commProp.appParam,
-            skipRevision: commProp.skipRevision,
           }
           switch (opts.type) {
             case 'pull':
