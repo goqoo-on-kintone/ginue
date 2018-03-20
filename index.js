@@ -41,7 +41,7 @@ const main = async () => {
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
       // アプリ単位ループ
       for (const [appName, appId] of Object.entries(opts.apps)) {
-        const kintoneCommands = await loadKintoneCommands()
+        const kintoneCommands = await loadKintoneCommands(opts.exclude)
         const requestPromises = []
         // APIコマンド単位ループ
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
