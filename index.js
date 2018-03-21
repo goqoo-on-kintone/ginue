@@ -8,6 +8,7 @@ const {
   ginuePush,
   ginuePull,
   ginueReset,
+  ginueDeploy,
 } =
  require('./lib/ginue')
 
@@ -19,7 +20,7 @@ const main = async () => {
       const base64Basic = await createBase64Account(opts.basic)
       const base64Account = await createBase64Account(opts.username, opts.password)
 
-      if (opts.type === 'reset') {
+      if (['reset', 'deploy'].includes(opts.type)) {
         const ktn = {
           domain: opts.domain,
           guestSpaceId: opts.guestSpaceId,
@@ -27,7 +28,14 @@ const main = async () => {
           base64Basic,
           apps: opts.apps,
         }
-        await ginueReset(ktn, opts)
+        switch (opts.type) {
+          case 'reset':
+            await ginueReset(ktn, opts)
+            break
+          case 'deploy':
+            await ginueDeploy(ktn, opts)
+            break
+        }
         return
       }
 
