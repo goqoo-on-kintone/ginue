@@ -1,61 +1,61 @@
 {
   "form.json": {
-    "methods":["GET"],
+    "methods": ["GET"],
     "appParam": "app",
     "hasPreview": true
   },
   "app/form/fields.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "langParam": "lang",
     "hasPreview": true
   },
   "app/form/layout.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "hasPreview": true
   },
   "app.json": {
-    "methods":["GET"],
+    "methods": ["GET"],
     "appParam": "id",
     "hasPreview": false
   },
   "app/acl.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "hasPreview": true
   },
   "app/status.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "langParam": "lang",
     "hasPreview": true
   },
   "record/acl.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "langParam": "lang",
     "hasPreview": true
   },
   "field/acl.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "hasPreview": true
   },
   "app/views.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "langParam": "lang",
     "hasPreview": true
   },
   "app/settings.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "langParam": "lang",
     "hasPreview": true
   },
   "app/customize.json": {
-    "methods":["GET", "PUT"],
+    "methods": ["GET", "PUT"],
     "appParam": "app",
     "hasPreview": true
   }

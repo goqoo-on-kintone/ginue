@@ -9,8 +9,7 @@ const {
   ginuePull,
   ginueReset,
   ginueDeploy,
-} =
- require('./lib/ginue')
+} = require('./lib/ginue')
 
 const main = async () => {
   const allOpts = await createOptionValues()
