@@ -1,6 +1,6 @@
 require('./helper.js')
 
-it('trimで先頭・末尾の改行が正しく削られる', function () {
+it('trimで先頭・末尾の改行が正しく削られる', () => {
   const newlineIncludedStr = `
 usage: ginue
 <options>
