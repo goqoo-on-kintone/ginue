@@ -47,6 +47,7 @@
     "rc-config-loader": "^2.0.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
+    "require-from-string": "^2.0.1",
     "tslib": "^1.9.0"
   }
 }
