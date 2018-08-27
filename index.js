@@ -79,6 +79,10 @@ const main = async () => {
                 console.log(`[SKIP] ${commName}`)
                 break
               }
+              if (commName === 'field/acl.json' && !opts.field_acl) {
+                console.log(`[SKIP] ${commName}`)
+                break
+              }
               if (pushTargetKtn) {
                 pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
               }
