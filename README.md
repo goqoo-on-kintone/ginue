@@ -40,7 +40,7 @@ $ ginue push [OPTIONS]
 オプション一覧
 
 ```
--d, --domain=<DOMAIN>         kintone sub domain name
+-d, --domain=<DOMAIN>         kintone domain name
 -u, --user=<USER>             kintone username
 -p, --password=<PASSWORD>     kintone password
 -a, --app=<APP-ID>            kintone app IDs
