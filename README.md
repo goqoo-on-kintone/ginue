@@ -1,4 +1,4 @@
-# ginue
+# Ginue
 
 ginue is the CLI tool to get settings of kintone via kintone REST API.
 
@@ -68,50 +68,80 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
 * アプリID（`-a`オプション or 標準入力）はカンマ区切りで複数指定可能です。
 * Basic認証を使用する場合は`-b`オプションが必須です。パスワードを省略した場合、標準入力を求められます。
 
-### .ginuerc.json
+### .ginuerc
 
-コマンドを実行するディレクトリに`.ginuerc.json`という設定ファイルを作成すると、`ginue`実行時に自動的に読み込まれてオプション指定を省略できます。プロジェクト単位で`.ginuerc.json`を作成すると便利です。
+コマンドを実行するディレクトリに`.ginuerc`という設定ファイルを作成すると、`ginue`実行時に自動的に読み込まれてオプション指定を省略できます。プロジェクト単位で`.ginuerc`を作成すると便利です。
 
-```
-{
-  "domain": "ginue.cybozu.com",
-  "username": "Administrator",
-  "password": "myKintonePassword",
-  "app": [10, 11, 12],
-  "guest": 5
-}
-```
-
-* トップレベルを配列にすると、異なる環境のアプリを複数指定して一括取得できます。
-* `environment`プロパティで各環境に名前を付けることができ、その名前のディレクトリ内にJSONが保存されます。
-* `app`プロパティにオブジェクトを指定すると、アプリIDではなくアプリ名のディレクトリにJSONが保存されます。
-
-
-```
-[
+* フォーマットはJSON/JS/YAMLの3種類に対応しています。
+  * .ginuerc.json
+  ```json
   {
-    "environment": "development",
-    "domain": "ginue-dev.cybozu.com",
-    "username": "Administrator",
-    "password": "myKintonePassword",
-    "app": {
-      "user": 128,
-      "order": 129,
-      "bill": 130
-    },
-    "basic": "Administrator:myBasicAuthPassword"
-  },
-  {
-    "environment": "production",
+    "output": "kintone-settings",
     "domain": "ginue.cybozu.com",
     "username": "Administrator",
     "password": "myKintonePassword",
-    "app": {
-      "user": 10,
-      "order": 11,
-      "bill": 12
-    },
+    "app": [10, 11, 12],
     "guest": 5
   }
-]
+  ```
+  * .ginuerc.js
+  ```js
+  module.exports = {
+    output: 'kintone-settings',
+    domain: 'ginue.cybozu.com',
+    username: 'Administrator',
+    password: 'myKintonePassword',
+    app: [10, 11, 12],
+    guest: 5,
+  }
+  ```
+  * .ginuerc.yml
+  ```yaml
+    output: kintone-settings
+    domain: ginue.cybozu.com
+    username: Administrator
+    password: myKintonePassword
+    app:
+      - 10
+      - 11
+      - 12
+    guest: 5
+  ```
+* `env`プロパティを使用すると、異なる環境のアプリを複数指定して一括取得できます。
+  * 各環境別にオブジェクトを作成し、プロパティは環境名として自由に設定します。(ex. `development`, `production`)
+  * `ginue pull`時には各環境ごとにディレクトリが作成され、配下にJSONファイルが保存されます。
+    * デフォルトでは環境名＝ディレクトリ名
+    * 各環境に`output`プロパティを指定すると、`output`の値＝ディレクトリ名
+    * トップレベルに`output`プロパティを指定すると、`output`のディレクトリ配下に、各環境のサブディレクトリを作成
+* `app`プロパティにオブジェクトを指定すると、アプリIDではなくアプリ名のディレクトリにJSONが保存されます。
+
+```json
+{
+  "output": "kintone-settings",
+  "env": {
+    "development": {
+      "domain": "ginue-dev.cybozu.com",
+      "username": "Administrator",
+      "password": "myKintonePassword",
+      "app": {
+        "user": 128,
+        "order": 129,
+        "bill": 130
+      },
+      "basic": "Administrator:myBasicAuthPassword"
+    },
+    "production": {
+      "output": "prod",
+      "domain": "ginue.cybozu.com",
+      "username": "Administrator",
+      "password": "myKintonePassword",
+      "app": {
+        "user": 10,
+        "order": 11,
+        "bill": 12
+      },
+      "guest": 5
+    }
+  }
+}
 ```
