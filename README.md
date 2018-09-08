@@ -46,6 +46,7 @@ $ ginue push [OPTIONS]
 -a, --app=<APP-ID>            kintone app IDs
 -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
 -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
+-l, --location=<LOCATION>     Location of setting file
 ```
 
 ## ginue pull
@@ -58,7 +59,7 @@ $ ginue push [OPTIONS]
 
 ```
 $ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
-$ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
+$ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -l kintone-settings
 ```
 
 ## 共通仕様
