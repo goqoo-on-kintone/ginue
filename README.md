@@ -76,7 +76,7 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
   * .ginuerc.json
   ```json
   {
-    "output": "kintone-settings",
+    "location": "kintone-settings",
     "domain": "ginue.cybozu.com",
     "username": "Administrator",
     "password": "myKintonePassword",
@@ -87,7 +87,7 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
   * .ginuerc.js
   ```js
   module.exports = {
-    output: 'kintone-settings',
+    location: 'kintone-settings',
     domain: 'ginue.cybozu.com',
     username: 'Administrator',
     password: 'myKintonePassword',
@@ -97,7 +97,7 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
   ```
   * .ginuerc.yml
   ```yaml
-    output: kintone-settings
+    location: kintone-settings
     domain: ginue.cybozu.com
     username: Administrator
     password: myKintonePassword
@@ -111,13 +111,13 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
   * 各環境別にオブジェクトを作成し、プロパティは環境名として自由に設定します。(ex. `development`, `production`)
   * `ginue pull`時には各環境ごとにディレクトリが作成され、配下にJSONファイルが保存されます。
     * デフォルトでは環境名＝ディレクトリ名
-    * 各環境に`output`プロパティを指定すると、`output`の値＝ディレクトリ名
-    * トップレベルに`output`プロパティを指定すると、`output`のディレクトリ配下に、各環境のサブディレクトリを作成
+    * 各環境に`location`プロパティを指定すると、`location`の値＝ディレクトリ名
+    * トップレベルに`location`プロパティを指定すると、`location`のディレクトリ配下に、各環境のサブディレクトリを作成
 * `app`プロパティにオブジェクトを指定すると、アプリIDではなくアプリ名のディレクトリにJSONが保存されます。
 
 ```json
 {
-  "output": "kintone-settings",
+  "location": "kintone-settings",
   "env": {
     "development": {
       "domain": "ginue-dev.cybozu.com",
@@ -131,7 +131,7 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator
       "basic": "Administrator:myBasicAuthPassword"
     },
     "production": {
-      "output": "prod",
+      "location": "prod",
       "domain": "ginue.cybozu.com",
       "username": "Administrator",
       "password": "myKintonePassword",
