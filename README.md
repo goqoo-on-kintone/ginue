@@ -40,13 +40,17 @@ $ ginue push [OPTIONS]
 オプション一覧
 
 ```
--d, --domain=<DOMAIN>         kintone domain name
--u, --user=<USER>             kintone username
--p, --password=<PASSWORD>     kintone password
--a, --app=<APP-ID>            kintone app IDs
--g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
--b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
--l, --location=<LOCATION>     Location of setting file
+  -h, --help                    Output usage information
+  -d, --domain=<DOMAIN>         kintone domain name
+  -u, --user=<USER>             kintone username
+  -p, --password=<PASSWORD>     kintone password
+  -a, --app=<APP-ID>            kintone app IDs
+  -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
+  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
+  -l, --location=<LOCATION>     Location of setting file
+  --js                          Use .js file format
+  --preview                     Fetch xxx-preview.json
+  --alt                         Save xxx-alt.json
 ```
 
 ## ginue pull
