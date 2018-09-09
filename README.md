@@ -26,10 +26,10 @@ $ yarn add --dev ginue
 
 Gitライクな一連のコマンドを提供します。
 
-* [ginue pull](#ginue\ pull) : kintoneの設定情報を取得します。
-* [ginue push](#ginue\ push) : kintoneの設定情報を送信します。
-* [ginue deploy](#ginue\ deploy) : kintoneアプリの設定を運用環境へ反映します。
-* [ginue reset](#ginue\ reset) : kintoneアプリの設定の変更をキャンセルします。
+* [ginue pull](#ginue-pull) : kintoneの設定情報を取得します。
+* [ginue push](#ginue-push) : kintoneの設定情報を送信します。
+* [ginue deploy](#ginue-deploy) : kintoneアプリの設定を運用環境へ反映します。
+* [ginue reset](#ginue-reset) : kintoneアプリの設定の変更をキャンセルします。
 
 ### 共通オプション
 
