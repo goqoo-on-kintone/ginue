@@ -44,7 +44,7 @@ Gitライクな一連のコマンドを提供します。
   -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
   -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
   -l, --location=<LOCATION>     Location of setting file
-  --js                          Use .js file format
+  -t, --fileType                Set file type 'json'(default) or 'js'
 ```
 
 * `domain` `user` `password` `app`オプションを省略した場合、標準入力を求められます。
