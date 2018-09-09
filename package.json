@@ -44,7 +44,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "netrc-parser": "^3.1.0",
-    "prettier": "^1.11.1",
+    "prettier": "^1.14.2",
     "rc-config-loader": "^2.0.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
