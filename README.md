@@ -43,7 +43,7 @@ Gitライクな一連のコマンドを提供します。
   -a, --app=<APP-ID>            kintone app IDs
   -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
   -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
-  -l, --location=<LOCATION>     Location of setting file
+  -l, --location=<LOCATION>     Location of settings file
   -t, --fileType                Set file type 'json'(default) or 'js'
 ```
 
