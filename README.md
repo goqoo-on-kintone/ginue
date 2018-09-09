@@ -1,13 +1,8 @@
 # Ginue
 
-ginue is the CLI tool to get settings of kintone via kintone REST API.
+Ginue is the CLI tool to edit settings of kintone via kintone REST API.
 
-kintoneアプリの設定情報を取得するCLI版ツールです。[kintone REST API](https://developer.cybozu.io/hc/ja/articles/201941834)で情報を取得します。
-
-以下で動作確認済み
-
-* macOS Sierra (Node.js v8.2.1)
-* Windows 10 (Node.js v8.2.1)
+[kintone REST API](https://developer.cybozu.io/hc/ja/articles/201941834)でkintoneアプリの設定情報を編集するためのCLI版ツールです。
 
 ## インストール方法
 
@@ -29,17 +24,18 @@ $ yarn add --dev ginue
 
 ## 使い方
 
-現在、全JSONを一括保存する`ginue pull`が使えます。
-（標準出力の`ginue show`、kintoneに設定を反映する`ginue push`を今後実装予定）
+Gitライクな一連のコマンドを提供します。
 
-```
-$ ginue pull [OPTIONS]
-$ ginue push [OPTIONS]
-```
+* [ginue pull](#ginue\ pull) : kintoneの設定情報を取得します。
+* [ginue push](#ginue\ push) : kintoneの設定情報を送信します。
+* [ginue deploy](#ginue\ deploy) : kintoneアプリの設定を運用環境へ反映します。
+* [ginue reset](#ginue\ reset) : kintoneアプリの設定の変更をキャンセルします。
 
-オプション一覧
+### 共通オプション
 
+#### コマンドライン引数から指定
 ```
+  -v, --version                 Output version information
   -h, --help                    Output usage information
   -d, --domain=<DOMAIN>         kintone domain name
   -u, --user=<USER>             kintone username
@@ -49,31 +45,18 @@ $ ginue push [OPTIONS]
   -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
   -l, --location=<LOCATION>     Location of setting file
   --js                          Use .js file format
-  --preview                     Fetch xxx-preview.json
-  --alt                         Save xxx-alt.json
 ```
 
-## ginue pull
+* `domain` `user` `password` `app`オプションを省略した場合、標準入力を求められます。
+* アプリID（`app`オプション or 標準入力）はカンマ区切りで複数指定可能です。
+* ゲストスペース内のアプリ情報を取得する場合は`guest`オプションが必須です。
+* Basic認証を使用する場合は`basic`オプションが必須です。パスワードを省略した場合、標準入力を求められます。
+* `location`オプションを指定すると、kintone設定情報ファイルの保存フォルダを指定できます。（省略時はカレントディレクトリ）
+* `js`オプションを指定すると、kintone設定情報ファイルを`.json`ではなく`.js`形式で扱います。
+* コマンドライン引数のほか、後述する`.ginuerc`や`.netrc`でもオプション指定が可能です
+  * 優先順位は `.netrc < .ginuerc < 引数`
 
-* カレントにアプリID名のディレクトリが作成され、その中に全JSONファイルが保存されます。
-* 取得するJSONファイルは`commands.conf`に記載します。`ginue`コマンドファイルと同じディレクトリに格納してください。
-* `app/settings.json` `preview/app/settings.json`以外のJSONファイルでは、`revision`要素が無視されます。
-
-実行例
-
-```
-$ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
-$ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -l kintone-settings
-```
-
-## 共通仕様
-
-* オプション引数を指定せずに起動した場合、標準入力を求められます。（`-g`オプション以外）
-* ゲストスペース内のアプリ情報を取得する場合は`-g`オプションが必須です。
-* アプリID（`-a`オプション or 標準入力）はカンマ区切りで複数指定可能です。
-* Basic認証を使用する場合は`-b`オプションが必須です。パスワードを省略した場合、標準入力を求められます。
-
-### .ginuerc
+#### .ginuerc
 
 コマンドを実行するディレクトリに`.ginuerc`という設定ファイルを作成すると、`ginue`実行時に自動的に読み込まれてオプション指定を省略できます。プロジェクト単位で`.ginuerc`を作成すると便利です。
 
@@ -112,7 +95,7 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -
       - 12
     guest: 5
   ```
-* `env`プロパティを使用すると、異なる環境のアプリを複数指定して一括取得できます。
+* `env`プロパティを使用すると、異なる環境のアプリをグルーピングできます。
   * 各環境別にオブジェクトを作成し、プロパティは環境名として自由に設定します。(ex. `development`, `production`)
   * `ginue pull`時には各環境ごとにディレクトリが作成され、配下にJSONファイルが保存されます。
     * デフォルトでは環境名＝ディレクトリ名
@@ -136,7 +119,7 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -
       "basic": "Administrator:myBasicAuthPassword"
     },
     "production": {
-      "location": "prod",
+      "location": "__PRODUCTION__",
       "domain": "ginue.cybozu.com",
       "username": "Administrator",
       "password": "myKintonePassword",
@@ -150,3 +133,20 @@ $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -
   }
 }
 ```
+
+## ginue pull
+
+* カレントにアプリID名のディレクトリが作成され、その中に全JSONファイルが保存されます。
+* 取得するJSONファイルは`commands.conf`に記載します。`ginue`コマンドファイルと同じディレクトリに格納してください。
+* `app/settings.json` `preview/app/settings.json`以外のJSONファイルでは、`revision`要素が無視されます。
+
+実行例
+
+```
+$ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
+$ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -l kintone-settings
+```
+
+## ginue push
+## ginue deploy
+## ginue reset
