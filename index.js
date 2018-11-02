@@ -10,6 +10,7 @@ const {
   ginueReset,
   ginueDeploy,
 } = require('./lib/ginue')
+const ginueErd = require('./lib/erd')
 
 const main = async () => {
   const allOpts = await createOptionValues()
@@ -35,6 +36,11 @@ const main = async () => {
             await ginueDeploy(ktn, opts)
             break
         }
+        return
+      }
+
+      if (opts.type === 'erd') {
+        ginueErd(opts)
         return
       }
 
