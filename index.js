@@ -54,6 +54,10 @@ const main = async () => {
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
       // アプリ単位ループ
       for (const [appName, appId] of Object.entries(opts.apps)) {
+        if (opts.appName && opts.appName !== appName) {
+          continue
+        }
+
         const kintoneCommands = await loadKintoneCommands(opts.exclude)
         const requestPromises = []
         // APIコマンド単位ループ
@@ -81,9 +85,6 @@ const main = async () => {
               }
               break
             case 'push':
-              if (opts.appName && opts.appName !== appName) {
-                continue
-              }
               if (commName.includes('/acl.json') && !opts.acl) {
                 console.log(`[SKIP] ${commName}`)
                 break
