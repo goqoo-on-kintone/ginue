@@ -81,6 +81,9 @@ const main = async () => {
               }
               break
             case 'push':
+              if (opts.appName && opts.appName !== appName) {
+                continue
+              }
               if (commName.includes('/acl.json') && !opts.acl) {
                 console.log(`[SKIP] ${commName}`)
                 break
