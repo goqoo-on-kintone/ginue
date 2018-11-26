@@ -30,6 +30,7 @@ Gitライクな一連のコマンドを提供します。
 * [ginue push](#ginue-push) : kintoneの設定情報を送信します。
 * [ginue deploy](#ginue-deploy) : kintoneアプリの設定を運用環境へ反映します。
 * [ginue reset](#ginue-reset) : kintoneアプリの設定の変更をキャンセルします。
+* [ginue erd](#ginue-erd) :（実験的機能）kintoneアプリのルックアップ関係を解析してER図を作成します。
 
 ### 共通オプション
 
@@ -184,4 +185,17 @@ $ ginue deploy development -A user
 ```
 $ ginue reset development
 $ ginue reset development -A user
+```
+
+## ginue erd
+
+* ⚠️実験的機能です。仕様は大きく変更される可能性があります。
+* `ginue pull`で保存済みのJSONファイルからkintoneアプリのルックアップ関係を解析して、ER図を作成します。
+* 各`env`ディレクトリの直下に、PlantUML形式のファイル`erd.pu`を保存します。
+* 画像ファイルは作成しないので、任意の方法でPlantUMLをレンダリングしてください。
+
+実行例
+
+```
+$ ginue erd development
 ```
