@@ -141,13 +141,15 @@ Gitライクな一連のコマンドを提供します。
 
 * カレントにアプリID名のディレクトリが作成され、その中に全JSONファイルが保存されます。
 * APIのレスポンス上は全JSONに`revision`要素が含まれますが、保存される各JSONファイルでは`revision`要素が省略され、代わりに`revision.json`というファイルを単独で作成します。（更新時のdiffがシンプルになるため）
+* `preview`オプションを指定すると`<env>-preview`ディレクトリが作成され、kintoneテスト環境のJSONファイルを別途保存します。運用環境へ反映する前の状態を確認したい場合は有効にしてください。
+  * `.ginuerc`に`"preview": true`を設定すると常時有効になります。
 
 実行例
 
 ```
 $ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
 $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -l kintone-settings
-$ ginue pull -A user
+$ ginue pull -A user --preview
 ```
 
 ## ginue push
