@@ -43,8 +43,9 @@ Gitライクな一連のコマンドを提供します。
   -a, --app=<APP-ID>            kintone app IDs
   -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
   -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
+  -A, --appName=<APP-NAME>      Set target app name
   -l, --location=<LOCATION>     Location of settings file
-  -t, --fileType                Set file type 'json'(default) or 'js'
+  -t, --fileType=<FILE-TYPE>    Set file type 'json'(default) or 'js'
 ```
 
 * `domain` `user` `password` `app`オプションを省略した場合、標準入力を求められます。
@@ -52,7 +53,7 @@ Gitライクな一連のコマンドを提供します。
 * ゲストスペース内のアプリ情報を取得する場合は`guest`オプションが必須です。
 * Basic認証を使用する場合は`basic`オプションが必須です。パスワードを省略した場合、標準入力を求められます。
 * `location`オプションを指定すると、kintone設定情報ファイルの保存フォルダを指定できます。（省略時はカレントディレクトリ）
-* `js`オプションを指定すると、kintone設定情報ファイルを`.json`ではなく`.js`形式で扱います。
+* `fileType`オプションに`js`を指定すると、kintone設定情報ファイルを`.json`ではなく`.js`フォーマットで扱います。
 * コマンドライン引数のほか、後述する`.ginuerc`や`.netrc`でもオプション指定が可能です
   * 優先順位は `.netrc < .ginuerc < 引数`
 
@@ -102,6 +103,7 @@ Gitライクな一連のコマンドを提供します。
     * 各環境に`location`プロパティを指定すると、`location`の値＝ディレクトリ名
     * トップレベルに`location`プロパティを指定すると、`location`のディレクトリ配下に、各環境のサブディレクトリを作成
 * `app`プロパティにオブジェクトを指定すると、アプリIDではなくアプリ名のディレクトリにJSONが保存されます。
+  * その場合、各種`ginue`コマンドの引数に`appName`オプションを指定することで、特定のアプリのみを処理できます。
 
 ```json
 {
@@ -137,16 +139,49 @@ Gitライクな一連のコマンドを提供します。
 ## ginue pull
 
 * カレントにアプリID名のディレクトリが作成され、その中に全JSONファイルが保存されます。
-* 取得するJSONファイルは`commands.conf`に記載します。`ginue`コマンドファイルと同じディレクトリに格納してください。
-* `app/settings.json` `preview/app/settings.json`以外のJSONファイルでは、`revision`要素が無視されます。
+* APIのレスポンス上は全JSONに`revision`要素が含まれますが、保存される各JSONファイルでは`revision`要素が省略され、代わりに`revision.json`というファイルを単独で作成します。（更新時のdiffがシンプルになるため）
 
 実行例
 
 ```
 $ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
 $ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -l kintone-settings
+$ ginue pull -A user
 ```
 
 ## ginue push
+
+* `ginue pull`で保存済みのJSONファイルを、kintoneにアップロードします。
+* 環境名を単独で指定すれば同じ環境にアップロードします。
+* 環境名をコロン区切りで`<from>:<to>`のように書くと、ローカルの`<from>`ディレクトリ配下に保存されたJSONファイルを`<to>`環境にアップロードします。
+* 実行後はkintoneのテスト環境が変更された状態になるので、kintoneの設定画面で「アプリを更新」「変更を中止」ボタンをクリックするか、`ginue deploy` `ginue reset`コマンドを使用してください。
+
+実行例
+
+```
+$ ginue push development
+$ ginue push development:production
+$ ginue push development:production -A user
+```
+
 ## ginue deploy
+
+* アプリの設定の運用環境への反映を行います。
+
+実行例
+
+```
+$ ginue deploy development
+$ ginue deploy development -A user
+```
+
 ## ginue reset
+
+* アプリの設定の変更をキャンセルします。
+
+実行例
+
+```
+$ ginue reset development
+$ ginue reset development -A user
+```
