@@ -103,6 +103,7 @@ const main = async () => {
         await Promise.all(requestPromises)
       }
     } catch (error) {
+      delete error.response
       console.error(error)
     }
   })
