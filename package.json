@@ -11,14 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TailsGarden/ginue.git"
+    "url": "git+https://github.com/goqoo-on-kintone/ginue.git"
   },
-  "author": "tailsgarden",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TailsGarden/ginue/issues"
+    "url": "https://github.com/goqoo-on-kintone/ginue/issues"
   },
-  "homepage": "https://github.com/TailsGarden/ginue#readme",
+  "homepage": "https://github.com/goqoo-on-kintone/ginue#readme",
   "engines": {
     "node": ">=7.6"
   },
