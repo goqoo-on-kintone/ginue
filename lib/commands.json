@@ -1,9 +1,4 @@
 {
-  "form.json": {
-    "methods": ["GET"],
-    "appParam": "app",
-    "hasPreview": true
-  },
   "app/form/fields.json": {
     "methods": ["GET", "PUT"],
     "appParam": "app",
