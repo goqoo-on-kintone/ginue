@@ -56,7 +56,7 @@ Gitライクな一連のコマンドを提供します。
 * `location`オプションを指定すると、kintone設定情報ファイルの保存フォルダを指定できます。（省略時はカレントディレクトリ）
 * `fileType`オプションに`js`を指定すると、kintone設定情報ファイルを`.json`ではなく`.js`フォーマットで扱います。
 * コマンドライン引数のほか、後述する`.ginuerc`や`.netrc`でもオプション指定が可能です
-  * `username`と`password`については環境変数でも設定可能です。（`GINUE_USERNAME`, `GINUE_PASSWORD`）
+  * `username`, `password`, `basic`については環境変数でも設定可能です。（`GINUE_USERNAME`, `GINUE_PASSWORD`, `GINUE_BASIC`）
   * 優先順位は `環境変数 < .netrc < .ginuerc < 引数`
 
 #### .ginuerc
