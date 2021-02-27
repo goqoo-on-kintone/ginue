@@ -4,6 +4,7 @@
   "app/customize.json",
   "app/form/fields.json",
   "app/form/layout.json",
+  "app/reports.json",
   "app/settings.json",
   "app/status.json",
   "app/views.json",
