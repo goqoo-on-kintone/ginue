@@ -1,5 +1,5 @@
 module.exports = {
-  extends: 'standard',
+  extends: ['standard', 'prettier'],
   plugins: ['mocha'],
   env: {
     mocha: true,
@@ -15,5 +15,6 @@ module.exports = {
     'no-debugger': 'off',
     'no-var': 'error',
     'prefer-const': 'error',
+    'camelcase': 'off',
   },
 }
