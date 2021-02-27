@@ -53,6 +53,9 @@ const main = async () => {
         if (opts.appName && opts.appName !== appName) {
           continue
         }
+        const environment = opts.pushTarget ? opts.pushTarget.environment : opts.environment
+        const target = `----------${environment}/${appName}----------`
+        console.log(target)
 
         const kintoneCommands = await loadKintoneCommands({ commands: opts.commands, exclude: opts.exclude })
         const requestPromises = []
