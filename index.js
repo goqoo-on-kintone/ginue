@@ -15,7 +15,7 @@ const ginueErd = require('./lib/erd')
 const main = async () => {
   const allOpts = await createOptionValues()
   // 環境単位ループ
-  allOpts.forEach(async opts => {
+  allOpts.forEach(async (opts) => {
     try {
       const base64Basic = await createBase64Account(opts.basic)
       const base64Account = await createBase64Account(opts.username, opts.password)
