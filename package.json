@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "apis": "curl https://$KINTONE_SUBDOMAIN.cybozu.com/k/v1/apis.json|jq '.apis|keys|map(select(.|test(\"app/|field/acl/|record/acl/\")))'>apis.json"
+    "apis:all": "curl https://$KINTONE_SUBDOMAIN.cybozu.com/k/v1/apis.json|jq '.apis|keys|map(select(.|test(\"app/|field/acl/|record/acl/\"))|select(.|test(\"preview/|/put\")|not)|sub(\"/get\";\".json\"))|sort' > apis/all.json",
+    "apis:ginue": "cat lib/commands.json|jq '.|keys' > apis/ginue.json",
+    "apis:diff": "yarn apis:all && yarn apis:ginue && diff -u apis/*"
   },
   "repository": {
     "type": "git",
