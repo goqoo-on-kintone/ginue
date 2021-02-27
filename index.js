@@ -58,7 +58,7 @@ const main = async () => {
           continue
         }
 
-        const kintoneCommands = await loadKintoneCommands(opts.exclude)
+        const kintoneCommands = await loadKintoneCommands({ commands: opts.commands, exclude: opts.exclude })
         const requestPromises = []
         // APIコマンド単位ループ
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
