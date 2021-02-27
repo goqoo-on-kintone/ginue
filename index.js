@@ -70,18 +70,12 @@ const main = async () => {
             appName,
             appId,
             command: commName,
-            preview: false,
             appParam: commProp.appParam,
             methods: commProp.methods,
           }
           switch (opts.type) {
             case 'pull':
-              requestPromises.push(ginuePull(ktn, opts))
-              if (preview) {
-                const ktnPreview = Object.assign({}, ktn)
-                ktnPreview.preview = true
-                requestPromises.push(ginuePull(ktnPreview, opts))
-              }
+              requestPromises.push(ginuePull({ ...ktn, preview }, opts))
               break
             case 'push':
               if (commName.includes('/acl.json') && !opts.acl) {
