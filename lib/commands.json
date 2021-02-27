@@ -25,6 +25,12 @@
     "hasPreview": true,
     "methods": ["GET", "PUT"]
   },
+  "app/reports.json": {
+    "appParam": "app",
+    "hasPreview": true,
+    "langParam": "lang",
+    "methods": ["GET", "PUT"]
+  },
   "app/settings.json": {
     "appParam": "app",
     "hasPreview": true,
