@@ -7,7 +7,8 @@
     "ginue": "./index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "apis": "curl https://$KINTONE_SUBDOMAIN.cybozu.com/k/v1/apis.json|jq '.apis|keys|map(select(.|test(\"app/|field/acl/|record/acl/\")))'>apis.json"
   },
   "repository": {
     "type": "git",
