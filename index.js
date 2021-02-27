@@ -1,16 +1,12 @@
 #!/usr/bin/env node
 'use strict'
 
-const {
-  loadKintoneCommands,
-  createBase64Account,
-  createOptionValues,
-  ginuePush,
-  ginuePull,
-  ginueReset,
-  ginueDeploy,
-} = require('./lib/ginue')
-const ginueErd = require('./lib/erd')
+const { createBase64Account } = require('./lib/util')
+const { createOptionValues, loadKintoneCommands } = require('./lib/config')
+const { ginuePull } = require('./lib/pull')
+const { ginuePush } = require('./lib/push')
+const { ginueDeploy, ginueReset } = require('./lib/deploy')
+const { ginueErd } = require('./lib/erd')
 
 const main = async () => {
   const allOpts = await createOptionValues()
