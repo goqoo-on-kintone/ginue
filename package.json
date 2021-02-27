@@ -1,6 +1,6 @@
 {
   "name": "ginue",
-  "version": "3.0.0-beta2",
+  "version": "3.0.0-beta3",
   "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
   "main": "index.js",
   "bin": {
