@@ -18,6 +18,7 @@ const main = async () => {
 
       if (['reset', 'deploy'].includes(opts.type)) {
         const ktn = {
+          proxy: opts.proxy,
           domain: opts.domain,
           guestSpaceId: opts.guestSpaceId,
           base64Account,
@@ -63,6 +64,7 @@ const main = async () => {
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
           const preview = Boolean(commProp.hasPreview && opts.preview)
           const ktn = {
+            proxy: opts.proxy,
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
             base64Account,
