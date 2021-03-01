@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
+const { inspect } = require('util')
 const { createBase64Account } = require('./lib/util')
 const { createOptionValues, loadKintoneCommands } = require('./lib/config')
 const { ginuePull } = require('./lib/pull')
@@ -98,8 +99,14 @@ const main = async () => {
         await Promise.all(requestPromises)
       }
     } catch (error) {
-      delete error.response
-      console.error(error)
+      try {
+        const message = JSON.parse(error.message)
+        console.error(inspect(message, { depth: Infinity, colors: true }))
+        delete error.message
+      } catch (e) {
+      } finally {
+        console.error(error)
+      }
     }
   })
 }
