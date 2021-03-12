@@ -25,6 +25,8 @@ const main = async () => {
           base64Account,
           base64Basic,
           apps: opts.apps,
+          pfxFilepath: opts.pfxFilepath,
+          pfxPassword: opts.pfxPassword,
         }
         switch (opts.type) {
           case 'reset':
@@ -47,6 +49,8 @@ const main = async () => {
         guestSpaceId: opts.pushTarget.guestSpaceId,
         base64Basic: await createBase64Account(opts.pushTarget.basic),
         base64Account: await createBase64Account(opts.pushTarget.username, opts.pushTarget.password),
+        pfxFilepath: opts.pushTarget.pfxFilepath,
+        pfxPassword: opts.pushTarget.pfxPassword,
       }
 
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
@@ -75,6 +79,8 @@ const main = async () => {
             command: commName,
             appParam: commProp.appParam,
             methods: commProp.methods,
+            pfxFilepath: opts.pfxFilepath,
+            pfxPassword: opts.pfxPassword,
           }
           switch (opts.type) {
             case 'pull':
