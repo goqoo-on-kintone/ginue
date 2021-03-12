@@ -36,27 +36,31 @@ Gitライクな一連のコマンドを提供します。
 
 #### コマンドライン引数から指定
 ```
-  -v, --version                 Output version information
-  -h, --help                    Output usage information
-  -d, --domain=<DOMAIN>         kintone domain name
-  -u, --user=<USER>             kintone username
-  -p, --password=<PASSWORD>     kintone password
-  -a, --app=<APP-ID>            kintone app IDs
-  -g, --guest=<GUEST-SPACE-ID>  kintone guest space ID
-  -b, --basic=<USER[:PASSWORD]> kintone Basic Authentication user and password
-  -A, --appName=<APP-NAME>      Set target app name
-  -l, --location=<LOCATION>     Location of settings file
-  -t, --fileType=<FILE-TYPE>    Set file type 'json'(default) or 'js'
+  -v, --version                    Output version information
+  -h, --help                       Output usage information
+  -d, --domain=<DOMAIN>            kintone domain name
+  -u, --user=<USER>                kintone username
+  -p, --password=<PASSWORD>        kintone password
+  -a, --app=<APP-ID>               kintone app IDs
+  -g, --guest=<GUEST-SPACE-ID>     kintone guest space ID
+  -b, --basic=<USER[:PASSWORD]>    kintone Basic Authentication user and password
+  -A, --appName=<APP-NAME>         Set target app name
+  -l, --location=<LOCATION>        Location of settings file
+  -t, --fileType=<FILE-TYPE>       Set file type 'json'(default) or 'js'
+  -F, --pfxFilepath=<PFX-FILEPATH> The path to client certificate file.
+  -P, --pfxPassword=<PFX-PASSWORD> The password of client certificate.
 ```
 
 * `domain` `user` `password` `app`オプションを省略した場合、標準入力を求められます。
 * アプリID（`app`オプション or 標準入力）はカンマ区切りで複数指定可能です。
 * ゲストスペース内のアプリ情報を取得する場合は`guest`オプションが必須です。
 * Basic認証を使用する場合は`basic`オプションが必須です。パスワードを省略した場合、標準入力を求められます。
+* クライアント証明書を使用する場合は`pfxFilepath` `pfxPassword`オプションが必須です。`pfxPassword`を省略した場合、標準入力を求められます。
 * `location`オプションを指定すると、kintone設定情報ファイルの保存フォルダを指定できます。（省略時はカレントディレクトリ）
 * `fileType`オプションに`js`を指定すると、kintone設定情報ファイルを`.json`ではなく`.js`フォーマットで扱います。
 * コマンドライン引数のほか、後述する`.ginuerc`や`.netrc`でもオプション指定が可能です
-  * `username`, `password`, `basic`については環境変数でも設定可能です。（`GINUE_USERNAME`, `GINUE_PASSWORD`, `GINUE_BASIC`）
+  * `username`, `password`, `basic`, `pfxFilepath`, `pfxPassword`については環境変数でも設定可能です。
+  （`GINUE_USERNAME`, `GINUE_PASSWORD`, `GINUE_BASIC`, `GINUE_PFX_FILEPATH`, `GINUE_PFX_PASSWORD`）
   * 優先順位は `環境変数 < .netrc < .ginuerc < 引数`
 
 #### .ginuerc
