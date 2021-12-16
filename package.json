@@ -1,6 +1,6 @@
 {
   "name": "ginue",
-  "version": "3.0.0-beta9001",
+  "version": "3.0.0-beta9002",
   "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
   "main": "index.js",
   "bin": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/goqoo-on-kintone/ginue#readme",
   "engines": {
-    "node": ">=12.0"
+    "node": ">=14.0"
   },
   "directories": {
     "test": "test/"
@@ -50,8 +50,8 @@
     "mkdirp": "^1.0.4",
     "netrc-parser": "^3.1.6",
     "node-fetch": "^2.3.0",
-    "node-fetch-with-proxy": "^0.1.2",
     "prettier": "^2.2.1",
+    "proxy-agent": "^5.0.0",
     "querystring": "^0.2.1",
     "rc-config-loader": "^4.0.0"
   }
