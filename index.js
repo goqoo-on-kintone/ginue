@@ -22,6 +22,10 @@ const main = async () => {
           proxy: opts.proxy,
           domain: opts.domain,
           guestSpaceId: opts.guestSpaceId,
+          passwordAuth: {
+            username: opts.username,
+            password: opts.password,
+          },
           base64Account,
           base64Basic,
           apps: opts.apps,
@@ -72,6 +76,10 @@ const main = async () => {
             proxy: opts.proxy,
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
+            passwordAuth: {
+              username: opts.username,
+              password: opts.password,
+            },
             base64Account,
             base64Basic,
             appName,
@@ -105,14 +113,7 @@ const main = async () => {
         await Promise.all(requestPromises)
       }
     } catch (error) {
-      try {
-        const message = JSON.parse(error.message)
-        console.error(inspect(message, { depth: Infinity, colors: true }))
-        delete error.message
-      } catch (e) {
-      } finally {
-        console.error(error)
-      }
+      console.error(error)
     }
   })
 }
