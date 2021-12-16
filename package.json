@@ -41,6 +41,7 @@
     "power-assert": "^1.6.1"
   },
   "dependencies": {
+    "@kintone/rest-api-client": "^2.0.28",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "https": "^1.0.0",
