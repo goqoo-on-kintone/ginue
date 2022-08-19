@@ -8,6 +8,7 @@ const { ginuePull } = require('./lib/pull')
 const { ginuePush } = require('./lib/push')
 const { ginueDeploy, ginueReset } = require('./lib/deploy')
 const { ginueErd } = require('./lib/erd')
+const { ginueDiff } = require('./lib/diff')
 
 const main = async () => {
   const allOpts = await createOptionValues()
@@ -41,6 +42,11 @@ const main = async () => {
 
       if (opts.type === 'erd') {
         ginueErd(opts)
+        return
+      }
+
+      if (opts.type === 'diff') {
+        ginueDiff(opts)
         return
       }
 

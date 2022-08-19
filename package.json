@@ -50,6 +50,7 @@
     "mkdirp": "^1.0.4",
     "netrc-parser": "^3.1.6",
     "node-fetch": "^2.3.0",
+    "open": "^8.4.0",
     "prettier": "^2.2.1",
     "proxy-agent": "^5.0.0",
     "querystring": "^0.2.1",
