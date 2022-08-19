@@ -12,6 +12,12 @@ const { ginueDiff } = require('./lib/diff')
 
 const main = async () => {
   const allOpts = await createOptionValues()
+
+  if (allOpts[0].type === 'diff') {
+    ginueDiff(allOpts)
+    return
+  }
+
   // 環境単位ループ
   allOpts.forEach(async (opts) => {
     try {
@@ -42,11 +48,6 @@ const main = async () => {
 
       if (opts.type === 'erd') {
         ginueErd(opts)
-        return
-      }
-
-      if (opts.type === 'diff') {
-        ginueDiff(opts)
         return
       }
 
