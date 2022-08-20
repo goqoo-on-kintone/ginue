@@ -54,6 +54,7 @@
     "prettier": "^2.2.1",
     "proxy-agent": "^5.0.0",
     "querystring": "^0.2.1",
-    "rc-config-loader": "^4.0.0"
+    "rc-config-loader": "^4.0.0",
+    "twins-diff": "^0.1.5"
   }
 }
