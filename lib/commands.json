@@ -29,7 +29,8 @@
     "appParam": "app",
     "hasPreview": true,
     "langParam": "lang",
-    "methods": ["GET", "PUT"]
+    "methods": ["GET", "PUT"],
+    "skipOauth": true
   },
   "app/settings.json": {
     "appParam": "app",
