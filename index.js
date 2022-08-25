@@ -8,9 +8,16 @@ const { ginuePull } = require('./lib/pull')
 const { ginuePush } = require('./lib/push')
 const { ginueDeploy, ginueReset } = require('./lib/deploy')
 const { ginueErd } = require('./lib/erd')
+const { ginueDiff } = require('./lib/diff')
 
 const main = async () => {
   const allOpts = await createOptionValues()
+
+  if (allOpts[0].type === 'diff') {
+    ginueDiff(allOpts)
+    return
+  }
+
   // 環境単位ループ
   allOpts.forEach(async (opts) => {
     try {
