@@ -2,7 +2,7 @@
 'use strict'
 
 const { inspect } = require('util')
-const { createBase64Account } = require('./lib/util')
+const { fetchGyumaOauthToken, createBase64Account } = require('./lib/util')
 const { createOptionValues, loadKintoneCommands } = require('./lib/config')
 const { ginuePull } = require('./lib/pull')
 const { ginuePush } = require('./lib/push')
@@ -21,8 +21,13 @@ const main = async () => {
   // 環境単位ループ
   allOpts.forEach(async (opts) => {
     try {
-      const base64Basic = await createBase64Account(opts.basic)
-      const base64Account = await createBase64Account(opts.username, opts.password)
+      let base64Account, base64Basic, accessToken
+      if (opts.oauth) {
+        accessToken = await fetchGyumaOauthToken(opts.domain)
+      } else {
+        base64Basic = await createBase64Account(opts.basic)
+        base64Account = await createBase64Account(opts.username, opts.password)
+      }
 
       if (['reset', 'deploy'].includes(opts.type)) {
         const ktn = {
@@ -31,6 +36,7 @@ const main = async () => {
           guestSpaceId: opts.guestSpaceId,
           base64Account,
           base64Basic,
+          accessToken,
           apps: opts.apps,
           pfxFilepath: opts.pfxFilepath,
           pfxPassword: opts.pfxPassword,
@@ -51,13 +57,20 @@ const main = async () => {
         return
       }
 
-      const pushTargetKtn = opts.pushTarget && {
-        domain: opts.pushTarget.domain,
-        guestSpaceId: opts.pushTarget.guestSpaceId,
-        base64Basic: await createBase64Account(opts.pushTarget.basic),
-        base64Account: await createBase64Account(opts.pushTarget.username, opts.pushTarget.password),
-        pfxFilepath: opts.pushTarget.pfxFilepath,
-        pfxPassword: opts.pushTarget.pfxPassword,
+      let pushTargetKtn
+      if (opts.pushTarget) {
+        pushTargetKtn = {
+          domain: opts.pushTarget.domain,
+          guestSpaceId: opts.pushTarget.guestSpaceId,
+        }
+        if (opts.pushTarget.oauth) {
+          pushTargetKtn.accessToken = await fetchGyumaOauthToken(opts.pushTarget.domain)
+        } else {
+          pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic)
+          pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username, opts.pushTarget.password)
+          pushTargetKtn.pfxFilepath = opts.pushTarget.pfxFilepath
+          pushTargetKtn.pfxPassword = opts.pushTarget.pfxPassword
+        }
       }
 
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
@@ -74,6 +87,12 @@ const main = async () => {
         const requestPromises = []
         // APIコマンド単位ループ
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
+          // OAuthに対応していないコマンドはスキップ
+          if (accessToken && commProp.skipOauth) {
+            console.log(`[SKIP] ${commName} (Forbidden via OAuth)`)
+            continue
+          }
+
           const preview = Boolean(commProp.hasPreview && opts.preview)
           const ktn = {
             proxy: opts.proxy,
@@ -81,6 +100,7 @@ const main = async () => {
             guestSpaceId: opts.guestSpaceId,
             base64Account,
             base64Basic,
+            accessToken,
             appName,
             appId,
             command: commName,
