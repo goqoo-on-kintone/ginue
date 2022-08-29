@@ -150,7 +150,7 @@ export const createDirPath = (ktn: Ktn, opts: Opts) => {
   return `${createBaseDirPath(opts)}${ktn.appName}`
 }
 
-export const createFilePath = (ktn: Ktn, opts: Opts, customFileName: string) => {
+export const createFilePath = (ktn: Ktn, opts: Opts, customFileName?: string) => {
   const dirPath = createDirPath(ktn, opts)
   mkdirp.sync(dirPath)
   let fileName = customFileName || `${ktn.command?.replace(/\//g, '_')}`

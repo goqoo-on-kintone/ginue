@@ -1,12 +1,12 @@
-'use strict'
+import fs from 'fs'
+import path from 'path'
+import { createFilePath, createBaseDirPath } from './util'
+import type { Opts } from './types'
+import type { App, Properties } from '@kintone/rest-api-client/lib/client/types/app'
+import type { Lookup } from '@kintone/rest-api-client/lib/KintoneFields/types/property'
 
-const fs = require('fs')
-const path = require('path')
-
-const { createFilePath, createBaseDirPath } = require('./util')
-
-exports.ginueErd = async (opts) => {
-  const apps = Object.entries(opts.app)
+export const ginueErd = async (opts: Opts) => {
+  const apps = Object.entries(opts.app!)
   const plantumlCode = [
     `@startuml
 
@@ -15,11 +15,13 @@ hide empty members
 `,
   ]
 
-  const relationMap = {}
+  const relationMap: Record<string, { name: string; lookupFields: Lookup[] }> = {}
   apps.forEach(async ([appCode, appId]) => {
-    const app = require(path.resolve(createFilePath({ appName: appCode, command: 'app_form_fields.json' }, opts)))
-    const { name } = require(path.resolve(createFilePath({ appName: appCode, command: 'app.json' }, opts)))
-    const lookupFields = Object.values(app.properties).filter((prop) => prop.lookup)
+    const app = require(path.resolve(createFilePath({ appName: appCode, command: 'app_form_fields.json' }, opts))) as {
+      properties: Properties
+    }
+    const { name } = require(path.resolve(createFilePath({ appName: appCode, command: 'app.json' }, opts))) as App
+    const lookupFields = Object.values(app.properties).filter((prop): prop is Lookup => 'lookup' in prop)
     relationMap[appId] = { name, lookupFields }
   })
 
