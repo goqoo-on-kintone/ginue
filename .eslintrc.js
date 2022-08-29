@@ -1,6 +1,5 @@
 module.exports = {
   extends: ['standard', 'prettier'],
-  plugins: ['mocha'],
   env: {
     mocha: true,
   },
