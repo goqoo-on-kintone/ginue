@@ -112,16 +112,17 @@ export const createBase64Account = async (...account: [string, string]) => {
   return base64Account
 }
 
-export const loadRequiedFile = (configFileName: string) => {
+export const loadRequiedFile = <T>(configFileName: string): T => {
   try {
-    const config = rcFile('config', { configFileName })
+    const config = rcFile<T>('config', { configFileName })
     if (!config) {
-      return errorExit(`${configFileName}: file not found!`)
+      throw new Error(`${configFileName}: file not found!`)
     }
     const { config: obj } = config
     return obj
   } catch (e) {
-    errorExit(`Invalid ${configFileName} !`)
+    const error = e as Error
+    return errorExit(error.message)
   }
 }
 

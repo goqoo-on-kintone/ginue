@@ -6,10 +6,16 @@ import minimist from 'minimist'
 import netrc from 'netrc-parser'
 import { rcFile } from 'rc-config-loader'
 import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
-import type { Opts, Ginuerc, EnvGinuerc } from './types'
+import type { Opts, Ginuerc, Commands, TargetOpts } from './types'
 
-const loadKintoneCommands = async ({ commands, exclude }) => {
-  const kintoneCommands = commands || loadRequiedFile(path.join(__dirname, 'commands'))
+const loadKintoneCommands = async ({
+  commands,
+  exclude,
+}: {
+  commands: Commands
+  exclude: keyof Commands | (keyof Commands)[]
+}) => {
+  const kintoneCommands = commands || loadRequiedFile<Commands>(path.join(__dirname, 'commands'))
   if (exclude) {
     // TODO: -aオプションの複数指定もこの仕様に合わせた方が良いかも。。
     const excludeCommands = Array.isArray(exclude) ? exclude : [exclude]
@@ -24,21 +30,21 @@ const loadKintoneCommands = async ({ commands, exclude }) => {
   return kintoneCommands
 }
 
-const loadGinuerc = async (): Promise<EnvGinuerc[]> => {
+const loadGinuerc = async (): Promise<Opts[]> => {
   const ginuercFile = rcFile<Ginuerc>('ginue')
   if (!ginuercFile) {
     return [{}]
   }
-  const ginuerc: Ginuerc = ginuercFile.config
+  const _ginuerc: Ginuerc = ginuercFile.config
 
-  if (Array.isArray(ginuerc)) {
+  if (Array.isArray(_ginuerc)) {
     console.error(`ERROR: The top-level structure of .ginuerc must not be array. (Since v2.0)`)
     process.exit(1)
   }
 
-  const { env, ...root } = ginuerc
+  const { env, ...ginuerc } = _ginuerc
   if (!env) {
-    return [root]
+    return [ginuerc]
   }
 
   return Object.entries(env).map(([envName, envGinuerc]) => {
@@ -46,12 +52,14 @@ const loadGinuerc = async (): Promise<EnvGinuerc[]> => {
 
     // 内側のlocationはプロパティ名を変更しておく
     envGinuerc.envLocation = envGinuerc.location
-    envGinuerc.location = root.location
+    envGinuerc.location = ginuerc.location
 
     // location以外のプロパティは(外側 < 内側)の優先度で設定
-    ;['fileType', 'preview', 'alt', 'oauth', 'commands', 'downloadJs', 'proxy'].forEach((prop) => {
-      if (root[prop] && envGinuerc[prop] === undefined) {
-        envGinuerc[prop] = root[prop]
+    const props = ['fileType', 'preview', 'alt', 'oauth', 'commands', 'downloadJs', 'proxy'] as const
+    props.forEach((prop) => {
+      if (ginuerc[prop] && envGinuerc[prop] === undefined) {
+        // @ts-expect-error
+        envGinuerc[prop] = ginuerc[prop]
       }
     })
 
@@ -208,7 +216,7 @@ const parseArgumentOptions = () => {
 const pluckOpts = (firstObj: any, secondObj?: any) => {
   // TODO: previewやjsなどのboolean値はfirstObjがfalseでも必ず使われてしまうのを修正
   const obj = Object.assign({}, secondObj, firstObj)
-  const opts: Opts = {
+  const opts: TargetOpts = {
     location: obj.location,
     envLocation: obj.envLocation,
     environment: obj.environment,
@@ -297,8 +305,7 @@ const createOptionValues = async () => {
       usageExit(1, argv.type)
     }
 
-    type TargetGinuerc = EnvGinuerc & { pushTarget?: EnvGinuerc }
-    const targetGinuercElem = ginuerc.find((g): g is TargetGinuerc => g.environment === target)
+    const targetGinuercElem = ginuerc.find((g): g is TargetOpts => g.environment === target)
     if (!targetGinuercElem) {
       console.error(`ERROR: environment '${target}' not found.`)
       process.exit(1)

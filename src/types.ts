@@ -1,46 +1,45 @@
 import type https from 'https'
 
-export type Ginuerc = { env?: Record<string, EnvGinuerc> } & EnvGinuerc
-export type EnvGinuerc = Partial<{
-  environment: string
-  envLocation: string
-  location: string
-  domain: string
-  app: number[] | Record<string, number>
-  downloadJs: boolean
-  username: string
-  password: string
-  pfxFilepath: string
-  pfxPassword: string
-  proxy?: string | https.AgentOptions
-}>
+export type Ginuerc = { env?: Record<string, Opts> } & Opts
+export type TargetOpts = Opts & { pushTarget?: Opts }
 
-export type Opts = {
+export type Opts = Partial<{
   location: string
   envLocation: string
   environment: string
-  proxy: string
+
   domain: string
   username: string
+  oauth: boolean
   password: string
-  app: string
-  guestSpaceId: string
-  pushTarget: string
-  preview: string
-  acl: string
-  field_acl: string
-  exclude: string
-  fileType: string
-  appName: string
-  alt: string
-  oauth: string
-  commands: string
-  downloadJs: string
-  pfxFilepath: string
-  pfxPassword: string
-
   basic?: string
   basic_user?: string
-}
+  pfxFilepath: string
+  pfxPassword: string
+  proxy: string | https.AgentOptions
+
+  app: number[] | Record<string, number>
+  appName: string
+  guestSpaceId: string
+  fileType: 'json' | 'js'
+
+  preview: boolean
+  alt: boolean
+  acl: boolean
+  field_acl: boolean
+  downloadJs: boolean
+
+  commands: Commands
+  exclude: ExcludedCommands
+}>
 
 export type Ktn = any
+
+export type Commands = {
+  appParam: string
+  hasPreview: boolean
+  langParam?: 'lang'
+  methods: ('GET' | 'PUT')[]
+  skipOauth?: boolean
+}
+export type ExcludedCommands = keyof Commands | (keyof Commands)[]
