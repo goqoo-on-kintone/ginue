@@ -126,7 +126,7 @@ export const loadRequiedFile = <T>(configFileName: string): T => {
   }
 }
 
-const createBaseDirPath = (opts: Opts) => {
+export const createBaseDirPath = (opts: Opts) => {
   let dirPath = ''
 
   if (opts.location) {

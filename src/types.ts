@@ -1,7 +1,7 @@
-export type Ginuerc = { env?: Record<string, Opts> } & Opts
-export type TargetOpts = Opts & { pushTarget?: Opts }
+export type Ginuerc = { env?: Record<string, BaseOpts> } & BaseOpts
+export type Opts = BaseOpts & { pushTarget?: BaseOpts }
 
-export type Opts = Partial<{
+export type BaseOpts = Partial<{
   type: string // push, pullなど
 
   location: string

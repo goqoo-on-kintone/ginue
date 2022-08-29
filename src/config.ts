@@ -4,7 +4,7 @@ import minimist from 'minimist'
 import netrc from 'netrc-parser'
 import { rcFile } from 'rc-config-loader'
 import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
-import type { Opts, Ginuerc, Commands, TargetOpts, AppDic } from './types'
+import type { Opts, Ginuerc, Commands, BaseOpts, AppDic } from './types'
 
 export const loadKintoneCommands = async ({
   commands,
@@ -28,7 +28,7 @@ export const loadKintoneCommands = async ({
   return kintoneCommands
 }
 
-const loadGinuerc = async (): Promise<Opts[]> => {
+const loadGinuerc = async (): Promise<BaseOpts[]> => {
   const ginuercFile = rcFile<Ginuerc>('ginue')
   if (!ginuercFile) {
     return [{}]
@@ -83,7 +83,7 @@ const inputKintoneInfo = async (name: string, type = 'input'): Promise<string> =
   return value[name]
 }
 
-const stdInputOptions = async (opts: Opts) => {
+const stdInputOptions = async (opts: BaseOpts) => {
   const TYPE_PASSWORD = 'password'
 
   // 標準入力しないオプションを画面表示(複数環境のアカウント情報入力などで間違えないため)
@@ -215,7 +215,7 @@ const parseArgumentOptions = () => {
 const pluckOpts = (firstObj: any, secondObj?: any) => {
   // TODO: previewやjsなどのboolean値はfirstObjがfalseでも必ず使われてしまうのを修正
   const obj = Object.assign({}, secondObj, firstObj)
-  const opts: TargetOpts = {
+  const opts: Opts = {
     location: obj.location,
     envLocation: obj.envLocation,
     environment: obj.environment,
@@ -295,7 +295,7 @@ export const createOptionValues = async () => {
 
   const ginuerc = await loadGinuerc()
 
-  let opts: TargetOpts | TargetOpts[] = {}
+  let opts: Opts | Opts[] = {}
   if (argv.target) {
     const [target, pushTarget] = argv.target.split(':')
 
@@ -304,7 +304,7 @@ export const createOptionValues = async () => {
       usageExit(1, argv.type)
     }
 
-    const targetGinuercElem = ginuerc.find((g): g is TargetOpts => g.environment === target)
+    const targetGinuercElem = ginuerc.find((g): g is Opts => g.environment === target)
     if (!targetGinuercElem) {
       console.error(`ERROR: environment '${target}' not found.`)
       process.exit(1)

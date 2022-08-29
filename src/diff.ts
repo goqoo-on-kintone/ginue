@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
-const open = require('open')
-const path = require('path')
-const { createBaseDirPath } = require('./util')
-const createAbsoluteDirPath = (opts) => path.resolve(createBaseDirPath(opts))
+import open from 'open'
+import path from 'path'
+import { createBaseDirPath } from './util'
+import type { Opts } from './types'
 
-exports.ginueDiff = (allOpts) => {
+const createAbsoluteDirPath = (opts: Opts) => path.resolve(createBaseDirPath(opts))
+
+export const ginueDiff = (allOpts: Opts[]) => {
   const envs = []
   if (allOpts.length === 1) {
     const [opts] = allOpts
