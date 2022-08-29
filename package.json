@@ -3,7 +3,7 @@
   "version": "3.0.0-beta9006",
   "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
   "bin": {
-    "ginue": "./dist/index.js"
+    "ginue": "./dist/cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,6 +16,12 @@
     "url": "git+https://github.com/goqoo-on-kintone/ginue.git"
   },
   "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "tsconfig.json",
+    "README.md"
+  ],
   "bugs": {
     "url": "https://github.com/goqoo-on-kintone/ginue/issues"
   },

@@ -2,14 +2,14 @@
 'use strict'
 
 const { inspect } = require('util')
-const { createBase64Account } = require('./lib/util')
-const { createOptionValues, loadKintoneCommands } = require('./lib/config')
-const { getOauthToken } = require('./lib/oauth')
-const { ginuePull } = require('./lib/pull')
-const { ginuePush } = require('./lib/push')
-const { ginueDeploy, ginueReset } = require('./lib/deploy')
-const { ginueErd } = require('./lib/erd')
-const { ginueDiff } = require('./lib/diff')
+const { createBase64Account } = require('./util')
+const { createOptionValues, loadKintoneCommands } = require('./config')
+const { getOauthToken } = require('./oauth')
+const { ginuePull } = require('./pull')
+const { ginuePush } = require('./push')
+const { ginueDeploy, ginueReset } = require('./deploy')
+const { ginueErd } = require('./erd')
+const { ginueDiff } = require('./diff')
 
 const main = async () => {
   const allOpts = await createOptionValues()
