@@ -36,6 +36,7 @@
     "@kintone/rest-api-client": "^3.1.9",
     "@types/inquirer": "^9.0.1",
     "@types/jest": "^28.1.8",
+    "@types/lodash": "^4.14.184",
     "@types/minimist": "^1.2.2",
     "@types/mkdirp": "^1.0.2",
     "@types/node-fetch": "^2.6.2",
