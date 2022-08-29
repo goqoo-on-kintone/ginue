@@ -1,4 +1,9 @@
-module.exports = {
+// @ts-check
+
+/**
+ * @type {import('./types').Commands}
+ */
+const commands = {
   'app.json': {
     appParam: 'id',
     hasPreview: false,
@@ -62,3 +67,4 @@ module.exports = {
     methods: ['GET', 'PUT'],
   },
 }
+module.exports = commands
