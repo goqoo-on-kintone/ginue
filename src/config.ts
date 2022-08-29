@@ -91,7 +91,7 @@ const stdInputOptions = async (opts) => {
         case 'pushTarget':
           continue
       }
-      console.log(`${optName}: ${dispValue}`)
+      console.info(`${optName}: ${dispValue}`)
     }
   }
 
@@ -145,7 +145,7 @@ const stdInputOptions = async (opts) => {
     (opts.pfxFilepath && (await inputKintoneInfo('client certificate password', TYPE_PASSWORD)))
 
   opts.app = opts.app || (await inputKintoneInfo('app'))
-  console.log()
+  console.info()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
   // opts.guestSpaceId = opts.guestSpaceId || await inputKintoneInfo('guestSpaceID')
 }
