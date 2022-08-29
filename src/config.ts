@@ -6,6 +6,7 @@ import minimist from 'minimist'
 import netrc from 'netrc-parser'
 import { rcFile } from 'rc-config-loader'
 import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
+import type { Opts, Ginuerc, EnvGinuerc } from './types'
 
 const loadKintoneCommands = async ({ commands, exclude }) => {
   const kintoneCommands = commands || loadRequiedFile(path.join(__dirname, 'commands'))
@@ -23,33 +24,34 @@ const loadKintoneCommands = async ({ commands, exclude }) => {
   return kintoneCommands
 }
 
-const loadGinuerc = async () => {
-  const ginuercFile = rcFile('ginue')
+const loadGinuerc = async (): Promise<EnvGinuerc[]> => {
+  const ginuercFile = rcFile<Ginuerc>('ginue')
   if (!ginuercFile) {
     return [{}]
   }
-  const { config: ginuerc } = ginuercFile
+  const ginuerc: Ginuerc = ginuercFile.config
 
   if (Array.isArray(ginuerc)) {
     console.error(`ERROR: The top-level structure of .ginuerc must not be array. (Since v2.0)`)
     process.exit(1)
   }
 
-  if (!ginuerc.env) {
-    return [ginuerc]
+  const { env, ...root } = ginuerc
+  if (!env) {
+    return [root]
   }
 
-  return Object.entries(ginuerc.env).map(([envName, envGinuerc]) => {
+  return Object.entries(env).map(([envName, envGinuerc]) => {
     envGinuerc.environment = envName
 
     // 内側のlocationはプロパティ名を変更しておく
     envGinuerc.envLocation = envGinuerc.location
-    envGinuerc.location = ginuerc.location
+    envGinuerc.location = root.location
 
     // location以外のプロパティは(外側 < 内側)の優先度で設定
     ;['fileType', 'preview', 'alt', 'oauth', 'commands', 'downloadJs', 'proxy'].forEach((prop) => {
-      if (ginuerc[prop] && envGinuerc[prop] === undefined) {
-        envGinuerc[prop] = ginuerc[prop]
+      if (root[prop] && envGinuerc[prop] === undefined) {
+        envGinuerc[prop] = root[prop]
       }
     })
 
@@ -203,10 +205,10 @@ const parseArgumentOptions = () => {
 // TODO: minimistやめて、もっとリッチなライブラリを使う
 // 引数や設定ファイルの組み合わせからオプション値を抽出
 // firstObjを優先し、firstObjに存在しないプロパティはsecondObjを使用
-const pluckOpts = (firstObj, secondObj) => {
+const pluckOpts = (firstObj: any, secondObj?: any) => {
   // TODO: previewやjsなどのboolean値はfirstObjがfalseでも必ず使われてしまうのを修正
   const obj = Object.assign({}, secondObj, firstObj)
-  const opts = {
+  const opts: Opts = {
     location: obj.location,
     envLocation: obj.envLocation,
     environment: obj.environment,
@@ -295,7 +297,8 @@ const createOptionValues = async () => {
       usageExit(1, argv.type)
     }
 
-    const targetGinuercElem = ginuerc.find((g) => g.environment === target)
+    type TargetGinuerc = EnvGinuerc & { pushTarget?: EnvGinuerc }
+    const targetGinuercElem = ginuerc.find((g): g is TargetGinuerc => g.environment === target)
     if (!targetGinuercElem) {
       console.error(`ERROR: environment '${target}' not found.`)
       process.exit(1)
