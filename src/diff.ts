@@ -5,10 +5,10 @@ import path from 'path'
 import { createBaseDirPath } from './util'
 import type { Opts } from './types'
 
-const createAbsoluteDirPath = (opts: Opts) => path.resolve(createBaseDirPath(opts))
+const createAbsoluteDirPath = (opts: Opts): string => path.resolve(createBaseDirPath(opts))
 
 export const ginueDiff = (allOpts: Opts[]) => {
-  const envs = []
+  const envs: (string | string[])[] = []
   if (allOpts.length === 1) {
     const [opts] = allOpts
     envs.push(createAbsoluteDirPath(opts))
