@@ -1,3 +1,5 @@
+import type { KintoneRestAPIClient } from '@kintone/rest-api-client'
+
 export type Ginuerc = { env?: Record<string, BaseOpts> } & BaseOpts
 export type Opts = BaseOpts & { pushTarget?: BaseOpts }
 
@@ -65,3 +67,10 @@ type CommandProps = {
 export type Commands = Record<string, CommandProps>
 
 export type AppDic = Record<string, string | number>
+
+export type AppSettings = Awaited<ReturnType<KintoneRestAPIClient['app']['getAppSettings']>>
+export type AppCustomize = {
+  desktop: { js: any[]; css: any[] }
+  mobile: { js: any[]; css: any[] }
+  revision: string
+}

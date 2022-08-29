@@ -1,11 +1,7 @@
 // TODO: isPushはやめる
 
-import type { KintoneRestAPIClient } from '@kintone/rest-api-client'
 import type { App, Properties, ViewForResponse, ReportForResponse } from '@kintone/rest-api-client/lib/client/types/app'
-import type { Ktn, Opts } from './types'
-
-type AppSettings = Awaited<ReturnType<KintoneRestAPIClient['app']['getAppSettings']>>
-type AppCustomize = { js: any[]; css: any[] }
+import type { AppCustomize, AppSettings, Ktn, Opts } from './types'
 
 export const convertAppSettingsJson = (settings: Partial<AppSettings>, isPush?: boolean) => {
   if (isPush) {
@@ -101,7 +97,7 @@ export const convertAppIdToName = (ktn: Ktn, kintoneInfoObj: any) => {
       return true
     }
     case 'app/customize.json': {
-      const customize = kintoneInfoObj as { desktop: AppCustomize; mobile: AppCustomize }
+      const customize = kintoneInfoObj as AppCustomize
       customize.desktop.js = ['<DESKTOP_JS>']
       customize.desktop.css = ['<DESKTOP_CSS>']
       customize.mobile.js = ['<MOBILE_JS>']
