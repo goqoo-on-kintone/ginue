@@ -2,8 +2,9 @@
 'use strict'
 
 const { inspect } = require('util')
-const { fetchGyumaOauthToken, createBase64Account } = require('./lib/util')
+const { createBase64Account } = require('./lib/util')
 const { createOptionValues, loadKintoneCommands } = require('./lib/config')
+const { getOauthToken } = require('./lib/oauth')
 const { ginuePull } = require('./lib/pull')
 const { ginuePush } = require('./lib/push')
 const { ginueDeploy, ginueReset } = require('./lib/deploy')
@@ -23,7 +24,7 @@ const main = async () => {
     try {
       let base64Account, base64Basic, accessToken
       if (opts.oauth) {
-        accessToken = await fetchGyumaOauthToken(opts.domain)
+        accessToken = await getOauthToken(opts.domain)
       } else {
         base64Basic = await createBase64Account(opts.basic)
         base64Account = await createBase64Account(opts.username, opts.password)
@@ -64,7 +65,7 @@ const main = async () => {
           guestSpaceId: opts.pushTarget.guestSpaceId,
         }
         if (opts.pushTarget.oauth) {
-          pushTargetKtn.accessToken = await fetchGyumaOauthToken(opts.pushTarget.domain)
+          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain)
         } else {
           pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic)
           pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username, opts.pushTarget.password)
