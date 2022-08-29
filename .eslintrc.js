@@ -8,8 +8,9 @@ module.exports = {
     assert: true,
     ginue: true,
   },
+  parserOptions: { ecmaVersion: 2022 },
   rules: {
-    'node/no-missing-require': 'error',
+    'n/no-missing-require': 'error',
     'comma-dangle': ['error', 'only-multiline'],
     'no-debugger': 'off',
     'no-var': 'error',
