@@ -1,16 +1,16 @@
 'use strict'
 
-const fetch = require('node-fetch')
-const ProxyAgent = require('proxy-agent')
-const https = require('https')
-const fs = require('fs')
+import fetch from 'node-fetch'
+import ProxyAgent from 'proxy-agent'
+import https from 'https'
+import fs from 'fs'
 
-const createUrl = (ktn) => {
+export const createUrl = (ktn) => {
   const basePath = ktn.guestSpaceId ? `k/guest/${ktn.guestSpaceId}/v1` : 'k/v1'
   return `https://${ktn.domain}/${basePath}/${ktn.command}`
 }
 
-const createGetUrl = (ktn) => {
+export const createGetUrl = (ktn) => {
   // TODO: 保存ファイル名に影響を与えないための処理だけどイマイチ。今後直す。
   ktn = Object.assign({}, ktn)
   if (ktn.preview) {
@@ -19,7 +19,7 @@ const createGetUrl = (ktn) => {
   const baseUrl = createUrl(ktn)
   return `${baseUrl}?${ktn.appParam}=${ktn.appId}`
 }
-const createHeaders = (ktn) => {
+export const createHeaders = (ktn) => {
   let header
   if (ktn.accessToken) {
     header = {
@@ -72,7 +72,7 @@ const formatFetchError = async (response) => {
   return JSON.stringify({ status, statusText, type, url, body })
 }
 
-const fetchKintoneInfo = async (ktn) => {
+export const fetchKintoneInfo = async (ktn) => {
   const response = await fetch(createGetUrl(ktn), { headers: createHeaders(ktn), agent: createAgent(ktn) })
   if (response.ok) {
     return response.json()
@@ -81,7 +81,7 @@ const fetchKintoneInfo = async (ktn) => {
   }
 }
 
-const sendKintoneInfo = async (method, ktn, kintoneInfo) => {
+export const sendKintoneInfo = async (method, ktn, kintoneInfo) => {
   const response = await fetch(createUrl(ktn), {
     method,
     headers: { ...createHeaders(ktn), 'Content-Type': 'application/json' },
@@ -95,7 +95,7 @@ const sendKintoneInfo = async (method, ktn, kintoneInfo) => {
   }
 }
 
-const downloadFile = async (ktn, fileKey) => {
+export const downloadFile = async (ktn, fileKey) => {
   const response = await fetch(`https://${ktn.domain}/k/v1/file.json?fileKey=${fileKey}`, {
     headers: createHeaders(ktn),
     agent: createAgent(ktn),
@@ -105,13 +105,4 @@ const downloadFile = async (ktn, fileKey) => {
   } else {
     throw new Error(await formatFetchError(response))
   }
-}
-
-module.exports = {
-  createUrl,
-  createGetUrl,
-  createHeaders,
-  fetchKintoneInfo,
-  sendKintoneInfo,
-  downloadFile,
 }
