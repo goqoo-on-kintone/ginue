@@ -137,7 +137,6 @@ const main = async () => {
         const message = JSON.parse(error.message)
         console.error(inspect(message, { depth: Infinity, colors: true }))
         delete error.message
-      } catch (e) {
       } finally {
         console.error(error)
       }
