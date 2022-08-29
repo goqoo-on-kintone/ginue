@@ -1,5 +1,3 @@
-import type https from 'https'
-
 export type Ginuerc = { env?: Record<string, Opts> } & Opts
 export type TargetOpts = Opts & { pushTarget?: Opts }
 
@@ -12,11 +10,19 @@ export type Opts = Partial<{
   username: string
   oauth: boolean
   password: string
-  basic?: string
-  basic_user?: string
+  basic: string
+  basic_user: string
+  basic_password: string
   pfxFilepath: string
   pfxPassword: string
-  proxy: string | https.AgentOptions
+  proxy:
+    | string
+    | {
+        protocol: string
+        auth: string
+        hostname: string
+        port: number
+      }
 
   app: number[] | Record<string, number>
   appName: string

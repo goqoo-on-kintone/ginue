@@ -67,7 +67,7 @@ const loadGinuerc = async (): Promise<Opts[]> => {
   })
 }
 
-const inputKintoneInfo = async (name, type = 'input') => {
+const inputKintoneInfo = async (name: string, type = 'input'): Promise<string> => {
   const value = await inquirer.prompt([
     {
       name,
@@ -85,7 +85,7 @@ const inputKintoneInfo = async (name, type = 'input') => {
   return value[name]
 }
 
-const stdInputOptions = async (opts) => {
+const stdInputOptions = async (opts: Opts) => {
   const TYPE_PASSWORD = 'password'
 
   // 標準入力しないオプションを画面表示(複数環境のアカウント情報入力などで間違えないため)
@@ -154,6 +154,7 @@ const stdInputOptions = async (opts) => {
     process.env.GINUE_PFX_PASSWORD ||
     (opts.pfxFilepath && (await inputKintoneInfo('client certificate password', TYPE_PASSWORD)))
 
+  // @ts-expect-error
   opts.app = opts.app || (await inputKintoneInfo('app'))
   console.info()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
@@ -266,12 +267,12 @@ const pluckOpts = (firstObj: any, secondObj?: any) => {
   return opts
 }
 
-const createAppDic = (app) => {
+const createAppDic = (app: string | string[]) => {
   if (typeof app === 'string') {
     app = app.split(',').map((str) => str.trim())
   }
   if (Array.isArray(app)) {
-    return app.reduce((obj, id) => {
+    return app.reduce<Record<string, string>>((obj, id) => {
       obj[id.toString()] = id
       return obj
     }, {})
