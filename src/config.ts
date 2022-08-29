@@ -6,7 +6,7 @@ import minimist from 'minimist'
 import netrc from 'netrc-parser'
 import { rcFile } from 'rc-config-loader'
 import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
-import type { Opts, Ginuerc, Commands, TargetOpts } from './types'
+import type { Opts, Ginuerc, Commands, TargetOpts, AppDic } from './types'
 
 const loadKintoneCommands = async ({
   commands,
@@ -267,12 +267,12 @@ const pluckOpts = (firstObj: any, secondObj?: any) => {
   return opts
 }
 
-const createAppDic = (app: string | string[]) => {
+const createAppDic = (app: string | (string | number)[] | AppDic): AppDic => {
   if (typeof app === 'string') {
     app = app.split(',').map((str) => str.trim())
   }
   if (Array.isArray(app)) {
-    return app.reduce<Record<string, string>>((obj, id) => {
+    return app.reduce<AppDic>((obj, id) => {
       obj[id.toString()] = id
       return obj
     }, {})
@@ -297,7 +297,7 @@ const createOptionValues = async () => {
 
   const ginuerc = await loadGinuerc()
 
-  let opts
+  let opts: TargetOpts | TargetOpts[] = {}
   if (argv.target) {
     const [target, pushTarget] = argv.target.split(':')
 
@@ -352,7 +352,7 @@ const createOptionValues = async () => {
     if (opts.pushTarget) {
       await stdInputOptions(opts.pushTarget)
     }
-    opts.apps = createAppDic(opts.app)
+    opts.apps = createAppDic(opts.app!)
     opts.type = argv.type
   }
 

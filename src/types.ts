@@ -2,6 +2,8 @@ export type Ginuerc = { env?: Record<string, Opts> } & Opts
 export type TargetOpts = Opts & { pushTarget?: Opts }
 
 export type Opts = Partial<{
+  type: string // push, pullなど
+
   location: string
   envLocation: string
   environment: string
@@ -25,6 +27,7 @@ export type Opts = Partial<{
       }
 
   app: number[] | Record<string, number>
+  apps: AppDic
   appName: string
   guestSpaceId: string
   fileType: 'json' | 'js'
@@ -49,3 +52,5 @@ export type Commands = {
   skipOauth?: boolean
 }
 export type ExcludedCommands = keyof Commands | (keyof Commands)[]
+
+export type AppDic = Record<string, string | number>
