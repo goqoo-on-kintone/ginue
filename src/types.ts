@@ -52,6 +52,7 @@ export type Ktn = Pick<Opts, 'proxy' | 'domain' | 'guestSpaceId' | 'apps' | 'pfx
     command: keyof Commands
     appParam: CommandProps['appParam']
     methods: CommandProps['methods']
+    lang: 'ja' | 'en' | 'zh' // デバッグ用
   }>
 
 type CommandProps = {
