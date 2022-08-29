@@ -1,5 +1,3 @@
-'use strict'
-
 import path from 'path'
 import inquirer from 'inquirer'
 import minimist from 'minimist'
@@ -8,7 +6,7 @@ import { rcFile } from 'rc-config-loader'
 import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
 import type { Opts, Ginuerc, Commands, TargetOpts, AppDic } from './types'
 
-const loadKintoneCommands = async ({
+export const loadKintoneCommands = async ({
   commands,
   exclude,
 }: {
@@ -280,7 +278,7 @@ const createAppDic = (app: string | (string | number)[] | AppDic): AppDic => {
   return app
 }
 
-const createOptionValues = async () => {
+export const createOptionValues = async () => {
   const argv = parseArgumentOptions()
 
   if (argv.version) {
@@ -371,5 +369,3 @@ const createOptionValues = async () => {
 
   return allOpts
 }
-
-module.exports = { createOptionValues, loadKintoneCommands }
