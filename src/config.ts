@@ -1,11 +1,11 @@
 'use strict'
 
-const path = require('path')
-const inquirer = require('inquirer')
-const minimist = require('minimist')
-const { default: netrc } = require('netrc-parser')
-const { rcFile } = require('rc-config-loader')
-const { pretty, showVersion, usageExit, loadRequiedFile } = require('./util')
+import path from 'path'
+import inquirer from 'inquirer'
+import minimist from 'minimist'
+import netrc from 'netrc-parser'
+import { rcFile } from 'rc-config-loader'
+import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
 
 const loadKintoneCommands = async ({ commands, exclude }) => {
   const kintoneCommands = commands || loadRequiedFile(path.join(__dirname, 'commands'))
