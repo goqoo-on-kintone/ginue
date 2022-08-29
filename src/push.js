@@ -55,7 +55,7 @@ const addField = async (message, ktn, kintoneInfo) => {
     properties: { [keyFieldCode]: property },
   }
   // TODO: ここでメッセージ出力はあんまり良くないので奇麗にしたい
-  await sendKintoneInfo('POST', ktn, postingInfo).catch((e) => console.log(e.message))
+  await sendKintoneInfo('POST', ktn, postingInfo).catch((e) => console.info(e.message))
 }
 
 const deleteFields = async (ktn, kintoneInfo, fields) => {
@@ -68,7 +68,7 @@ const deleteFields = async (ktn, kintoneInfo, fields) => {
     fields,
   }
   // TODO: ここでメッセージ出力はあんまり良くないので奇麗にしたい
-  await sendKintoneInfo('DELETE', deletingKtn, deletingInfo).catch((e) => console.log(e.message))
+  await sendKintoneInfo('DELETE', deletingKtn, deletingInfo).catch((e) => console.info(e.message))
 }
 
 const confirmDeleteFieldsInRoot = async (message, ktn) => {
@@ -169,7 +169,7 @@ const execPush = async (ktn, kintoneInfo) => {
       await isSkipRequest('app/views.json', 'Permission denied.').catch(() => {
         throw e
       })
-      console.log(`[SKIP] app/views.json`)
+      console.info(`[SKIP] app/views.json`)
     } else {
       throw e
     }
@@ -187,7 +187,7 @@ exports.ginuePush = async (ktn, opts, pushTarget) => {
   ) {
     return
   }
-  console.log(ktn.command)
+  console.info(ktn.command)
   const filePath = createFilePath(ktn, opts)
   const kintoneInfo = loadRequiedFile(filePath)
   ktn.command = `preview/${ktn.command}`

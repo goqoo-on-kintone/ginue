@@ -82,7 +82,7 @@ const main = async () => {
         }
         const environment = opts.pushTarget ? opts.pushTarget.environment : opts.environment
         const target = `----------${environment}/${appName}----------`
-        console.log(target)
+        console.info(target)
 
         const kintoneCommands = await loadKintoneCommands({ commands: opts.commands, exclude: opts.exclude })
         const requestPromises = []
@@ -90,7 +90,7 @@ const main = async () => {
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
           // OAuthに対応していないコマンドはスキップ
           if (accessToken && commProp.skipOauth) {
-            console.log(`[SKIP] ${commName} (Forbidden via OAuth)`)
+            console.info(`[SKIP] ${commName} (Forbidden via OAuth)`)
             continue
           }
 
@@ -116,11 +116,11 @@ const main = async () => {
               break
             case 'push':
               if (commName.includes('/acl.json') && !opts.acl) {
-                console.log(`[SKIP] ${commName}`)
+                console.info(`[SKIP] ${commName}`)
                 break
               }
               if (commName === 'field/acl.json' && !opts.field_acl) {
-                console.log(`[SKIP] ${commName}`)
+                console.info(`[SKIP] ${commName}`)
                 break
               }
               if (pushTargetKtn) {

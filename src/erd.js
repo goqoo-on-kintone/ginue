@@ -49,5 +49,5 @@ hide empty members
   const dirPath = createBaseDirPath(opts)
   const filePath = `${dirPath}/erd.pu`
   fs.writeFileSync(filePath, plantumlCodeStr)
-  console.log(filePath)
+  console.info(filePath)
 }

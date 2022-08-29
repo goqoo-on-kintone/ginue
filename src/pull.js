@@ -109,7 +109,7 @@ const downloadCustomizeFiles = async (kintoneInfo, ktn, opts) => {
     const jsFilePath = `${dirPath}/${target}/${name}`
     mkdirp.sync(path.dirname(jsFilePath))
     fs.writeFileSync(jsFilePath, jsFile)
-    console.log(jsFilePath)
+    console.info(jsFilePath)
   }
 }
 
@@ -120,7 +120,7 @@ exports.ginuePull = async (ktn, opts) => {
   const kintoneInfoObj = await fetchKintoneInfo(ktn, opts)
   const [kintoneInfo, kintoneRevision, kintoneInfoAlt] = convertKintoneInfo(kintoneInfoObj, ktn, opts)
   const filePath = createFilePath(ktn, opts)
-  console.log(filePath)
+  console.info(filePath)
   saveKintoneInfo(filePath, kintoneInfo)
   if (kintoneRevision) {
     // TODO: 無駄に何回も上書保存するので、フラグを持たせて1回だけにしたい
@@ -129,7 +129,7 @@ exports.ginuePull = async (ktn, opts) => {
   }
   if (kintoneInfoAlt) {
     const altFilePath = filePath.replace('.js', '-alt.js') // (.json|.js) どっちにも対応するhack。。。
-    console.log(altFilePath)
+    console.info(altFilePath)
     saveKintoneInfo(altFilePath, kintoneInfoAlt)
   }
   if (ktn.command === 'app/customize.json' && opts.downloadJs) {
