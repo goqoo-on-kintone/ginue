@@ -34,9 +34,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
-    "eslint-plugin-standard": "^5.0.0",
-    "intelli-espower-loader": "^1.0.1",
-    "power-assert": "^1.6.1"
+    "eslint-plugin-standard": "^5.0.0"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
