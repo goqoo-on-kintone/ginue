@@ -12,7 +12,7 @@ export const showVersion = () => {
   process.exit(0)
 }
 
-export const usageExit = (returnCode = 0, command: string) => {
+export const usageExit = (returnCode = 0, command?: string) => {
   let message
   switch (command) {
     case 'pull':
