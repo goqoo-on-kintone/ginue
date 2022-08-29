@@ -1,15 +1,13 @@
-'use strict'
-
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 // TODO: cloneDeepだけならJSON.stringify()で十分なのでlodashやめる
-const _ = require('lodash')
-const mkdirp = require('mkdirp')
-const { prettyln, trim, createDirPath, createFilePath } = require('./util')
-const { fetchKintoneInfo, downloadFile } = require('./client')
-const { convertAppIdToName } = require('./converter')
+import { cloneDeep } from 'lodash'
+import mkdirp from 'mkdirp'
+import { prettyln, trim, createDirPath, createFilePath } from './util'
+import { fetchKintoneInfo, downloadFile } from './client'
+import { convertAppIdToName } from './converter'
 
-const prettier = require('prettier')
+import prettier from 'prettier'
 // .prettierrcがあればそれに沿ってフォーマット
 const prettierOptions = prettier.resolveConfig.sync(process.cwd()) || {}
 // parserを指定しないと警告が出るのでその対策
@@ -30,12 +28,12 @@ const cloneSort = (ktn, kintoneInfoObj) => {
       const keys = Object.keys(kintoneInfoObj.properties)
       keys.sort()
       const properties = keys.reduce((obj, key) => {
-        const property = _.cloneDeep(kintoneInfoObj.properties[key])
+        const property = cloneDeep(kintoneInfoObj.properties[key])
         if (property.lookup) {
           property.lookup.fieldMappings.sort((i, j) => compare(i.field, j.field))
         }
         if (property.type === 'DROP_DOWN') {
-          const options = Object.entries(_.cloneDeep(property.options))
+          const options = Object.entries(cloneDeep(property.options))
           options.sort(([, i], [, j]) => compare(Number(i.index), Number(j.index)))
           property.options = Object.fromEntries(options)
         }
@@ -45,7 +43,7 @@ const cloneSort = (ktn, kintoneInfoObj) => {
       return { properties }
     }
     case 'app/views.json': {
-      const viewEntries = Object.entries(_.cloneDeep(kintoneInfoObj.views))
+      const viewEntries = Object.entries(cloneDeep(kintoneInfoObj.views))
       const indexes = Object.values(kintoneInfoObj.views).map((v) => v.index)
       indexes.sort((i, j) => compare(Number(i), Number(j)))
       const views = indexes.reduce((obj, index) => {
@@ -56,7 +54,7 @@ const cloneSort = (ktn, kintoneInfoObj) => {
       return { views }
     }
     case 'field/acl.json': {
-      const rights = _.cloneDeep(kintoneInfoObj.rights)
+      const rights = cloneDeep(kintoneInfoObj.rights)
       rights.sort((i, j) => compare(i.code, j.code))
       return { rights }
     }
@@ -113,7 +111,7 @@ const downloadCustomizeFiles = async (kintoneInfo, ktn, opts) => {
   }
 }
 
-exports.ginuePull = async (ktn, opts) => {
+export const ginuePull = async (ktn, opts) => {
   if (!ktn.methods.includes('GET')) {
     return
   }
