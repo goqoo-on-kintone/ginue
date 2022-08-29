@@ -46,7 +46,7 @@ const loadGinuerc = async () => {
     envGinuerc.envLocation = envGinuerc.location
     envGinuerc.location = ginuerc.location
 
-    // location以外のプロパティは(外側 < 内側)の優先度で設定
+    // location以外のプロパティは(外側 < 内側)の優先度で設定
     ;['fileType', 'preview', 'alt', 'oauth', 'commands', 'downloadJs', 'proxy'].forEach((prop) => {
       if (ginuerc[prop] && envGinuerc[prop] === undefined) {
         envGinuerc[prop] = ginuerc[prop]
