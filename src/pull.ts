@@ -6,6 +6,7 @@ import mkdirp from 'mkdirp'
 import { prettyln, trim, createDirPath, createFilePath } from './util'
 import { fetchKintoneInfo, downloadFile } from './client'
 import { convertAppIdToName } from './converter'
+import { Opts, Ktn } from './types'
 
 import prettier from 'prettier'
 // .prettierrcがあればそれに沿ってフォーマット
@@ -13,7 +14,7 @@ const prettierOptions = prettier.resolveConfig.sync(process.cwd()) || {}
 // parserを指定しないと警告が出るのでその対策
 prettierOptions.parser = prettierOptions.parser || 'babel'
 
-const compare = (i, j) => {
+const compare = (i: number, j: number) => {
   if (i < j) {
     return -1
   } else if (i > j) {
@@ -22,7 +23,7 @@ const compare = (i, j) => {
   return 0
 }
 
-const cloneSort = (ktn, kintoneInfoObj) => {
+const cloneSort = (ktn: Ktn, kintoneInfoObj) => {
   switch (ktn.command) {
     case 'app/form/fields.json': {
       const keys = Object.keys(kintoneInfoObj.properties)
@@ -62,7 +63,7 @@ const cloneSort = (ktn, kintoneInfoObj) => {
   return kintoneInfoObj
 }
 
-const convertKintoneInfo = (kintoneInfoObj, ktn, opts) => {
+const convertKintoneInfo = (kintoneInfoObj, ktn: Ktn, opts: Opts) => {
   let kintoneRevision
   if (kintoneInfoObj.revision) {
     kintoneRevision = prettyln({ revision: kintoneInfoObj.revision })
@@ -79,7 +80,7 @@ const convertKintoneInfo = (kintoneInfoObj, ktn, opts) => {
   return [kintoneInfo, kintoneRevision, kintoneInfoAlt]
 }
 
-const saveKintoneInfo = async (filePath, kintoneInfo) => {
+const saveKintoneInfo = async (filePath: string, kintoneInfo) => {
   const extension = path.extname(filePath)
   if (extension === '.js') {
     kintoneInfo = prettier.format(
@@ -93,7 +94,7 @@ module.exports = ${kintoneInfo}
   fs.writeFileSync(filePath, kintoneInfo)
 }
 
-const downloadCustomizeFiles = async (kintoneInfo, ktn, opts) => {
+const downloadCustomizeFiles = async (kintoneInfo, ktn: Ktn, opts: Opts) => {
   const customizeInfo = JSON.parse(kintoneInfo)
   const fileInfos = ['desktop', 'mobile'].flatMap((target) =>
     [customizeInfo[target].js, customizeInfo[target].css].flatMap((infos) =>
@@ -111,11 +112,11 @@ const downloadCustomizeFiles = async (kintoneInfo, ktn, opts) => {
   }
 }
 
-export const ginuePull = async (ktn, opts) => {
+export const ginuePull = async (ktn: Ktn, opts: Opts) => {
   if (!ktn.methods.includes('GET')) {
     return
   }
-  const kintoneInfoObj = await fetchKintoneInfo(ktn, opts)
+  const kintoneInfoObj = await fetchKintoneInfo(ktn)
   const [kintoneInfo, kintoneRevision, kintoneInfoAlt] = convertKintoneInfo(kintoneInfoObj, ktn, opts)
   const filePath = createFilePath(ktn, opts)
   console.info(filePath)
