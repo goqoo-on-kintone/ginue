@@ -1,14 +1,10 @@
-'use strict'
+import type { Opts, Ktn } from './types'
+import mkdirp from 'mkdirp'
+import { rcFile } from 'rc-config-loader'
 
-const mkdirp = require('mkdirp')
-const { rcFile } = require('rc-config-loader')
-
-// @ts-expect-error
-export const pretty = (obj) => JSON.stringify(obj, null, '  ')
-// @ts-expect-error
-export const prettyln = (obj) => pretty(obj) + '\n'
-// @ts-expect-error
-export const trim = (str) => str.replace(/^\n|\n$/g, '')
+export const pretty = (obj: any) => JSON.stringify(obj, null, '  ')
+export const prettyln = (obj: any) => pretty(obj) + '\n'
+export const trim = (str: string) => str.replace(/^\n|\n$/g, '')
 
 export const showVersion = () => {
   const { version } = require('../package.json')
@@ -16,8 +12,7 @@ export const showVersion = () => {
   process.exit(0)
 }
 
-// @ts-expect-error
-export const usageExit = (returnCode = 0, command) => {
+export const usageExit = (returnCode = 0, command: string) => {
   let message
   switch (command) {
     case 'pull':
@@ -103,8 +98,7 @@ usage: ginue [-v, --version] [-h, --help]
 }
 
 // TODO: 全エラーメッセージをこの関数に統一
-// @ts-expect-error
-export const errorExit = (message, returnCode = 1) => {
+export const errorExit = (message: string, returnCode = 1) => {
   console.error(`ERROR: ${message}`)
   process.exit(returnCode)
 }
@@ -113,24 +107,25 @@ export const errorExit = (message, returnCode = 1) => {
 // 呼び出し方は2通り
 // 引数1つ：(ユーザー名:パスワード)コロン区切り文字列
 // 引数2つ：(ユーザー名, パスワード)それぞれの文字列
-// @ts-expect-error
-export const createBase64Account = async (...account) => {
+export const createBase64Account = async (...account: [string, string]) => {
   const base64Account = Buffer.from(account.join(':')).toString('base64')
   return base64Account
 }
 
-// @ts-expect-error
-export const loadRequiedFile = (configFileName) => {
+export const loadRequiedFile = (configFileName: string) => {
   try {
-    const { config: obj } = rcFile('config', { configFileName })
+    const config = rcFile('config', { configFileName })
+    if (!config) {
+      return errorExit(`${configFileName}: file not found!`)
+    }
+    const { config: obj } = config
     return obj
   } catch (e) {
     errorExit(`Invalid ${configFileName} !`)
   }
 }
 
-// @ts-expect-error
-const createBaseDirPath = (opts) => {
+const createBaseDirPath = (opts: Opts) => {
   let dirPath = ''
 
   if (opts.location) {
@@ -150,13 +145,11 @@ const createBaseDirPath = (opts) => {
   return dirPath
 }
 
-// @ts-expect-error
-export const createDirPath = (ktn, opts) => {
+export const createDirPath = (ktn: Ktn, opts: Opts) => {
   return `${createBaseDirPath(opts)}${ktn.appName}`
 }
 
-// @ts-expect-error
-export const createFilePath = (ktn, opts, customFileName) => {
+export const createFilePath = (ktn: Ktn, opts: Opts, customFileName: string) => {
   const dirPath = createDirPath(ktn, opts)
   mkdirp.sync(dirPath)
   let fileName = customFileName || `${ktn.command.replace(/\//g, '_')}`
