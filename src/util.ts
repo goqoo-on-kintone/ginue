@@ -3,17 +3,21 @@
 const mkdirp = require('mkdirp')
 const { rcFile } = require('rc-config-loader')
 
-const pretty = (obj) => JSON.stringify(obj, null, '  ')
-const prettyln = (obj) => pretty(obj) + '\n'
-const trim = (str) => str.replace(/^\n|\n$/g, '')
+// @ts-expect-error
+export const pretty = (obj) => JSON.stringify(obj, null, '  ')
+// @ts-expect-error
+export const prettyln = (obj) => pretty(obj) + '\n'
+// @ts-expect-error
+export const trim = (str) => str.replace(/^\n|\n$/g, '')
 
-const showVersion = () => {
+export const showVersion = () => {
   const { version } = require('../package.json')
   console.error(`Ginue ${version}`)
   process.exit(0)
 }
 
-const usageExit = (returnCode = 0, command) => {
+// @ts-expect-error
+export const usageExit = (returnCode = 0, command) => {
   let message
   switch (command) {
     case 'pull':
@@ -99,7 +103,8 @@ usage: ginue [-v, --version] [-h, --help]
 }
 
 // TODO: 全エラーメッセージをこの関数に統一
-const errorExit = (message, returnCode = 1) => {
+// @ts-expect-error
+export const errorExit = (message, returnCode = 1) => {
   console.error(`ERROR: ${message}`)
   process.exit(returnCode)
 }
@@ -108,12 +113,14 @@ const errorExit = (message, returnCode = 1) => {
 // 呼び出し方は2通り
 // 引数1つ：(ユーザー名:パスワード)コロン区切り文字列
 // 引数2つ：(ユーザー名, パスワード)それぞれの文字列
-const createBase64Account = async (...account) => {
+// @ts-expect-error
+export const createBase64Account = async (...account) => {
   const base64Account = Buffer.from(account.join(':')).toString('base64')
   return base64Account
 }
 
-const loadRequiedFile = (configFileName) => {
+// @ts-expect-error
+export const loadRequiedFile = (configFileName) => {
   try {
     const { config: obj } = rcFile('config', { configFileName })
     return obj
@@ -122,6 +129,7 @@ const loadRequiedFile = (configFileName) => {
   }
 }
 
+// @ts-expect-error
 const createBaseDirPath = (opts) => {
   let dirPath = ''
 
@@ -142,11 +150,13 @@ const createBaseDirPath = (opts) => {
   return dirPath
 }
 
-const createDirPath = (ktn, opts) => {
+// @ts-expect-error
+export const createDirPath = (ktn, opts) => {
   return `${createBaseDirPath(opts)}${ktn.appName}`
 }
 
-const createFilePath = (ktn, opts, customFileName) => {
+// @ts-expect-error
+export const createFilePath = (ktn, opts, customFileName) => {
   const dirPath = createDirPath(ktn, opts)
   mkdirp.sync(dirPath)
   let fileName = customFileName || `${ktn.command.replace(/\//g, '_')}`
@@ -154,18 +164,4 @@ const createFilePath = (ktn, opts, customFileName) => {
     fileName = fileName.replace(/\.json$/, '.js')
   }
   return `${dirPath}/${fileName}`
-}
-
-module.exports = {
-  pretty,
-  prettyln,
-  trim,
-  showVersion,
-  usageExit,
-  errorExit,
-  createBase64Account,
-  loadRequiedFile,
-  createBaseDirPath,
-  createDirPath,
-  createFilePath,
 }
