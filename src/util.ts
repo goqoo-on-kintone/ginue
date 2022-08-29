@@ -153,7 +153,7 @@ export const createDirPath = (ktn: Ktn, opts: Opts) => {
 export const createFilePath = (ktn: Ktn, opts: Opts, customFileName: string) => {
   const dirPath = createDirPath(ktn, opts)
   mkdirp.sync(dirPath)
-  let fileName = customFileName || `${ktn.command.replace(/\//g, '_')}`
+  let fileName = customFileName || `${ktn.command?.replace(/\//g, '_')}`
   if (opts.fileType === 'js') {
     fileName = fileName.replace(/\.json$/, '.js')
   }

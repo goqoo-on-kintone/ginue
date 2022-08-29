@@ -39,18 +39,28 @@ export type BaseOpts = Partial<{
   downloadJs: boolean
 
   commands: Commands
-  exclude: ExcludedCommands
+  exclude: keyof Commands | (keyof Commands)[]
 }>
 
-export type Ktn = any
+export type Ktn = Pick<Opts, 'proxy' | 'domain' | 'guestSpaceId' | 'apps' | 'pfxFilepath' | 'pfxPassword' | 'preview'> &
+  Partial<{
+    base64Account: string
+    base64Basic: string
+    accessToken: string
+    appName: string
+    appId: string
+    command: keyof Commands
+    appParam: CommandProps['appParam']
+    methods: CommandProps['methods']
+  }>
 
-export type Commands = {
+type CommandProps = {
   appParam: string
   hasPreview: boolean
   langParam?: 'lang'
   methods: ('GET' | 'PUT')[]
   skipOauth?: boolean
 }
-export type ExcludedCommands = keyof Commands | (keyof Commands)[]
+export type Commands = Record<string, CommandProps>
 
 export type AppDic = Record<string, string | number>
