@@ -18,8 +18,7 @@ export const convertAppSettingsJson = (settings: Partial<AppSettings>, isPush?: 
     if (isPush) {
       delete settings.icon
     } else {
-      // @ts-expect-error
-      settings.icon.file.fileKey = ['<FILE_KEY>']
+      settings.icon.file.fileKey = '<FILE_KEY>'
     }
   }
 }
