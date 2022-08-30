@@ -1,9 +1,7 @@
-'use strict'
-
-const inquirer = require('inquirer')
-const { loadRequiedFile, createFilePath } = require('./util')
-const { sendKintoneInfo, fetchKintoneInfo } = require('./client')
-const { convertAppSettingsJson, convertAppFormFieldsJson } = require('./converter')
+import inquirer from 'inquirer'
+import { loadRequiedFile, createFilePath } from './util'
+import { sendKintoneInfo, fetchKintoneInfo } from './client'
+import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
 
 const pluckFieldCodeFromMessage = (message, regexps) => {
   const found = regexps.map((regexp) => message.match(regexp)).find((found) => Array.isArray(found))
@@ -176,7 +174,7 @@ const execPush = async (ktn, kintoneInfo) => {
   }
 }
 
-exports.ginuePush = async (ktn, opts, pushTarget) => {
+export const ginuePush = async (ktn, opts, pushTarget) => {
   if (!ktn.methods.includes('PUT')) {
     return
   }
