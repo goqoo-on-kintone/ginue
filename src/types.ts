@@ -19,14 +19,7 @@ export type BaseOpts = Partial<{
   basic_password: string
   pfxFilepath: string
   pfxPassword: string
-  proxy:
-    | string
-    | {
-        protocol: string
-        auth: string
-        hostname: string
-        port: number
-      }
+  proxy: ProxyOption
 
   app: number[] | Record<string, number>
   apps: AppDic
@@ -56,6 +49,15 @@ export type Ktn = Pick<Opts, 'proxy' | 'domain' | 'guestSpaceId' | 'apps' | 'pfx
     methods: CommandProps['methods']
     lang: 'ja' | 'en' | 'zh' // デバッグ用
   }>
+
+export type ProxyOption =
+  | string
+  | {
+      protocol: string
+      auth: string
+      hostname: string
+      port: number
+    }
 
 type CommandProps = {
   appParam: string
