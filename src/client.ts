@@ -2,7 +2,8 @@ import fetch, { Response } from 'node-fetch'
 import { createAgent as _createAgent } from './agent'
 import type { Ktn } from './types'
 
-const createAgent = (ktn: Ktn) => _createAgent(ktn.proxy, ktn.pfxFilepath, ktn.pfxPassword)
+const createAgent = (ktn: Ktn) =>
+  _createAgent({ proxy: ktn.proxy, pfx: { filepath: ktn.pfxFilepath!, password: ktn.pfxPassword! } })
 
 export const createUrl = (ktn: Ktn) => {
   const basePath = ktn.guestSpaceId ? `k/guest/${ktn.guestSpaceId}/v1` : 'k/v1'

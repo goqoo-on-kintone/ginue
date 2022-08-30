@@ -58,6 +58,8 @@ export type ProxyOption =
       hostname: string
       port: number
     }
+export type PfxOption = { filepath: string; password: string }
+export type AgentOptions = { proxy?: ProxyOption; pfx?: PfxOption }
 
 type CommandProps = {
   appParam: string

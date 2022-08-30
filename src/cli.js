@@ -22,9 +22,13 @@ const main = async () => {
   // 環境単位ループ
   allOpts.forEach(async (opts) => {
     try {
+      const agentOptions = {
+        proxy: opts.proxy,
+        pfx: { filepath: opts.pfxFilepath, password: opts.pfxPassword },
+      }
       let base64Account, base64Basic, accessToken
       if (opts.oauth) {
-        accessToken = await getOauthToken(opts.domain)
+        accessToken = await getOauthToken(opts.domain, agentOptions)
       } else {
         base64Basic = await createBase64Account(opts.basic)
         base64Account = await createBase64Account(opts.username, opts.password)
@@ -65,7 +69,7 @@ const main = async () => {
           guestSpaceId: opts.pushTarget.guestSpaceId,
         }
         if (opts.pushTarget.oauth) {
-          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain)
+          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain, agentOptions)
         } else {
           pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic)
           pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username, opts.pushTarget.password)
