@@ -39,11 +39,11 @@ const pluckPushTargetAppId = (pushBaseAppId: string | number, opts?: Opts) => {
 export const convertAppFormFieldsJson = (properties: Properties, opts?: Opts) => {
   const isPush = Boolean(opts)
   for (const prop of Object.values(properties)) {
-    if ('lookup' in prop) {
+    if ('lookup' in prop && prop.lookup) {
       const relatedApp = prop.lookup.relatedApp
       relatedApp.app = isPush ? pluckPushTargetAppId(relatedApp.app, opts) : '<APP_ID>'
     }
-    if ('referenceTable' in prop) {
+    if ('referenceTable' in prop && prop.referenceTable) {
       const relatedApp = prop.referenceTable.relatedApp
       relatedApp.app = isPush ? pluckPushTargetAppId(relatedApp.app, opts) : '<APP_ID>'
     }
