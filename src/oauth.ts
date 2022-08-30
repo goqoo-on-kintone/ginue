@@ -1,4 +1,3 @@
-// @ts-expect-error
 import gyuma from 'gyuma'
 
 export const getOauthToken = async (domain: string) => {
