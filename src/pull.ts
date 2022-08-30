@@ -7,7 +7,7 @@ import prettier from 'prettier'
 import { prettyln, trim, createDirPath, createFilePath } from './util'
 import { fetchKintoneInfo, downloadFile } from './client'
 import { convertAppIdToName } from './converter'
-import type { ViewForResponse, AppRightEntityForResponse } from '@kintone/rest-api-client/lib/client/types/app'
+import type { ViewForResponse, FieldRightForResponse } from '@kintone/rest-api-client/lib/client/types/app'
 import type { OneOf } from '@kintone/rest-api-client/lib/KintoneFields/types/property'
 import type { AppCustomize, Opts, Ktn } from './types'
 
@@ -58,8 +58,8 @@ const cloneSort = (ktn: Ktn, kintoneInfoObj: any) => {
       return { views }
     }
     case 'field/acl.json': {
-      const rights = cloneDeep(kintoneInfoObj.rights as AppRightEntityForResponse[])
-      rights.sort((i, j) => compare(i.entity.code!, j.entity.code!))
+      const rights = cloneDeep(kintoneInfoObj.rights as FieldRightForResponse[])
+      rights.sort((i, j) => compare(i.code, j.code))
       return { rights }
     }
   }
