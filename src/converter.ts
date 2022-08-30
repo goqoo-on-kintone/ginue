@@ -47,7 +47,7 @@ export const convertAppFormFieldsJson = (properties: Properties, opts?: Opts) =>
       const relatedApp = prop.referenceTable.relatedApp
       relatedApp.app = isPush ? pluckPushTargetAppId(relatedApp.app, opts) : '<APP_ID>'
     }
-    if ('fields' in prop) {
+    if ('fields' in prop && prop.fields) {
       convertAppFormFieldsJson(prop.fields, opts)
     }
   }

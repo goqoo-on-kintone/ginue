@@ -32,7 +32,7 @@ const cloneSort = (ktn: Ktn, kintoneInfoObj: any) => {
       keys.sort()
       const properties = keys.reduce<Record<string, OneOf>>((obj, key) => {
         const property = cloneDeep(kintoneInfoObj.properties[key]) as OneOf
-        if ('lookup' in property) {
+        if ('lookup' in property && property.lookup) {
           property.lookup.fieldMappings.sort((i, j) => compare(i.field, j.field))
         }
         if (property.type === 'DROP_DOWN') {

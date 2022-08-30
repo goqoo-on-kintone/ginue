@@ -21,7 +21,9 @@ hide empty members
       properties: Properties
     }
     const { name } = require(path.resolve(createFilePath({ appName: appCode, command: 'app.json' }, opts))) as App
-    const lookupFields = Object.values(app.properties).filter((prop): prop is Lookup => 'lookup' in prop)
+    const lookupFields = Object.values(app.properties).filter((prop): prop is Lookup =>
+      Boolean('lookup' in prop && prop.lookup)
+    )
     relationMap[appId] = { name, lookupFields }
   })
 
