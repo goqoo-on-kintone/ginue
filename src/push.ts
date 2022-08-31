@@ -2,13 +2,14 @@ import inquirer from 'inquirer'
 import { loadRequiedFile, createFilePath } from './util'
 import { sendKintoneInfo, fetchKintoneInfo } from './client'
 import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
+import type { Ktn, Opts } from './types'
 
-const pluckFieldCodeFromMessage = (message, regexps) => {
+const pluckFieldCodeFromMessage = (message: string, regexps: RegExp[]) => {
   const found = regexps.map((regexp) => message.match(regexp)).find((found) => Array.isArray(found))
   return found && found[1]
 }
 
-const addField = async (message, ktn, kintoneInfo) => {
+const addField = async (message: string, ktn: Ktn, kintoneInfo) => {
   const fieldCode = pluckFieldCodeFromMessage(message, [
     /指定されたフィールド（code: (.+)）が見つかりません/,
     /The field \(code: (.+)\) not found/,
@@ -56,7 +57,7 @@ const addField = async (message, ktn, kintoneInfo) => {
   await sendKintoneInfo('POST', ktn, postingInfo).catch((e) => console.info(e.message))
 }
 
-const deleteFields = async (ktn, kintoneInfo, fields) => {
+const deleteFields = async (ktn: Ktn, kintoneInfo, fields) => {
   const deletingKtn = {
     ...ktn,
     command: 'preview/app/form/fields.json',
@@ -69,7 +70,7 @@ const deleteFields = async (ktn, kintoneInfo, fields) => {
   await sendKintoneInfo('DELETE', deletingKtn, deletingInfo).catch((e) => console.info(e.message))
 }
 
-const confirmDeleteFieldsInRoot = async (message, ktn) => {
+const confirmDeleteFieldsInRoot = async (message: string, ktn: Ktn): Promise<string[]> => {
   const fieldCodes = pluckFieldCodeFromMessage(message, [
     /フォームの更新に失敗しました。一部のフィールド（code: (.+)）のレイアウトを指定していません/,
     /Failed to update form\. Field \(code: (.+)\) is missing in the layout parameter/,
@@ -93,7 +94,7 @@ const confirmDeleteFieldsInRoot = async (message, ktn) => {
   return fields
 }
 
-const confirmDeleteFieldsInSubtable = async (message, ktn, kintoneInfo) => {
+const confirmDeleteFieldsInSubtable = async (message: string, ktn: Ktn, kintoneInfo): Promise<string[] | undefined> => {
   const subtableField = pluckFieldCodeFromMessage(message, [
     /フォームの更新に失敗しました。テーブル「(.+)」の指定が正しくありません。指定するフィールドに不足がある、またはテーブルにないフィールドを指定しています/,
     /The format of table (.+) is not valid. Some fields may be missing or the specified fields may not exist in the table/,
@@ -124,7 +125,7 @@ const confirmDeleteFieldsInSubtable = async (message, ktn, kintoneInfo) => {
   return fields
 }
 
-const isSkipRequest = async (command, message) => {
+const isSkipRequest = async (command: string, message: string) => {
   const { isConfirmed } = await inquirer.prompt([
     {
       name: 'isConfirmed',
@@ -137,21 +138,23 @@ const isSkipRequest = async (command, message) => {
   }
 }
 
-const execPush = async (ktn, kintoneInfo) => {
+const execPush = async (ktn: Ktn, kintoneInfo) => {
   try {
     await sendKintoneInfo('PUT', ktn, kintoneInfo)
   } catch (e) {
-    const { code, message, errors } = JSON.parse(e.message).body
+    const { code, message, errors } = JSON.parse((e as Error).message).body
     if (ktn.command === 'preview/app/form/fields.json' && code === 'GAIA_FC01') {
       await addField(message, ktn, kintoneInfo).catch(() => {
         throw e
       })
       await execPush(ktn, kintoneInfo)
     } else if (ktn.command === 'preview/app/form/layout.json') {
-      const confirmDeleteFields = {
+      type FunctionMap = Record<string, () => Promise<string[] | undefined>>
+      const functionMap: FunctionMap = {
         GAIA_FN11: () => confirmDeleteFieldsInRoot(message, ktn),
         CB_VA01: () => confirmDeleteFieldsInSubtable(JSON.stringify(errors), ktn, kintoneInfo),
-      }[code]
+      }
+      const confirmDeleteFields = functionMap[code]
       if (!confirmDeleteFields) throw e
 
       const fields = await confirmDeleteFields()
@@ -174,7 +177,7 @@ const execPush = async (ktn, kintoneInfo) => {
   }
 }
 
-export const ginuePush = async (ktn, opts, pushTarget) => {
+export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget) => {
   if (!ktn.methods.includes('PUT')) {
     return
   }
