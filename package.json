@@ -1,10 +1,9 @@
 {
   "name": "ginue",
-  "version": "3.0.0-beta9006",
+  "version": "3.0.0-beta9010",
   "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
-  "main": "index.js",
   "bin": {
-    "ginue": "./index.js"
+    "ginue": "./dist/cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,6 +16,12 @@
     "url": "git+https://github.com/goqoo-on-kintone/ginue.git"
   },
   "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "tsconfig.json",
+    "README.md"
+  ],
   "bugs": {
     "url": "https://github.com/goqoo-on-kintone/ginue/issues"
   },
@@ -28,20 +33,27 @@
     "test": "test/"
   },
   "devDependencies": {
+    "@kintone/rest-api-client": "^3.1.9",
+    "@types/inquirer": "^9.0.1",
+    "@types/jest": "^28.1.8",
+    "@types/lodash": "^4.14.184",
+    "@types/minimist": "^1.2.2",
+    "@types/mkdirp": "^1.0.2",
+    "@types/node-fetch": "^2.6.2",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.0.1",
-    "eslint-plugin-n": "^15.2.5",
-    "eslint-plugin-promise": "^6.0.1",
-    "eslint-plugin-standard": "^5.0.0",
-    "jest": "^29.0.1"
+    "jest": "^29.0.1",
+    "ts-jest": "^28.0.8",
+    "ts-node": "^10.9.1",
+    "typescript": "4.7"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "gyuma": "^0.4.1",
+    "gyuma": "^0.5.0",
     "https": "^1.0.0",
     "inquirer": "^8.0.0",
     "lodash": "^4.17.21",

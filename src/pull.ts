@@ -1,21 +1,22 @@
-'use strict'
-
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 // TODO: cloneDeepだけならJSON.stringify()で十分なのでlodashやめる
-const _ = require('lodash')
-const mkdirp = require('mkdirp')
-const { prettyln, trim, createDirPath, createFilePath } = require('./util')
-const { fetchKintoneInfo, downloadFile } = require('./client')
-const { convertAppIdToName } = require('./converter')
+import { cloneDeep } from 'lodash'
+import mkdirp from 'mkdirp'
+import prettier from 'prettier'
+import { prettyln, trim, createDirPath, createFilePath } from './util'
+import { fetchKintoneInfo, downloadFile } from './client'
+import { convertAppIdToName } from './converter'
+import type { ViewForResponse, FieldRightForResponse } from '@kintone/rest-api-client/lib/client/types/app'
+import type { OneOf } from '@kintone/rest-api-client/lib/KintoneFields/types/property'
+import type { AppCustomize, Opts, Ktn } from './types'
 
-const prettier = require('prettier')
 // .prettierrcがあればそれに沿ってフォーマット
 const prettierOptions = prettier.resolveConfig.sync(process.cwd()) || {}
 // parserを指定しないと警告が出るのでその対策
 prettierOptions.parser = prettierOptions.parser || 'babel'
 
-const compare = (i, j) => {
+const compare = (i: number | string, j: number | string) => {
   if (i < j) {
     return -1
   } else if (i > j) {
@@ -24,18 +25,18 @@ const compare = (i, j) => {
   return 0
 }
 
-const cloneSort = (ktn, kintoneInfoObj) => {
+const cloneSort = (ktn: Ktn, kintoneInfoObj: any) => {
   switch (ktn.command) {
     case 'app/form/fields.json': {
       const keys = Object.keys(kintoneInfoObj.properties)
       keys.sort()
-      const properties = keys.reduce((obj, key) => {
-        const property = _.cloneDeep(kintoneInfoObj.properties[key])
-        if (property.lookup) {
+      const properties = keys.reduce<Record<string, OneOf>>((obj, key) => {
+        const property = cloneDeep(kintoneInfoObj.properties[key]) as OneOf
+        if ('lookup' in property && property.lookup) {
           property.lookup.fieldMappings.sort((i, j) => compare(i.field, j.field))
         }
         if (property.type === 'DROP_DOWN') {
-          const options = Object.entries(_.cloneDeep(property.options))
+          const options = Object.entries(cloneDeep(property.options))
           options.sort(([, i], [, j]) => compare(Number(i.index), Number(j.index)))
           property.options = Object.fromEntries(options)
         }
@@ -45,18 +46,19 @@ const cloneSort = (ktn, kintoneInfoObj) => {
       return { properties }
     }
     case 'app/views.json': {
-      const viewEntries = Object.entries(_.cloneDeep(kintoneInfoObj.views))
-      const indexes = Object.values(kintoneInfoObj.views).map((v) => v.index)
+      const _views = kintoneInfoObj.views as Record<string, ViewForResponse>
+      const viewEntries = Object.entries(cloneDeep(_views))
+      const indexes = Object.values(_views).map((v) => v.index)
       indexes.sort((i, j) => compare(Number(i), Number(j)))
-      const views = indexes.reduce((obj, index) => {
-        const [key, value] = viewEntries.find(([, value]) => value.index === index)
+      const views = indexes.reduce<Record<string, ViewForResponse>>((obj, index) => {
+        const [key, value] = viewEntries.find(([, value]) => value.index === index)!
         obj[key] = value
         return obj
       }, {})
       return { views }
     }
     case 'field/acl.json': {
-      const rights = _.cloneDeep(kintoneInfoObj.rights)
+      const rights = cloneDeep(kintoneInfoObj.rights as FieldRightForResponse[])
       rights.sort((i, j) => compare(i.code, j.code))
       return { rights }
     }
@@ -64,7 +66,7 @@ const cloneSort = (ktn, kintoneInfoObj) => {
   return kintoneInfoObj
 }
 
-const convertKintoneInfo = (kintoneInfoObj, ktn, opts) => {
+const convertKintoneInfo = (kintoneInfoObj: { revision?: number }, ktn: Ktn, opts: Opts) => {
   let kintoneRevision
   if (kintoneInfoObj.revision) {
     kintoneRevision = prettyln({ revision: kintoneInfoObj.revision })
@@ -81,7 +83,7 @@ const convertKintoneInfo = (kintoneInfoObj, ktn, opts) => {
   return [kintoneInfo, kintoneRevision, kintoneInfoAlt]
 }
 
-const saveKintoneInfo = async (filePath, kintoneInfo) => {
+const saveKintoneInfo = async (filePath: string, kintoneInfo: string) => {
   const extension = path.extname(filePath)
   if (extension === '.js') {
     kintoneInfo = prettier.format(
@@ -95,9 +97,9 @@ module.exports = ${kintoneInfo}
   fs.writeFileSync(filePath, kintoneInfo)
 }
 
-const downloadCustomizeFiles = async (kintoneInfo, ktn, opts) => {
-  const customizeInfo = JSON.parse(kintoneInfo)
-  const fileInfos = ['desktop', 'mobile'].flatMap((target) =>
+const downloadCustomizeFiles = async (kintoneInfo: string, ktn: Ktn, opts: Opts) => {
+  const customizeInfo = JSON.parse(kintoneInfo) as AppCustomize
+  const fileInfos = (['desktop', 'mobile'] as const).flatMap((target) =>
     [customizeInfo[target].js, customizeInfo[target].css].flatMap((infos) =>
       infos.filter((info) => info.type === 'FILE').map((info) => ({ ...info.file, target }))
     )
@@ -109,19 +111,19 @@ const downloadCustomizeFiles = async (kintoneInfo, ktn, opts) => {
     const jsFilePath = `${dirPath}/${target}/${name}`
     mkdirp.sync(path.dirname(jsFilePath))
     fs.writeFileSync(jsFilePath, jsFile)
-    console.log(jsFilePath)
+    console.info(jsFilePath)
   }
 }
 
-exports.ginuePull = async (ktn, opts) => {
-  if (!ktn.methods.includes('GET')) {
+export const ginuePull = async (ktn: Ktn, opts: Opts) => {
+  if (!ktn.methods?.includes('GET')) {
     return
   }
-  const kintoneInfoObj = await fetchKintoneInfo(ktn, opts)
+  const kintoneInfoObj = await fetchKintoneInfo(ktn)
   const [kintoneInfo, kintoneRevision, kintoneInfoAlt] = convertKintoneInfo(kintoneInfoObj, ktn, opts)
   const filePath = createFilePath(ktn, opts)
-  console.log(filePath)
-  saveKintoneInfo(filePath, kintoneInfo)
+  console.info(filePath)
+  saveKintoneInfo(filePath, kintoneInfo!)
   if (kintoneRevision) {
     // TODO: 無駄に何回も上書保存するので、フラグを持たせて1回だけにしたい
     const revisionFilePath = createFilePath(ktn, opts, 'revision.json')
@@ -129,10 +131,10 @@ exports.ginuePull = async (ktn, opts) => {
   }
   if (kintoneInfoAlt) {
     const altFilePath = filePath.replace('.js', '-alt.js') // (.json|.js) どっちにも対応するhack。。。
-    console.log(altFilePath)
+    console.info(altFilePath)
     saveKintoneInfo(altFilePath, kintoneInfoAlt)
   }
   if (ktn.command === 'app/customize.json' && opts.downloadJs) {
-    await downloadCustomizeFiles(kintoneInfo, ktn, opts)
+    await downloadCustomizeFiles(kintoneInfo!, ktn, opts)
   }
 }

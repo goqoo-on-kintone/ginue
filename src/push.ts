@@ -1,16 +1,15 @@
-'use strict'
+import inquirer from 'inquirer'
+import { loadRequiedFile, createFilePath } from './util'
+import { sendKintoneInfo, fetchKintoneInfo } from './client'
+import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
+import type { BaseOpts, FormFields, FormLayout, KintoneInfo, Ktn, Opts } from './types'
 
-const inquirer = require('inquirer')
-const { loadRequiedFile, createFilePath } = require('./util')
-const { sendKintoneInfo, fetchKintoneInfo } = require('./client')
-const { convertAppSettingsJson, convertAppFormFieldsJson } = require('./converter')
-
-const pluckFieldCodeFromMessage = (message, regexps) => {
+const pluckFieldCodeFromMessage = (message: string, regexps: RegExp[]) => {
   const found = regexps.map((regexp) => message.match(regexp)).find((found) => Array.isArray(found))
   return found && found[1]
 }
 
-const addField = async (message, ktn, kintoneInfo) => {
+const addField = async (message: string, ktn: Ktn, kintoneInfo: KintoneInfo) => {
   const fieldCode = pluckFieldCodeFromMessage(message, [
     /指定されたフィールド（code: (.+)）が見つかりません/,
     /The field \(code: (.+)\) not found/,
@@ -20,24 +19,27 @@ const addField = async (message, ktn, kintoneInfo) => {
     return Promise.reject(new Error())
   }
 
-  let property = kintoneInfo.properties[fieldCode]
+  let property = kintoneInfo.properties?.[fieldCode]
   let keyFieldCode = fieldCode
   let messageFieldCode = fieldCode
   if (!property) {
     // サブテーブル内フィールドを追加する場合
-    const outerProperty = Object.values(kintoneInfo.properties)
+    const outerProperty = Object.values(kintoneInfo.properties!)
       .filter((_) => _.type === 'SUBTABLE')
+      // @ts-expect-error
       .find((_) => Object.keys(_.fields).some((code) => code === fieldCode))
-    const innerProperty = Object.values(outerProperty.fields).find((_) => _.code === fieldCode)
+    // @ts-expect-error
+    const innerProperty = Object.values(outerProperty?.fields).find((_) => _.code === fieldCode)
 
     property = {
       ...outerProperty,
+      // @ts-expect-error
       fields: {
         [fieldCode]: innerProperty,
       },
     }
-    keyFieldCode = outerProperty.code
-    messageFieldCode = `${outerProperty.code}.${fieldCode}`
+    keyFieldCode = outerProperty?.code!
+    messageFieldCode = `${keyFieldCode}.${fieldCode}`
   }
 
   const { isConfirmed } = await inquirer.prompt([
@@ -55,10 +57,10 @@ const addField = async (message, ktn, kintoneInfo) => {
     properties: { [keyFieldCode]: property },
   }
   // TODO: ここでメッセージ出力はあんまり良くないので奇麗にしたい
-  await sendKintoneInfo('POST', ktn, postingInfo).catch((e) => console.log(e.message))
+  await sendKintoneInfo('POST', ktn, postingInfo).catch((e) => console.info(e.message))
 }
 
-const deleteFields = async (ktn, kintoneInfo, fields) => {
+const deleteFields = async (ktn: Ktn, kintoneInfo: KintoneInfo, fields: string[]) => {
   const deletingKtn = {
     ...ktn,
     command: 'preview/app/form/fields.json',
@@ -68,10 +70,10 @@ const deleteFields = async (ktn, kintoneInfo, fields) => {
     fields,
   }
   // TODO: ここでメッセージ出力はあんまり良くないので奇麗にしたい
-  await sendKintoneInfo('DELETE', deletingKtn, deletingInfo).catch((e) => console.log(e.message))
+  await sendKintoneInfo('DELETE', deletingKtn, deletingInfo).catch((e) => console.info(e.message))
 }
 
-const confirmDeleteFieldsInRoot = async (message, ktn) => {
+const confirmDeleteFieldsInRoot = async (message: string, ktn: Ktn): Promise<string[]> => {
   const fieldCodes = pluckFieldCodeFromMessage(message, [
     /フォームの更新に失敗しました。一部のフィールド（code: (.+)）のレイアウトを指定していません/,
     /Failed to update form\. Field \(code: (.+)\) is missing in the layout parameter/,
@@ -95,7 +97,11 @@ const confirmDeleteFieldsInRoot = async (message, ktn) => {
   return fields
 }
 
-const confirmDeleteFieldsInSubtable = async (message, ktn, kintoneInfo) => {
+const confirmDeleteFieldsInSubtable = async (
+  message: string,
+  ktn: Ktn,
+  kintoneInfo: FormLayout
+): Promise<string[] | undefined> => {
   const subtableField = pluckFieldCodeFromMessage(message, [
     /フォームの更新に失敗しました。テーブル「(.+)」の指定が正しくありません。指定するフィールドに不足がある、またはテーブルにないフィールドを指定しています/,
     /The format of table (.+) is not valid. Some fields may be missing or the specified fields may not exist in the table/,
@@ -105,11 +111,17 @@ const confirmDeleteFieldsInSubtable = async (message, ktn, kintoneInfo) => {
     return
   }
 
-  const kintoneInfoOfTarget = await fetchKintoneInfo({ ...ktn, command: 'app/form/layout.json', preview: true })
-  const innerFieldCodes = (_) => _.layout.find((_) => _.code === subtableField).fields.map((_) => _.code)
+  const kintoneInfoOfTarget: FormLayout = await fetchKintoneInfo({
+    ...ktn,
+    command: 'app/form/layout.json',
+    preview: true,
+  })
+  const innerFieldCodes = (_: FormLayout): string[] =>
+    // @ts-expect-error
+    _.layout.find((_) => _.code === subtableField).fields.map((_) => _.code)
   const fieldsOfTarget = innerFieldCodes(kintoneInfoOfTarget)
   const fieldsToSend = innerFieldCodes(kintoneInfo)
-  const fields = fieldsOfTarget.filter((code) => !fieldsToSend.includes(code))
+  const fields = fieldsOfTarget.filter((code: string) => !fieldsToSend.includes(code))
 
   const { isConfirmed } = await inquirer.prompt([
     {
@@ -126,7 +138,7 @@ const confirmDeleteFieldsInSubtable = async (message, ktn, kintoneInfo) => {
   return fields
 }
 
-const isSkipRequest = async (command, message) => {
+const isSkipRequest = async (command: string, message: string) => {
   const { isConfirmed } = await inquirer.prompt([
     {
       name: 'isConfirmed',
@@ -139,24 +151,31 @@ const isSkipRequest = async (command, message) => {
   }
 }
 
-const execPush = async (ktn, kintoneInfo) => {
+const execPush = async (ktn: Ktn, kintoneInfo: KintoneInfo) => {
   try {
     await sendKintoneInfo('PUT', ktn, kintoneInfo)
   } catch (e) {
-    const { code, message, errors } = JSON.parse(e.message).body
+    const { code, message, errors } = JSON.parse((e as Error).message).body
     if (ktn.command === 'preview/app/form/fields.json' && code === 'GAIA_FC01') {
       await addField(message, ktn, kintoneInfo).catch(() => {
         throw e
       })
       await execPush(ktn, kintoneInfo)
     } else if (ktn.command === 'preview/app/form/layout.json') {
-      const confirmDeleteFields = {
-        GAIA_FN11: () => confirmDeleteFieldsInRoot(message, ktn),
-        CB_VA01: () => confirmDeleteFieldsInSubtable(JSON.stringify(errors), ktn, kintoneInfo),
-      }[code]
-      if (!confirmDeleteFields) throw e
+      let fields: string[] | undefined
+      switch (code) {
+        case 'GAIA_FN11':
+          fields = await confirmDeleteFieldsInRoot(message, ktn)
+          break
+        case 'CB_VA01':
+          fields = await confirmDeleteFieldsInSubtable(
+            JSON.stringify(errors),
+            ktn,
+            kintoneInfo as unknown as FormLayout
+          )
+          break
+      }
 
-      const fields = await confirmDeleteFields()
       if (fields) {
         await deleteFields(ktn, kintoneInfo, fields).catch(() => {
           throw e
@@ -169,27 +188,27 @@ const execPush = async (ktn, kintoneInfo) => {
       await isSkipRequest('app/views.json', 'Permission denied.').catch(() => {
         throw e
       })
-      console.log(`[SKIP] app/views.json`)
+      console.info(`[SKIP] app/views.json`)
     } else {
       throw e
     }
   }
 }
 
-exports.ginuePush = async (ktn, opts, pushTarget) => {
-  if (!ktn.methods.includes('PUT')) {
+export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget: BaseOpts) => {
+  if (!ktn.methods!.includes('PUT')) {
     return
   }
   if (
     [
       'app/customize.json', // TODO: ファイルアップロードが伴うので除外。今後工夫する
-    ].includes(ktn.command)
+    ].includes(ktn.command!)
   ) {
     return
   }
-  console.log(ktn.command)
+  console.info(ktn.command)
   const filePath = createFilePath(ktn, opts)
-  const kintoneInfo = loadRequiedFile(filePath)
+  const kintoneInfo = loadRequiedFile<KintoneInfo>(filePath)
   ktn.command = `preview/${ktn.command}`
 
   if (ktn.command === 'preview/app/settings.json') {
@@ -198,14 +217,16 @@ exports.ginuePush = async (ktn, opts, pushTarget) => {
 
   if (pushTarget) {
     if (ktn.command === 'preview/app/form/fields.json') {
-      convertAppFormFieldsJson(kintoneInfo.properties, opts)
+      convertAppFormFieldsJson((kintoneInfo as FormFields).properties, opts)
     }
-    for (const key of ['domain', 'guestSpaceId', 'base64Basic', 'base64Account', 'accessToken', 'appId']) {
+    const keys = ['domain', 'guestSpaceId', 'base64Basic', 'base64Account', 'accessToken', 'appId'] as (keyof Ktn)[]
+    for (const key of keys) {
+      // @ts-expect-error
       ktn[key] = pushTarget[key]
     }
   }
 
-  kintoneInfo.app = ktn.appId
+  kintoneInfo.app = ktn.appId!
   ktn.environment = opts.pushTarget ? opts.pushTarget.environment : opts.environment
   await execPush(ktn, kintoneInfo)
 }

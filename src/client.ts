@@ -1,16 +1,16 @@
-'use strict'
+import fetch, { Response } from 'node-fetch'
+import { createAgent as _createAgent } from './agent'
+import type { Ktn } from './types'
 
-const fetch = require('node-fetch')
-const ProxyAgent = require('proxy-agent')
-const https = require('https')
-const fs = require('fs')
+const createAgent = (ktn: Ktn) =>
+  _createAgent({ proxy: ktn.proxy, pfx: { filepath: ktn.pfxFilepath!, password: ktn.pfxPassword! } })
 
-const createUrl = (ktn) => {
+export const createUrl = (ktn: Ktn) => {
   const basePath = ktn.guestSpaceId ? `k/guest/${ktn.guestSpaceId}/v1` : 'k/v1'
   return `https://${ktn.domain}/${basePath}/${ktn.command}`
 }
 
-const createGetUrl = (ktn) => {
+export const createGetUrl = (ktn: Ktn) => {
   // TODO: 保存ファイル名に影響を与えないための処理だけどイマイチ。今後直す。
   ktn = Object.assign({}, ktn)
   if (ktn.preview) {
@@ -19,8 +19,8 @@ const createGetUrl = (ktn) => {
   const baseUrl = createUrl(ktn)
   return `${baseUrl}?${ktn.appParam}=${ktn.appId}`
 }
-const createHeaders = (ktn) => {
-  let header
+export const createHeaders = (ktn: Ktn) => {
+  let header: Record<string, any>
   if (ktn.accessToken) {
     header = {
       Authorization: `Bearer ${ktn.accessToken}`,
@@ -40,27 +40,7 @@ const createHeaders = (ktn) => {
   return header
 }
 
-const createProxyAgent = (ktn) => (ktn.proxy ? new ProxyAgent(ktn.proxy) : undefined)
-const createPfxAgent = (ktn) =>
-  ktn.pfxFilepath && ktn.pfxPassword
-    ? new https.Agent({
-        pfx: fs.readFileSync(ktn.pfxFilepath),
-        passphrase: ktn.pfxPassword,
-      })
-    : undefined
-
-const createAgent = (ktn) => {
-  const proxyAgent = createProxyAgent(ktn)
-  const pfxAgent = createPfxAgent(ktn)
-
-  if (proxyAgent && pfxAgent) {
-    throw new Error('Proxy server and client certificate cannot be used at the same time.')
-  }
-
-  return proxyAgent ?? pfxAgent
-}
-
-const formatFetchError = async (response) => {
+const formatFetchError = async (response: Response) => {
   const { status, statusText, type, url } = response
   const bodyText = await response.text()
   let body
@@ -72,7 +52,7 @@ const formatFetchError = async (response) => {
   return JSON.stringify({ status, statusText, type, url, body })
 }
 
-const fetchKintoneInfo = async (ktn) => {
+export const fetchKintoneInfo = async (ktn: Ktn) => {
   const response = await fetch(createGetUrl(ktn), { headers: createHeaders(ktn), agent: createAgent(ktn) })
   if (response.ok) {
     return response.json()
@@ -81,7 +61,7 @@ const fetchKintoneInfo = async (ktn) => {
   }
 }
 
-const sendKintoneInfo = async (method, ktn, kintoneInfo) => {
+export const sendKintoneInfo = async (method: string, ktn: Ktn, kintoneInfo: any) => {
   const response = await fetch(createUrl(ktn), {
     method,
     headers: { ...createHeaders(ktn), 'Content-Type': 'application/json' },
@@ -95,7 +75,7 @@ const sendKintoneInfo = async (method, ktn, kintoneInfo) => {
   }
 }
 
-const downloadFile = async (ktn, fileKey) => {
+export const downloadFile = async (ktn: Ktn, fileKey: string) => {
   const response = await fetch(`https://${ktn.domain}/k/v1/file.json?fileKey=${fileKey}`, {
     headers: createHeaders(ktn),
     agent: createAgent(ktn),
@@ -105,13 +85,4 @@ const downloadFile = async (ktn, fileKey) => {
   } else {
     throw new Error(await formatFetchError(response))
   }
-}
-
-module.exports = {
-  createUrl,
-  createGetUrl,
-  createHeaders,
-  fetchKintoneInfo,
-  sendKintoneInfo,
-  downloadFile,
 }

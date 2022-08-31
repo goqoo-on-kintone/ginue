@@ -1,14 +1,19 @@
-'use strict'
+import path from 'path'
+import inquirer from 'inquirer'
+import minimist from 'minimist'
+import netrc, { Machines } from 'netrc-parser'
+import { rcFile } from 'rc-config-loader'
+import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
+import type { Opts, Ginuerc, Commands, BaseOpts, AppDic } from './types'
 
-const path = require('path')
-const inquirer = require('inquirer')
-const minimist = require('minimist')
-const { default: netrc } = require('netrc-parser')
-const { rcFile } = require('rc-config-loader')
-const { pretty, showVersion, usageExit, loadRequiedFile } = require('./util')
-
-const loadKintoneCommands = async ({ commands, exclude }) => {
-  const kintoneCommands = commands || loadRequiedFile(path.join(__dirname, 'commands'))
+export const loadKintoneCommands = async ({
+  commands,
+  exclude,
+}: {
+  commands: Commands
+  exclude: keyof Commands | (keyof Commands)[]
+}) => {
+  const kintoneCommands = commands || loadRequiedFile<Commands>(path.join(__dirname, 'commands'))
   if (exclude) {
     // TODO: -aオプションの複数指定もこの仕様に合わせた方が良いかも。。
     const excludeCommands = Array.isArray(exclude) ? exclude : [exclude]
@@ -23,32 +28,35 @@ const loadKintoneCommands = async ({ commands, exclude }) => {
   return kintoneCommands
 }
 
-const loadGinuerc = async () => {
-  const ginuercFile = rcFile('ginue')
+const loadGinuerc = async (): Promise<BaseOpts[]> => {
+  const ginuercFile = rcFile<Ginuerc>('ginue')
   if (!ginuercFile) {
     return [{}]
   }
-  const { config: ginuerc } = ginuercFile
+  const _ginuerc: Ginuerc = ginuercFile.config
 
-  if (Array.isArray(ginuerc)) {
+  if (Array.isArray(_ginuerc)) {
     console.error(`ERROR: The top-level structure of .ginuerc must not be array. (Since v2.0)`)
     process.exit(1)
   }
 
-  if (!ginuerc.env) {
+  const { env, ...ginuerc } = _ginuerc
+  if (!env) {
     return [ginuerc]
   }
 
-  return Object.entries(ginuerc.env).map(([envName, envGinuerc]) => {
+  return Object.entries(env).map(([envName, envGinuerc]) => {
     envGinuerc.environment = envName
 
     // 内側のlocationはプロパティ名を変更しておく
     envGinuerc.envLocation = envGinuerc.location
     envGinuerc.location = ginuerc.location
 
-    // location以外のプロパティは(外側 < 内側)の優先度で設定
-    ;['fileType', 'preview', 'alt', 'oauth', 'commands', 'downloadJs', 'proxy'].forEach((prop) => {
+    // location以外のプロパティは(外側 < 内側)の優先度で設定
+    const props = ['fileType', 'preview', 'alt', 'oauth', 'commands', 'downloadJs', 'proxy'] as const
+    props.forEach((prop) => {
       if (ginuerc[prop] && envGinuerc[prop] === undefined) {
+        // @ts-expect-error
         envGinuerc[prop] = ginuerc[prop]
       }
     })
@@ -57,7 +65,7 @@ const loadGinuerc = async () => {
   })
 }
 
-const inputKintoneInfo = async (name, type = 'input') => {
+const inputKintoneInfo = async (name: string, type = 'input'): Promise<string> => {
   const value = await inquirer.prompt([
     {
       name,
@@ -75,8 +83,12 @@ const inputKintoneInfo = async (name, type = 'input') => {
   return value[name]
 }
 
-const stdInputOptions = async (opts) => {
+const stdInputOptions = async (opts: BaseOpts) => {
   const TYPE_PASSWORD = 'password'
+
+  // .netrcファイルの読み込み
+  netrc.loadSync()
+  const netrcMachines = netrc.machines
 
   // 標準入力しないオプションを画面表示(複数環境のアカウント情報入力などで間違えないため)
   for (const [optName, optValue] of Object.entries(opts)) {
@@ -91,22 +103,21 @@ const stdInputOptions = async (opts) => {
         case 'pushTarget':
           continue
       }
-      console.log(`${optName}: ${dispValue}`)
+      console.info(`${optName}: ${dispValue}`)
     }
   }
 
-  if (opts.proxy instanceof Object) {
-    const netrcProxyProps = netrc.machines[opts.proxy.hostname] || {}
-    const netrcProxyAuth = `${netrcProxyProps.login}:${netrcProxyProps.password}`
-    opts.proxy.auth = opts.proxy.auth || netrcProxyAuth
+  // プロキシサーバーの認証情報がnetrcにある場合は読み取る
+  // 認証はオプションなので、認証情報が見つからなくても標準入力はさせない
+  if (opts.proxy instanceof Object && !opts.proxy.auth) {
+    const netrcProxyProps = netrcMachines[opts.proxy.hostname]
+    if (netrcProxyProps) {
+      opts.proxy.auth = `${netrcProxyProps.login}:${netrcProxyProps.password}`
+    }
   }
 
   opts.domain = opts.domain || (await inputKintoneInfo('domain'))
-  // netrcに保存済みの情報取得
-  if (!opts.oauth) {
-    netrc.loadSync()
-  }
-  const netrcProps = (netrc.machines && netrc.machines[opts.domain]) || {}
+  const netrcProps: Machines[string] = !opts.oauth ? netrcMachines[opts.domain] ?? {} : {}
 
   const netrcBasic = netrcProps.account
   // TODO: コマンドライン引数のbasic処理と共通化したい
@@ -144,8 +155,9 @@ const stdInputOptions = async (opts) => {
     process.env.GINUE_PFX_PASSWORD ||
     (opts.pfxFilepath && (await inputKintoneInfo('client certificate password', TYPE_PASSWORD)))
 
+  // @ts-expect-error
   opts.app = opts.app || (await inputKintoneInfo('app'))
-  console.log()
+  console.info()
   // TODO: 「is guest space?(Y/N)」のように問い合わせて、YならguestSpaceIdを入力
   // opts.guestSpaceId = opts.guestSpaceId || await inputKintoneInfo('guestSpaceID')
 }
@@ -203,10 +215,10 @@ const parseArgumentOptions = () => {
 // TODO: minimistやめて、もっとリッチなライブラリを使う
 // 引数や設定ファイルの組み合わせからオプション値を抽出
 // firstObjを優先し、firstObjに存在しないプロパティはsecondObjを使用
-const pluckOpts = (firstObj, secondObj) => {
+const pluckOpts = (firstObj: any, secondObj?: any) => {
   // TODO: previewやjsなどのboolean値はfirstObjがfalseでも必ず使われてしまうのを修正
   const obj = Object.assign({}, secondObj, firstObj)
-  const opts = {
+  const opts: Opts = {
     location: obj.location,
     envLocation: obj.envLocation,
     environment: obj.environment,
@@ -256,12 +268,12 @@ const pluckOpts = (firstObj, secondObj) => {
   return opts
 }
 
-const createAppDic = (app) => {
+const createAppDic = (app: string | (string | number)[] | AppDic): AppDic => {
   if (typeof app === 'string') {
     app = app.split(',').map((str) => str.trim())
   }
   if (Array.isArray(app)) {
-    return app.reduce((obj, id) => {
+    return app.reduce<AppDic>((obj, id) => {
       obj[id.toString()] = id
       return obj
     }, {})
@@ -269,7 +281,7 @@ const createAppDic = (app) => {
   return app
 }
 
-const createOptionValues = async () => {
+export const createOptionValues = async () => {
   const argv = parseArgumentOptions()
 
   if (argv.version) {
@@ -286,7 +298,7 @@ const createOptionValues = async () => {
 
   const ginuerc = await loadGinuerc()
 
-  let opts
+  let opts: Opts | Opts[] = {}
   if (argv.target) {
     const [target, pushTarget] = argv.target.split(':')
 
@@ -295,7 +307,7 @@ const createOptionValues = async () => {
       usageExit(1, argv.type)
     }
 
-    const targetGinuercElem = ginuerc.find((g) => g.environment === target)
+    const targetGinuercElem = ginuerc.find((g): g is Opts => g.environment === target)
     if (!targetGinuercElem) {
       console.error(`ERROR: environment '${target}' not found.`)
       process.exit(1)
@@ -341,7 +353,7 @@ const createOptionValues = async () => {
     if (opts.pushTarget) {
       await stdInputOptions(opts.pushTarget)
     }
-    opts.apps = createAppDic(opts.app)
+    opts.apps = createAppDic(opts.app!)
     opts.type = argv.type
   }
 
@@ -360,5 +372,3 @@ const createOptionValues = async () => {
 
   return allOpts
 }
-
-module.exports = { createOptionValues, loadKintoneCommands }

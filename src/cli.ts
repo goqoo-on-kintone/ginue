@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-'use strict'
 
-const { inspect } = require('util')
-const { createBase64Account } = require('./lib/util')
-const { createOptionValues, loadKintoneCommands } = require('./lib/config')
-const { getOauthToken } = require('./lib/oauth')
-const { ginuePull } = require('./lib/pull')
-const { ginuePush } = require('./lib/push')
-const { ginueDeploy, ginueReset } = require('./lib/deploy')
-const { ginueErd } = require('./lib/erd')
-const { ginueDiff } = require('./lib/diff')
+import { inspect } from 'util'
+import { createBase64Account } from './util'
+import { createOptionValues, loadKintoneCommands } from './config'
+import { getOauthToken } from './oauth'
+import { ginuePull } from './pull'
+import { ginuePush } from './push'
+import { ginueDeploy, ginueReset } from './deploy'
+import { ginueErd } from './erd'
+import { ginueDiff } from './diff'
+import { BaseOpts, Ktn } from './types'
 
 const main = async () => {
   const allOpts = await createOptionValues()
@@ -22,15 +22,20 @@ const main = async () => {
   // 環境単位ループ
   allOpts.forEach(async (opts) => {
     try {
+      const agentOptions = {
+        proxy: opts.proxy,
+        pfx:
+          opts.pfxFilepath && opts.pfxPassword ? { filepath: opts.pfxFilepath, password: opts.pfxPassword } : undefined,
+      }
       let base64Account, base64Basic, accessToken
       if (opts.oauth) {
-        accessToken = await getOauthToken(opts.domain)
+        accessToken = await getOauthToken(opts.domain!, agentOptions)
       } else {
-        base64Basic = await createBase64Account(opts.basic)
-        base64Account = await createBase64Account(opts.username, opts.password)
+        base64Basic = await createBase64Account(opts.basic!)
+        base64Account = await createBase64Account(opts.username!, opts.password)
       }
 
-      if (['reset', 'deploy'].includes(opts.type)) {
+      if (['reset', 'deploy'].includes(opts.type!)) {
         const ktn = {
           proxy: opts.proxy,
           domain: opts.domain,
@@ -58,17 +63,17 @@ const main = async () => {
         return
       }
 
-      let pushTargetKtn
+      let pushTargetKtn: BaseOpts
       if (opts.pushTarget) {
         pushTargetKtn = {
           domain: opts.pushTarget.domain,
           guestSpaceId: opts.pushTarget.guestSpaceId,
         }
         if (opts.pushTarget.oauth) {
-          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain)
+          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain!, agentOptions)
         } else {
-          pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic)
-          pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username, opts.pushTarget.password)
+          pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic!)
+          pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username!, opts.pushTarget.password)
           pushTargetKtn.pfxFilepath = opts.pushTarget.pfxFilepath
           pushTargetKtn.pfxPassword = opts.pushTarget.pfxPassword
         }
@@ -76,26 +81,26 @@ const main = async () => {
 
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
       // アプリ単位ループ
-      for (const [appName, appId] of Object.entries(opts.apps)) {
+      for (const [appName, appId] of Object.entries(opts.apps!)) {
         if (opts.appName && opts.appName !== appName) {
           continue
         }
         const environment = opts.pushTarget ? opts.pushTarget.environment : opts.environment
         const target = `----------${environment}/${appName}----------`
-        console.log(target)
+        console.info(target)
 
-        const kintoneCommands = await loadKintoneCommands({ commands: opts.commands, exclude: opts.exclude })
+        const kintoneCommands = await loadKintoneCommands({ commands: opts.commands!, exclude: opts.exclude! })
         const requestPromises = []
         // APIコマンド単位ループ
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
           // OAuthに対応していないコマンドはスキップ
           if (accessToken && commProp.skipOauth) {
-            console.log(`[SKIP] ${commName} (Forbidden via OAuth)`)
+            console.info(`[SKIP] ${commName} (Forbidden via OAuth)`)
             continue
           }
 
           const preview = Boolean(commProp.hasPreview && opts.preview)
-          const ktn = {
+          const ktn: Ktn = {
             proxy: opts.proxy,
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
@@ -103,7 +108,7 @@ const main = async () => {
             base64Basic,
             accessToken,
             appName,
-            appId,
+            appId: appId,
             command: commName,
             appParam: commProp.appParam,
             methods: commProp.methods,
@@ -116,28 +121,29 @@ const main = async () => {
               break
             case 'push':
               if (commName.includes('/acl.json') && !opts.acl) {
-                console.log(`[SKIP] ${commName}`)
+                console.info(`[SKIP] ${commName}`)
                 break
               }
               if (commName === 'field/acl.json' && !opts.field_acl) {
-                console.log(`[SKIP] ${commName}`)
+                console.info(`[SKIP] ${commName}`)
                 break
               }
-              if (pushTargetKtn) {
+              if (pushTargetKtn!) {
+                // @ts-expect-error
                 pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
               }
-              await ginuePush(ktn, opts, pushTargetKtn)
+              await ginuePush(ktn, opts, pushTargetKtn!)
               break
           }
         }
         await Promise.all(requestPromises)
       }
-    } catch (error) {
+    } catch (e) {
+      const error = e as Partial<Error>
       try {
-        const message = JSON.parse(error.message)
+        const message = JSON.parse(error.message!)
         console.error(inspect(message, { depth: Infinity, colors: true }))
         delete error.message
-      } catch (e) {
       } finally {
         console.error(error)
       }
