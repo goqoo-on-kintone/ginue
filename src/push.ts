@@ -149,15 +149,16 @@ const execPush = async (ktn: Ktn, kintoneInfo) => {
       })
       await execPush(ktn, kintoneInfo)
     } else if (ktn.command === 'preview/app/form/layout.json') {
-      type FunctionMap = Record<string, () => Promise<string[] | undefined>>
-      const functionMap: FunctionMap = {
-        GAIA_FN11: () => confirmDeleteFieldsInRoot(message, ktn),
-        CB_VA01: () => confirmDeleteFieldsInSubtable(JSON.stringify(errors), ktn, kintoneInfo),
+      let fields: string[] | undefined
+      switch (code) {
+        case 'GAIA_FN11':
+          fields = await confirmDeleteFieldsInRoot(message, ktn)
+          break
+        case 'CB_VA01':
+          fields = await confirmDeleteFieldsInSubtable(JSON.stringify(errors), ktn, kintoneInfo)
+          break
       }
-      const confirmDeleteFields = functionMap[code]
-      if (!confirmDeleteFields) throw e
 
-      const fields = await confirmDeleteFields()
       if (fields) {
         await deleteFields(ktn, kintoneInfo, fields).catch(() => {
           throw e
