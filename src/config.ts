@@ -1,7 +1,7 @@
 import path from 'path'
 import inquirer from 'inquirer'
 import minimist from 'minimist'
-import netrc from 'netrc-parser'
+import netrc, { Machines } from 'netrc-parser'
 import { rcFile } from 'rc-config-loader'
 import { pretty, showVersion, usageExit, loadRequiedFile } from './util'
 import type { Opts, Ginuerc, Commands, BaseOpts, AppDic } from './types'
@@ -86,6 +86,10 @@ const inputKintoneInfo = async (name: string, type = 'input'): Promise<string> =
 const stdInputOptions = async (opts: BaseOpts) => {
   const TYPE_PASSWORD = 'password'
 
+  // .netrcファイルの読み込み
+  netrc.loadSync()
+  const netrcMachines = netrc.machines
+
   // 標準入力しないオプションを画面表示(複数環境のアカウント情報入力などで間違えないため)
   for (const [optName, optValue] of Object.entries(opts)) {
     if (optValue) {
@@ -103,18 +107,17 @@ const stdInputOptions = async (opts: BaseOpts) => {
     }
   }
 
-  if (opts.proxy instanceof Object) {
-    const netrcProxyProps = netrc.machines[opts.proxy.hostname] || {}
-    const netrcProxyAuth = `${netrcProxyProps.login}:${netrcProxyProps.password}`
-    opts.proxy.auth = opts.proxy.auth || netrcProxyAuth
+  // プロキシサーバーの認証情報がnetrcにある場合は読み取る
+  // 認証はオプションなので、認証情報が見つからなくても標準入力はさせない
+  if (opts.proxy instanceof Object && !opts.proxy.auth) {
+    const netrcProxyProps = netrcMachines[opts.proxy.hostname]
+    if (netrcProxyProps) {
+      opts.proxy.auth = `${netrcProxyProps.login}:${netrcProxyProps.password}`
+    }
   }
 
   opts.domain = opts.domain || (await inputKintoneInfo('domain'))
-  // netrcに保存済みの情報取得
-  if (!opts.oauth) {
-    netrc.loadSync()
-  }
-  const netrcProps = (netrc.machines && netrc.machines[opts.domain]) || {}
+  const netrcProps: Machines[string] = !opts.oauth ? netrcMachines[opts.domain] ?? {} : {}
 
   const netrcBasic = netrcProps.account
   // TODO: コマンドライン引数のbasic処理と共通化したい
