@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-'use strict'
 
-const { inspect } = require('util')
-const { createBase64Account } = require('./util')
-const { createOptionValues, loadKintoneCommands } = require('./config')
-const { getOauthToken } = require('./oauth')
-const { ginuePull } = require('./pull')
-const { ginuePush } = require('./push')
-const { ginueDeploy, ginueReset } = require('./deploy')
-const { ginueErd } = require('./erd')
-const { ginueDiff } = require('./diff')
+import { inspect } from 'util'
+import { createBase64Account } from './util'
+import { createOptionValues, loadKintoneCommands } from './config'
+import { getOauthToken } from './oauth'
+import { ginuePull } from './pull'
+import { ginuePush } from './push'
+import { ginueDeploy, ginueReset } from './deploy'
+import { ginueErd } from './erd'
+import { ginueDiff } from './diff'
 
 const main = async () => {
   const allOpts = await createOptionValues()
