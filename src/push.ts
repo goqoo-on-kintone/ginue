@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 import { loadRequiedFile, createFilePath } from './util'
 import { sendKintoneInfo, fetchKintoneInfo } from './client'
 import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
-import type { KintoneInfo, Ktn, Opts } from './types'
+import type { BaseOpts, FormFields, KintoneInfo, Ktn, Opts } from './types'
 
 const pluckFieldCodeFromMessage = (message: string, regexps: RegExp[]) => {
   const found = regexps.map((regexp) => message.match(regexp)).find((found) => Array.isArray(found))
@@ -57,7 +57,7 @@ const addField = async (message: string, ktn: Ktn, kintoneInfo: KintoneInfo) => 
   await sendKintoneInfo('POST', ktn, postingInfo).catch((e) => console.info(e.message))
 }
 
-const deleteFields = async (ktn: Ktn, kintoneInfo, fields) => {
+const deleteFields = async (ktn: Ktn, kintoneInfo: KintoneInfo, fields: string[]) => {
   const deletingKtn = {
     ...ktn,
     command: 'preview/app/form/fields.json',
@@ -138,7 +138,7 @@ const isSkipRequest = async (command: string, message: string) => {
   }
 }
 
-const execPush = async (ktn: Ktn, kintoneInfo) => {
+const execPush = async (ktn: Ktn, kintoneInfo: KintoneInfo) => {
   try {
     await sendKintoneInfo('PUT', ktn, kintoneInfo)
   } catch (e) {
@@ -178,14 +178,14 @@ const execPush = async (ktn: Ktn, kintoneInfo) => {
   }
 }
 
-export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget) => {
-  if (!ktn.methods.includes('PUT')) {
+export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget: BaseOpts) => {
+  if (!ktn.methods!.includes('PUT')) {
     return
   }
   if (
     [
       'app/customize.json', // TODO: ファイルアップロードが伴うので除外。今後工夫する
-    ].includes(ktn.command)
+    ].includes(ktn.command!)
   ) {
     return
   }
@@ -200,14 +200,16 @@ export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget) => {
 
   if (pushTarget) {
     if (ktn.command === 'preview/app/form/fields.json') {
-      convertAppFormFieldsJson(kintoneInfo.properties, opts)
+      convertAppFormFieldsJson((kintoneInfo as FormFields).properties, opts)
     }
-    for (const key of ['domain', 'guestSpaceId', 'base64Basic', 'base64Account', 'accessToken', 'appId']) {
+    const keys = ['domain', 'guestSpaceId', 'base64Basic', 'base64Account', 'accessToken', 'appId'] as (keyof Ktn)[]
+    for (const key of keys) {
+      // @ts-expect-error
       ktn[key] = pushTarget[key]
     }
   }
 
-  kintoneInfo.app = ktn.appId
+  kintoneInfo.app = ktn.appId!
   ktn.environment = opts.pushTarget ? opts.pushTarget.environment : opts.environment
   await execPush(ktn, kintoneInfo)
 }

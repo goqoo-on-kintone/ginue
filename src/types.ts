@@ -36,6 +36,10 @@ export type BaseOpts = Partial<{
 
   commands: Commands
   exclude: keyof Commands | (keyof Commands)[]
+
+  base64Account?: string
+  base64Basic?: string
+  accessToken?: string
 }>
 
 export type Ktn = Pick<Opts, 'proxy' | 'domain' | 'guestSpaceId' | 'apps' | 'pfxFilepath' | 'pfxPassword' | 'preview'> &
@@ -49,6 +53,8 @@ export type Ktn = Pick<Opts, 'proxy' | 'domain' | 'guestSpaceId' | 'apps' | 'pfx
     appParam: CommandProps['appParam']
     methods: CommandProps['methods']
     lang: 'ja' | 'en' | 'zh' // デバッグ用
+
+    environment: string
   }>
 
 export type ProxyOption =
@@ -73,6 +79,7 @@ export type Commands = Record<string, CommandProps>
 
 export type AppDic = Record<string, string | number>
 
+export type FormFields = Awaited<ReturnType<KintoneRestAPIClient['app']['getFormFields']>>
 export type AppSettings = Awaited<ReturnType<KintoneRestAPIClient['app']['getAppSettings']>>
 export type AppCustomize = {
   desktop: { js: any[]; css: any[] }
@@ -82,5 +89,6 @@ export type AppCustomize = {
 
 export type KintoneInfo = {
   properties?: Properties
-  app: number
+  app: string
+  revision: string
 }
