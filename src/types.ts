@@ -1,4 +1,5 @@
 import type { KintoneRestAPIClient } from '@kintone/rest-api-client'
+import type { Properties } from '@kintone/rest-api-client/lib/client/types/app'
 
 export type Ginuerc = { env?: Record<string, BaseOpts> } & BaseOpts
 export type Opts = BaseOpts & { pushTarget?: BaseOpts }
@@ -77,4 +78,9 @@ export type AppCustomize = {
   desktop: { js: any[]; css: any[] }
   mobile: { js: any[]; css: any[] }
   revision: string
+}
+
+export type KintoneInfo = {
+  properties?: Properties
+  app: number
 }

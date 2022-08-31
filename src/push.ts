@@ -2,14 +2,14 @@ import inquirer from 'inquirer'
 import { loadRequiedFile, createFilePath } from './util'
 import { sendKintoneInfo, fetchKintoneInfo } from './client'
 import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
-import type { Ktn, Opts } from './types'
+import type { KintoneInfo, Ktn, Opts } from './types'
 
 const pluckFieldCodeFromMessage = (message: string, regexps: RegExp[]) => {
   const found = regexps.map((regexp) => message.match(regexp)).find((found) => Array.isArray(found))
   return found && found[1]
 }
 
-const addField = async (message: string, ktn: Ktn, kintoneInfo) => {
+const addField = async (message: string, ktn: Ktn, kintoneInfo: KintoneInfo) => {
   const fieldCode = pluckFieldCodeFromMessage(message, [
     /指定されたフィールド（code: (.+)）が見つかりません/,
     /The field \(code: (.+)\) not found/,
@@ -19,12 +19,12 @@ const addField = async (message: string, ktn: Ktn, kintoneInfo) => {
     return Promise.reject(new Error())
   }
 
-  let property = kintoneInfo.properties[fieldCode]
+  let property = kintoneInfo.properties?.[fieldCode]
   let keyFieldCode = fieldCode
   let messageFieldCode = fieldCode
   if (!property) {
     // サブテーブル内フィールドを追加する場合
-    const outerProperty = Object.values(kintoneInfo.properties)
+    const outerProperty = Object.values(kintoneInfo.properties!)
       .filter((_) => _.type === 'SUBTABLE')
       .find((_) => Object.keys(_.fields).some((code) => code === fieldCode))
     const innerProperty = Object.values(outerProperty.fields).find((_) => _.code === fieldCode)
@@ -191,7 +191,7 @@ export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget) => {
   }
   console.info(ktn.command)
   const filePath = createFilePath(ktn, opts)
-  const kintoneInfo = loadRequiedFile(filePath)
+  const kintoneInfo = loadRequiedFile<KintoneInfo>(filePath)
   ktn.command = `preview/${ktn.command}`
 
   if (ktn.command === 'preview/app/settings.json') {
