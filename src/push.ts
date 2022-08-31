@@ -26,17 +26,20 @@ const addField = async (message: string, ktn: Ktn, kintoneInfo: KintoneInfo) => 
     // サブテーブル内フィールドを追加する場合
     const outerProperty = Object.values(kintoneInfo.properties!)
       .filter((_) => _.type === 'SUBTABLE')
+      // @ts-expect-error
       .find((_) => Object.keys(_.fields).some((code) => code === fieldCode))
-    const innerProperty = Object.values(outerProperty.fields).find((_) => _.code === fieldCode)
+    // @ts-expect-error
+    const innerProperty = Object.values(outerProperty?.fields).find((_) => _.code === fieldCode)
 
     property = {
       ...outerProperty,
+      // @ts-expect-error
       fields: {
         [fieldCode]: innerProperty,
       },
     }
-    keyFieldCode = outerProperty.code
-    messageFieldCode = `${outerProperty.code}.${fieldCode}`
+    keyFieldCode = outerProperty?.code!
+    messageFieldCode = `${keyFieldCode}.${fieldCode}`
   }
 
   const { isConfirmed } = await inquirer.prompt([
