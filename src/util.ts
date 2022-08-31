@@ -107,7 +107,7 @@ export const errorExit = (message: string, returnCode = 1) => {
 // 呼び出し方は2通り
 // 引数1つ：(ユーザー名:パスワード)コロン区切り文字列
 // 引数2つ：(ユーザー名, パスワード)それぞれの文字列
-export const createBase64Account = async (...account: [string, string]) => {
+export const createBase64Account = async (...account: [string, string?]) => {
   const base64Account = Buffer.from(account.join(':')).toString('base64')
   return base64Account
 }

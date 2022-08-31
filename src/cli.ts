@@ -23,17 +23,18 @@ const main = async () => {
     try {
       const agentOptions = {
         proxy: opts.proxy,
-        pfx: { filepath: opts.pfxFilepath, password: opts.pfxPassword },
+        pfx:
+          opts.pfxFilepath && opts.pfxPassword ? { filepath: opts.pfxFilepath, password: opts.pfxPassword } : undefined,
       }
       let base64Account, base64Basic, accessToken
       if (opts.oauth) {
-        accessToken = await getOauthToken(opts.domain, agentOptions)
+        accessToken = await getOauthToken(opts.domain!, agentOptions)
       } else {
-        base64Basic = await createBase64Account(opts.basic)
-        base64Account = await createBase64Account(opts.username, opts.password)
+        base64Basic = await createBase64Account(opts.basic!)
+        base64Account = await createBase64Account(opts.username!, opts.password)
       }
 
-      if (['reset', 'deploy'].includes(opts.type)) {
+      if (['reset', 'deploy'].includes(opts.type!)) {
         const ktn = {
           proxy: opts.proxy,
           domain: opts.domain,
@@ -68,10 +69,10 @@ const main = async () => {
           guestSpaceId: opts.pushTarget.guestSpaceId,
         }
         if (opts.pushTarget.oauth) {
-          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain, agentOptions)
+          pushTargetKtn.accessToken = await getOauthToken(opts.pushTarget.domain!, agentOptions)
         } else {
-          pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic)
-          pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username, opts.pushTarget.password)
+          pushTargetKtn.base64Basic = await createBase64Account(opts.pushTarget.basic!)
+          pushTargetKtn.base64Account = await createBase64Account(opts.pushTarget.username!, opts.pushTarget.password)
           pushTargetKtn.pfxFilepath = opts.pushTarget.pfxFilepath
           pushTargetKtn.pfxPassword = opts.pushTarget.pfxPassword
         }
@@ -79,7 +80,7 @@ const main = async () => {
 
       // TODO: スペース単位ループを可能にする(スペース内全アプリをpull)
       // アプリ単位ループ
-      for (const [appName, appId] of Object.entries(opts.apps)) {
+      for (const [appName, appId] of Object.entries(opts.apps!)) {
         if (opts.appName && opts.appName !== appName) {
           continue
         }
@@ -87,7 +88,7 @@ const main = async () => {
         const target = `----------${environment}/${appName}----------`
         console.info(target)
 
-        const kintoneCommands = await loadKintoneCommands({ commands: opts.commands, exclude: opts.exclude })
+        const kintoneCommands = await loadKintoneCommands({ commands: opts.commands!, exclude: opts.exclude! })
         const requestPromises = []
         // APIコマンド単位ループ
         for (const [commName, commProp] of Object.entries(kintoneCommands)) {
@@ -135,9 +136,10 @@ const main = async () => {
         }
         await Promise.all(requestPromises)
       }
-    } catch (error) {
+    } catch (e) {
+      const error = e as Partial<Error>
       try {
-        const message = JSON.parse(error.message)
+        const message = JSON.parse(error.message!)
         console.error(inspect(message, { depth: Infinity, colors: true }))
         delete error.message
       } finally {
