@@ -23,6 +23,7 @@ export type BaseOpts = Partial<{
   proxy: ProxyOption
 
   app: number[] | Record<string, number>
+  appId: number
   apps: AppDic
   appName: string
   guestSpaceId: string
@@ -48,7 +49,7 @@ export type Ktn = Pick<Opts, 'proxy' | 'domain' | 'guestSpaceId' | 'apps' | 'pfx
     base64Basic: string
     accessToken: string
     appName: string
-    appId: string
+    appId: string | number
     command: keyof Commands
     appParam: CommandProps['appParam']
     methods: CommandProps['methods']
@@ -90,6 +91,6 @@ export type AppCustomize = {
 
 export type KintoneInfo = {
   properties?: Properties
-  app: string
+  app: number | string
   revision: string
 }

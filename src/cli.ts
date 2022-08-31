@@ -9,6 +9,7 @@ import { ginuePush } from './push'
 import { ginueDeploy, ginueReset } from './deploy'
 import { ginueErd } from './erd'
 import { ginueDiff } from './diff'
+import { BaseOpts, Ktn } from './types'
 
 const main = async () => {
   const allOpts = await createOptionValues()
@@ -62,7 +63,7 @@ const main = async () => {
         return
       }
 
-      let pushTargetKtn
+      let pushTargetKtn: BaseOpts
       if (opts.pushTarget) {
         pushTargetKtn = {
           domain: opts.pushTarget.domain,
@@ -99,7 +100,7 @@ const main = async () => {
           }
 
           const preview = Boolean(commProp.hasPreview && opts.preview)
-          const ktn = {
+          const ktn: Ktn = {
             proxy: opts.proxy,
             domain: opts.domain,
             guestSpaceId: opts.guestSpaceId,
@@ -107,7 +108,7 @@ const main = async () => {
             base64Basic,
             accessToken,
             appName,
-            appId,
+            appId: appId,
             command: commName,
             appParam: commProp.appParam,
             methods: commProp.methods,
@@ -127,10 +128,11 @@ const main = async () => {
                 console.info(`[SKIP] ${commName}`)
                 break
               }
-              if (pushTargetKtn) {
+              if (pushTargetKtn!) {
+                // @ts-expect-error
                 pushTargetKtn.appId = opts.pushTarget.app[ktn.appName]
               }
-              await ginuePush(ktn, opts, pushTargetKtn)
+              await ginuePush(ktn, opts, pushTargetKtn!)
               break
           }
         }
