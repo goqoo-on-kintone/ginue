@@ -80,6 +80,7 @@ export type Commands = Record<string, CommandProps>
 export type AppDic = Record<string, string | number>
 
 export type FormFields = Awaited<ReturnType<KintoneRestAPIClient['app']['getFormFields']>>
+export type FormLayout = Awaited<ReturnType<KintoneRestAPIClient['app']['getFormLayout']>>
 export type AppSettings = Awaited<ReturnType<KintoneRestAPIClient['app']['getAppSettings']>>
 export type AppCustomize = {
   desktop: { js: any[]; css: any[] }

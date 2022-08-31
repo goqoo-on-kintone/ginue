@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 import { loadRequiedFile, createFilePath } from './util'
 import { sendKintoneInfo, fetchKintoneInfo } from './client'
 import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
-import type { BaseOpts, FormFields, KintoneInfo, Ktn, Opts } from './types'
+import type { BaseOpts, FormFields, FormLayout, KintoneInfo, Ktn, Opts } from './types'
 
 const pluckFieldCodeFromMessage = (message: string, regexps: RegExp[]) => {
   const found = regexps.map((regexp) => message.match(regexp)).find((found) => Array.isArray(found))
@@ -94,7 +94,11 @@ const confirmDeleteFieldsInRoot = async (message: string, ktn: Ktn): Promise<str
   return fields
 }
 
-const confirmDeleteFieldsInSubtable = async (message: string, ktn: Ktn, kintoneInfo): Promise<string[] | undefined> => {
+const confirmDeleteFieldsInSubtable = async (
+  message: string,
+  ktn: Ktn,
+  kintoneInfo: FormLayout
+): Promise<string[] | undefined> => {
   const subtableField = pluckFieldCodeFromMessage(message, [
     /フォームの更新に失敗しました。テーブル「(.+)」の指定が正しくありません。指定するフィールドに不足がある、またはテーブルにないフィールドを指定しています/,
     /The format of table (.+) is not valid. Some fields may be missing or the specified fields may not exist in the table/,
@@ -104,11 +108,17 @@ const confirmDeleteFieldsInSubtable = async (message: string, ktn: Ktn, kintoneI
     return
   }
 
-  const kintoneInfoOfTarget = await fetchKintoneInfo({ ...ktn, command: 'app/form/layout.json', preview: true })
-  const innerFieldCodes = (_) => _.layout.find((_) => _.code === subtableField).fields.map((_) => _.code)
+  const kintoneInfoOfTarget: FormLayout = await fetchKintoneInfo({
+    ...ktn,
+    command: 'app/form/layout.json',
+    preview: true,
+  })
+  const innerFieldCodes = (_: FormLayout): string[] =>
+    // @ts-expect-error
+    _.layout.find((_) => _.code === subtableField).fields.map((_) => _.code)
   const fieldsOfTarget = innerFieldCodes(kintoneInfoOfTarget)
   const fieldsToSend = innerFieldCodes(kintoneInfo)
-  const fields = fieldsOfTarget.filter((code) => !fieldsToSend.includes(code))
+  const fields = fieldsOfTarget.filter((code: string) => !fieldsToSend.includes(code))
 
   const { isConfirmed } = await inquirer.prompt([
     {
@@ -155,7 +165,11 @@ const execPush = async (ktn: Ktn, kintoneInfo: KintoneInfo) => {
           fields = await confirmDeleteFieldsInRoot(message, ktn)
           break
         case 'CB_VA01':
-          fields = await confirmDeleteFieldsInSubtable(JSON.stringify(errors), ktn, kintoneInfo)
+          fields = await confirmDeleteFieldsInSubtable(
+            JSON.stringify(errors),
+            ktn,
+            kintoneInfo as unknown as FormLayout
+          )
           break
       }
 
