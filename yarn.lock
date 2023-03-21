@@ -2382,10 +2382,10 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-gyuma@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/gyuma/-/gyuma-0.5.0.tgz#af385a86c1309a11e4db3f95d02fed0ced8efb59"
-  integrity sha512-xGEpgm/0Mv9zhqZknnz4NHXiwsPbPzospZPIKAQa+g2J7+xtu1Q1a7z1s2tnlobgrxxu1+VsF5kZJ+Nr6lNEOQ==
+gyuma@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/gyuma/-/gyuma-0.6.1.tgz#ae3c4c1036b4863b8221ea4116edc6e6de0a0cb5"
+  integrity sha512-R3XK/HpCOZW2a4V8CbFwqWsJ0EpECrOzoTeXs3tBdRqvep+hG80uaP3fOKhVzd5+P+aLm2oP/CBqnqmI5asxYQ==
   dependencies:
     date-fns "^2.29.2"
     del "6"

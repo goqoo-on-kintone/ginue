@@ -1,4 +1,4 @@
-import gyuma from 'gyuma'
+import { gyuma } from 'gyuma'
 import { AgentOptions } from './types'
 
 export const getOauthToken = async (domain: string, agentOptions: AgentOptions) => {
