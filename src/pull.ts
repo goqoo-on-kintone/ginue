@@ -135,6 +135,10 @@ export const ginuePull = async (ktn: Ktn, opts: Opts) => {
     saveKintoneInfo(altFilePath, kintoneInfoAlt)
   }
   if (ktn.command === 'app/customize.json' && opts.downloadJs) {
+    if (ktn.accessToken) {
+      console.info(`[SKIP] Download JS File (Forbidden via OAuth)`)
+      return
+    }
     await downloadCustomizeFiles(kintoneInfo!, ktn, opts)
   }
 }
