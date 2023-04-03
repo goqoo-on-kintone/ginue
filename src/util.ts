@@ -112,7 +112,7 @@ export const createBase64Account = async (...account: [string, string?]) => {
   return base64Account
 }
 
-export const loadRequiedFile = <T>(configFileName: string): T => {
+export const loadRequiedFile = <T extends Record<string, any>>(configFileName: string): T => {
   try {
     const config = rcFile<T>('config', { configFileName })
     if (!config) {
