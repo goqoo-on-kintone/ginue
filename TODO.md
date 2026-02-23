@@ -22,6 +22,16 @@ github.com/goqoo-on-kintone/gyuma/        # → Go版への移行案内
 | gyuma | TypeScript (OAuth) | Ginueに内蔵 + 単独配布 |
 | twins-diff | TypeScript 343行 | Ginueに内蔵 + 単独配布 |
 
+## バージョン
+
+Go版は **v4.0.0** からスタート（v3は欠番）
+
+```
+v2.x    JavaScript正式版（メンテナンスモード）
+v3.x    TypeScriptベータ版（@next、廃止予定）
+v4.x    Go版 ← 新規
+```
+
 ## 最終成果物
 
 ```bash
