@@ -3,6 +3,7 @@ import path from 'path'
 // TODO: cloneDeepだけならJSON.stringify()で十分なのでlodashやめる
 import { cloneDeep } from 'lodash'
 import mkdirp from 'mkdirp'
+// @ts-expect-error - prettier v2の型定義がないため
 import prettier from 'prettier'
 import { prettyln, trim, createDirPath, createFilePath } from './util'
 import { fetchKintoneInfo, downloadFile } from './client'
