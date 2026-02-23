@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## [3.1.0] - 2025-02-24
 
+v3.0.0で「最初で最後の機能リリース」と言ったな、あれは嘘だ。
+
 ### Features
 
 - **Dry-run mode** (`--dry-run=<OUTPUT-DIR>`): Preview transformed JSON without pushing to kintone. Useful for verifying cross-environment push transformations.
