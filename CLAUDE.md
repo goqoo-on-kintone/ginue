@@ -18,13 +18,22 @@ node dist/cli.js <command>
 # Lint
 yarn eslint src/
 
+# テスト
+yarn test          # Jest実行
+
 # API定義の確認
 yarn apis:all      # kintoneから全API取得
 yarn apis:ginue    # ginue対応API確認
 yarn apis:diff     # 差分確認
 ```
 
-テストは現在未実装（`yarn test`はエラーになる）。
+### テスト構成
+
+```
+test/
+├── util.test.ts       # trim, pretty, createBase64Account, createBaseDirPath
+└── converter.test.ts  # convertAppSettingsJson, convertAppFormFieldsJson, convertAppIdToName
+```
 
 ## アーキテクチャ
 
@@ -36,6 +45,8 @@ src/
 ├── pull.ts      # kintone設定をJSONファイルへ保存
 ├── push.ts      # JSONファイルをkintoneへアップロード
 ├── deploy.ts    # テスト環境→運用環境への反映/キャンセル
+├── erd.ts       # ルックアップ関係からER図(PlantUML)生成
+├── diff.ts      # twins-diffを起動して環境間差分表示
 ├── commands.js  # 対応kintone APIの定義（11種類）
 ├── converter.ts # JSON正規化・変換ユーティリティ
 ├── types.ts     # 型定義
