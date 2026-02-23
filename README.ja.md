@@ -40,24 +40,30 @@ Gitライクな一連のコマンドを提供します。
 * [ginue deploy](#ginue-deploy) : kintoneアプリの設定を運用環境へ反映します。
 * [ginue reset](#ginue-reset) : kintoneアプリの設定の変更をキャンセルします。
 * [ginue erd](#ginue-erd) :（実験的機能）kintoneアプリのルックアップ関係を解析してER図を作成します。
+* [ginue diff](#ginue-diff) :（実験的機能）環境間の設定差分を表示します。
 
 ### 共通オプション
 
 #### コマンドライン引数から指定
 ```
-  -v, --version                    Output version information
-  -h, --help                       Output usage information
-  -d, --domain=<DOMAIN>            kintone domain name
-  -u, --user=<USER>                kintone username
-  -p, --password=<PASSWORD>        kintone password
-  -a, --app=<APP-ID>               kintone app IDs
-  -g, --guest=<GUEST-SPACE-ID>     kintone guest space ID
-  -b, --basic=<USER[:PASSWORD]>    kintone Basic Authentication user and password
-  -A, --appName=<APP-NAME>         Set target app name
-  -l, --location=<LOCATION>        Location of settings file
-  -t, --fileType=<FILE-TYPE>       Set file type 'json'(default) or 'js'
-  -F, --pfxFilepath=<PFX-FILEPATH> The path to client certificate file.
-  -P, --pfxPassword=<PFX-PASSWORD> The password of client certificate.
+  -v, --version                    バージョン情報を表示
+  -h, --help                       ヘルプを表示
+  -d, --domain=<DOMAIN>            kintoneドメイン名
+  -u, --user=<USER>                kintoneユーザー名
+  -p, --password=<PASSWORD>        kintoneパスワード
+  -a, --app=<APP-ID>               kintoneアプリID
+  -g, --guest=<GUEST-SPACE-ID>     kintoneゲストスペースID
+  -b, --basic=<USER[:PASSWORD]>    Basic認証のユーザー名とパスワード
+  -A, --appName=<APP-NAME>         対象アプリ名を指定
+  -l, --location=<LOCATION>        設定ファイルの保存先
+  -t, --fileType=<FILE-TYPE>       ファイル形式 'json'(デフォルト) or 'js'
+  -F, --pfxFilepath=<PFX-FILEPATH> クライアント証明書ファイルのパス
+  -P, --pfxPassword=<PFX-PASSWORD> クライアント証明書のパスワード
+  --oauth                          OAuth 2.0認証を使用（gyumaが必要）
+  --preview                        運用環境ではなくテスト環境から取得
+  --alt                            代替フォーマットで保存（環境依存の値をマスク）
+  --downloadJs                     カスタマイズJS/CSSファイルをダウンロード
+  --proxy=<PROXY-URL>              プロキシサーバーURL
 ```
 
 * `domain` `user` `password` `app`オプションを省略した場合、標準入力を求められます。
@@ -205,7 +211,7 @@ $ ginue reset development -A user
 
 ## ginue erd
 
-* ⚠️実験的機能です。仕様は大きく変更される可能性があります。
+* ⚠️実験的機能です。動作が不安定な場合があります。
 * `ginue pull`で保存済みのJSONファイルからkintoneアプリのルックアップ関係を解析して、ER図を作成します。
 * 各`env`ディレクトリの直下に、PlantUML形式のファイル`erd.pu`を保存します。
 * 画像ファイルは作成しないので、任意の方法でPlantUMLをレンダリングしてください。
@@ -214,4 +220,16 @@ $ ginue reset development -A user
 
 ```
 $ ginue erd development
+```
+
+## ginue diff
+
+* ⚠️実験的機能です。動作が不安定な場合があります。
+* 環境間の設定差分を[twins-diff](https://github.com/the-red/twins-diff)で表示します。
+
+実行例
+
+```
+$ ginue diff development
+$ ginue diff development:production
 ```

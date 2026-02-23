@@ -40,6 +40,7 @@ Ginue provides Git-like commands:
 * [ginue deploy](#ginue-deploy): Deploy settings to production environment
 * [ginue reset](#ginue-reset): Cancel pending changes
 * [ginue erd](#ginue-erd): (Experimental) Generate ER diagram from lookup relationships
+* [ginue diff](#ginue-diff): (Experimental) Show diff between environments
 
 ### Common Options
 
@@ -57,6 +58,11 @@ Ginue provides Git-like commands:
   -t, --fileType=<FILE-TYPE>       Set file type 'json'(default) or 'js'
   -F, --pfxFilepath=<PFX-FILEPATH> The path to client certificate file
   -P, --pfxPassword=<PFX-PASSWORD> The password of client certificate
+  --oauth                          Use OAuth 2.0 authentication (requires gyuma)
+  --preview                        Fetch from test environment instead of production
+  --alt                            Save with alternate format (masks environment-specific values)
+  --downloadJs                     Download JS/CSS customization files
+  --proxy=<PROXY-URL>              Proxy server URL
 ```
 
 * If `domain`, `user`, `password`, or `app` options are omitted, you will be prompted for input.
@@ -144,12 +150,23 @@ ginue reset development -A user
 
 ## ginue erd
 
-⚠️ Experimental feature.
+⚠️ Experimental feature. May be unstable.
 
 Generates an ER diagram (PlantUML format) from lookup field relationships.
 
 ```bash
 ginue erd development
+```
+
+## ginue diff
+
+⚠️ Experimental feature. May be unstable.
+
+Opens a visual diff viewer ([twins-diff](https://github.com/the-red/twins-diff)) to compare settings between environments.
+
+```bash
+ginue diff development
+ginue diff development:production
 ```
 
 ## License
