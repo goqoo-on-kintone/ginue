@@ -9,9 +9,9 @@ A CLI tool to manage kintone app settings via the kintone REST API with a Git-li
 > v3.0 is the first and final feature release of the TypeScript version. Bug fix patches (v3.0.x) may be released as needed.
 > Development will continue with v4, rewritten in Go, distributed as a single binary without requiring Node.js.
 >
-> - v2.x: JavaScript version (maintenance mode)
-> - **v3.0.x: TypeScript version (current)**
-> - v4.x: Go version (in development)
+> - v2: JavaScript version (maintenance mode)
+> - **v3: TypeScript version (current)**
+> - v4: Go version (in development)
 
 ## Installation
 
