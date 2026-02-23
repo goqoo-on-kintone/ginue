@@ -36,19 +36,19 @@ ginue deploy production
 
 ## Phase 0: twins-diff Go化（3-5日）
 
-- [ ] Go HTTPサーバー + API実装
-- [ ] React UIビルド → go:embed組み込み
-- [ ] 差分ロジック（go-diff利用）
-- [ ] 単独CLI作成
-- [ ] pkg/diffとしてライブラリ化
+- [x] Go HTTPサーバー + API実装
+- [x] React UIビルド → go:embed組み込み
+- [x] 差分ロジック（go-diff利用）
+- [x] 単独CLI作成
+- [x] pkg/diffとしてライブラリ化
 
 ## Phase 1: gyuma Go化（1-2週間）
 
-- [ ] OAuth 2.0 + PKCE フロー実装
+- [x] OAuth 2.0 + PKCE フロー実装
 - [ ] ローカルコールバックサーバー
-- [ ] トークン管理
+- [x] トークン管理
 - [ ] プロキシ/クライアント証明書対応
-- [ ] 単独CLI作成
+- [x] 単独CLI作成
 - [ ] pkg/oauthとしてライブラリ化
 
 ## Phase 2: Ginue基盤（1週間）
