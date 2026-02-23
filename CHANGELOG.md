@@ -4,6 +4,30 @@ English | [日本語](/CHANGELOG.ja.md)
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0] - 2025-02-24
+
+### Features
+
+- **Dry-run mode** (`--dry-run=<OUTPUT-DIR>`): Preview transformed JSON without pushing to kintone. Useful for verifying cross-environment push transformations.
+
+### Testing
+
+- **E2E test framework**: Added comprehensive E2E tests covering all commands (pull, push, deploy, reset)
+- **24 test cases**: Including `--dry-run`, `--alt`, `--exclude`, `-a`, `-A`, `--fileType` options
+- **Push conversion unit tests**: Tests for app ID conversion in lookup/referenceTable fields
+
+### Documentation
+
+- **ROADMAP.md**: v4 direction (Node.js/Deno/Go options), esbuild-style distribution strategy
+- **REFACTORING.md**: Detailed v4 refactoring plan with prioritized improvements
+- **README updates**: Added `--dry-run` option documentation
+
+### Internal
+
+- **Deno migration POC** (`test/deno-poc/`): Verified `.ginuerc.js` dynamic loading works with `deno compile`
+
+---
+
 ## [3.0.0] - 2025-02-23
 
 The first and final feature release of the TypeScript version. Bug fix patches (v3.0.x) may be released as needed. v4 onwards will be rewritten in Go.

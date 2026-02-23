@@ -4,6 +4,30 @@
 
 このプロジェクトの注目すべき変更点をこのファイルに記録します。
 
+## [3.1.0] - 2025-02-24
+
+### 機能追加
+
+- **Dry-runモード** (`--dry-run=<OUTPUT-DIR>`): 実際にpushせずに変換後のJSONをプレビュー。環境間pushの変換内容を事前確認するのに便利。
+
+### テスト
+
+- **E2Eテストフレームワーク**: 全コマンド（pull, push, deploy, reset）をカバーするE2Eテストを追加
+- **24テストケース**: `--dry-run`, `--alt`, `--exclude`, `-a`, `-A`, `--fileType`オプションを含む
+- **Push変換ユニットテスト**: lookup/referenceTableフィールドのアプリID変換テストを追加
+
+### ドキュメント
+
+- **ROADMAP.md**: v4の方向性（Node.js/Deno/Goの選択肢）、esbuild方式の配布戦略を追加
+- **REFACTORING.md**: 優先度付きのv4リファクタリング計画を追加
+- **README更新**: `--dry-run`オプションのドキュメントを追加
+
+### 内部
+
+- **Deno移行POC** (`test/deno-poc/`): `deno compile`で`.ginuerc.js`の動的読み込みが可能なことを検証
+
+---
+
 ## [3.0.0] - 2025-02-23
 
 TypeScript版の最初で最後の機能リリース。バグ修正パッチ（v3.0.x）は必要に応じてリリース予定。v4以降はGo言語で書き直す予定。
