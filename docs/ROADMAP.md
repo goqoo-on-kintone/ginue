@@ -3,10 +3,10 @@
 ## バージョン
 
 - **v2.x**: JavaScript版（メンテナンスモード）
-- **v3.x**: TypeScript版（v3.0.0が最初で最後の正式リリース）
+- **v3.0.x**: TypeScript版（v3.0が最初で最後の機能リリース、パッチは必要に応じて）
 - **v4.x**: Go版（本計画）
 
-## v3.0.0 リリース準備（TypeScript最終版）
+## v3.0 リリース準備（TypeScript最終版）
 
 - [x] README.md 英語版作成
 - [x] README.ja.md 日本語版整備

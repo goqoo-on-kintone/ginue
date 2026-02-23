@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ## [3.0.0] - 2024-XX-XX
 
-The first and final release of the TypeScript version. v4 onwards will be rewritten in Go.
+The first and final feature release of the TypeScript version. Bug fix patches (v3.0.x) may be released as needed. v4 onwards will be rewritten in Go.
 
 ### Features
 
