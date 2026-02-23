@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/goqoo-on-kintone/ginue#readme",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "directories": {
     "test": "test/"

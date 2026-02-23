@@ -35,7 +35,7 @@ TypeScript版の最初で最後の機能リリース。バグ修正パッチ（v
 
 ### 破壊的変更
 
-- **Node.js要件**: Node.js 7.6+ → **16+** に引き上げ
+- **Node.js要件**: Node.js 7.6+ → **18+** に引き上げ
 - **コードベース**: JavaScript → TypeScript に完全移行
 - **エントリポイント**: `./index.js` → `./dist/cli.js` に変更
 - **テストフレームワーク**: Mocha/power-assert → Jest に変更

@@ -35,7 +35,7 @@ The first and final feature release of the TypeScript version. Bug fix patches (
 
 ### Breaking Changes
 
-- **Node.js requirement**: Node.js 7.6+ → **16+**
+- **Node.js requirement**: Node.js 7.6+ → **18+**
 - **Codebase**: Fully migrated from JavaScript to TypeScript
 - **Entry point**: `./index.js` → `./dist/cli.js`
 - **Test framework**: Mocha/power-assert → Jest
