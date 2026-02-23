@@ -14,7 +14,7 @@
 - [x] テストコード追加（util.ts, converter.ts）
 - [x] package.json testスクリプト設定
 - [ ] バージョン番号を3.0.0に更新
-- [ ] CHANGELOGまたはリリースノート作成
+- [x] CHANGELOGまたはリリースノート作成
 - [ ] npm publish
 
 ---
