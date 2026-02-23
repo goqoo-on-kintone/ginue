@@ -8,15 +8,7 @@ All notable changes to this project will be documented in this file.
 
 The first and final release of the TypeScript version. v4 onwards will be rewritten in Go.
 
-### Breaking Changes
-
-- **Node.js requirement**: Node.js 7.6+ → **16+**
-- **Codebase**: Fully migrated from JavaScript to TypeScript
-- **Entry point**: `./index.js` → `./dist/cli.js`
-- **Test framework**: Mocha/power-assert → Jest
-- **form.json**: Removed from pull targets (low practical value)
-
-### New Features
+### Features
 
 #### Authentication
 - **OAuth 2.0** (`--oauth`): OAuth authentication via gyuma
@@ -41,17 +33,13 @@ The first and final release of the TypeScript version. v4 onwards will be rewrit
 - **Custom view skip**: Interactively skip when views.json contains custom views
 - Display environment/app name during processing
 
-### Bug Fixes
+### Breaking Changes
 
-- Fixed proxy credentials not being read from `.netrc`
-- Skip JS download when using OAuth (API limitation)
-- Fixed layout.json error handling
-- Fixed custom view skip not working correctly in views.json
-- Fixed subtable field addition not working properly
-- Fixed `--preview` and non-preview mixing inconsistently
-- Fixed various null errors
-- Fixed fileKey being treated as an array
-- Fixed type error (AppAcl → FieldAcl)
+- **Node.js requirement**: Node.js 7.6+ → **16+**
+- **Codebase**: Fully migrated from JavaScript to TypeScript
+- **Entry point**: `./index.js` → `./dist/cli.js`
+- **Test framework**: Mocha/power-assert → Jest
+- **form.json**: Removed from pull targets (low practical value)
 
 ### Internal Changes
 
@@ -84,10 +72,6 @@ The first and final release of the TypeScript version. v4 onwards will be rewrit
 
 - Support Basic authentication via environment variable (`GINUE_BASIC`)
 
-### Security
-
-- Upgrade minimist 1.2.0 → 1.2.3
-
 ---
 
 ## [2.2.0] - 2020-05-07
@@ -95,11 +79,6 @@ The first and final release of the TypeScript version. v4 onwards will be rewrit
 ### Features
 
 - **Environment variables**: Set credentials via `GINUE_USERNAME`, `GINUE_PASSWORD`, `GINUE_BASIC`, etc.
-
-### Bug Fixes
-
-- Fixed subtable fields not being auto-sorted in form-alt.json
-- Fixed inappropriate "App not found in environment" error during push
 
 ### Security
 
@@ -116,23 +95,13 @@ The first and final release of the TypeScript version. v4 onwards will be rewrit
 - **Language switching**: Switch kintone API response language
 - OAuth 2.0 authentication foundation
 
-### Bug Fixes
-
-- Fixed incorrect environment name display during push
-- Improved error message display
-
 ---
 
 ## [2.0.0] - 2018-11-26
 
 Major update from v1. Added push functionality and revamped ginuerc format.
 
-### Breaking Changes
-
-- **ginuerc format change**: Array format → `env` object format
-- **output option removed**: Renamed to `location` option
-
-### New Features
+### Features
 
 #### New Commands
 - **ginue push**: Upload local JSON files to kintone
@@ -164,11 +133,10 @@ Major update from v1. Added push functionality and revamped ginuerc format.
 - Command-specific help (-h/--help)
 - Per-app processing (-A/--appName)
 
-### Bug Fixes
+### Breaking Changes
 
-- Fixed preview-only files being pulled twice with --preview
-- Fixed exclude not working when only one item
-- Fixed push/deploy/reset when ginuerc doesn't exist
+- **ginuerc format change**: Array format → `env` object format
+- **output option removed**: Renamed to `location` option
 
 ### Internal Changes
 
@@ -185,11 +153,6 @@ Major update from v1. Added push functionality and revamped ginuerc format.
 - **Basic authentication** (`-b/--basic`): Specify Basic auth username and password
 - **App name directories**: Create directories using app names instead of IDs
 
-### Bug Fixes
-
-- Fixed regression where multiple app IDs couldn't be passed via command line
-- Fixed stdout display
-
 ---
 
 ## [1.1.0] - 2018-01-18
@@ -198,10 +161,6 @@ Major update from v1. Added push functionality and revamped ginuerc format.
 
 - **Multiple environments**: Specify multiple environments as array in ginuerc, separate directories by environment
 - Improved stdin handling for multiple environments
-
-### Bug Fixes
-
-- Fixed option processing bugs with certain argument combinations
 
 ---
 
