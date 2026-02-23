@@ -1,40 +1,48 @@
 # Ginue
 
-Ginue is the CLI tool to edit settings of kintone via kintone REST API.
+English | [日本語](/README.ja.md)
 
-[kintone REST API](https://developer.cybozu.io/hc/ja/articles/201941834)でkintoneアプリの設定情報を編集するためのCLI版ツールです。
+A CLI tool to manage kintone app settings via the kintone REST API with a Git-like workflow.
 
-## インストール方法
+> **📢 Notice**
+>
+> v3.0.0 is the first and final release of the TypeScript version. Development will continue with v4, rewritten in Go.
+> v4 will be distributed as a single binary without requiring Node.js.
+>
+> - v2.x: JavaScript version (maintenance mode)
+> - **v3.x: TypeScript version (current, final release)**
+> - v4.x: Go version (in development)
 
-グローバルにインストールする場合
+## Installation
 
+Global installation:
+
+```bash
+npm install -g ginue
+# or
+yarn global add ginue
 ```
-$ npm install -g ginue
- or
-$ yarn global add ginue
+
+Per-project installation:
+
+```bash
+npm install --save-dev ginue
+# or
+yarn add --dev ginue
 ```
 
-プロジェクトごとにインストールする場合
+## Usage
 
-```
-$ npm install --save-dev ginue
- or
-$ yarn add --dev ginue
-```
+Ginue provides Git-like commands:
 
-## 使い方
+* [ginue pull](#ginue-pull): Fetch kintone app settings
+* [ginue push](#ginue-push): Upload settings to kintone
+* [ginue deploy](#ginue-deploy): Deploy settings to production environment
+* [ginue reset](#ginue-reset): Cancel pending changes
+* [ginue erd](#ginue-erd): (Experimental) Generate ER diagram from lookup relationships
 
-Gitライクな一連のコマンドを提供します。
+### Common Options
 
-* [ginue pull](#ginue-pull) : kintoneの設定情報を取得します。
-* [ginue push](#ginue-push) : kintoneの設定情報を送信します。
-* [ginue deploy](#ginue-deploy) : kintoneアプリの設定を運用環境へ反映します。
-* [ginue reset](#ginue-reset) : kintoneアプリの設定の変更をキャンセルします。
-* [ginue erd](#ginue-erd) :（実験的機能）kintoneアプリのルックアップ関係を解析してER図を作成します。
-
-### 共通オプション
-
-#### コマンドライン引数から指定
 ```
   -v, --version                    Output version information
   -h, --help                       Output usage information
@@ -47,96 +55,43 @@ Gitライクな一連のコマンドを提供します。
   -A, --appName=<APP-NAME>         Set target app name
   -l, --location=<LOCATION>        Location of settings file
   -t, --fileType=<FILE-TYPE>       Set file type 'json'(default) or 'js'
-  -F, --pfxFilepath=<PFX-FILEPATH> The path to client certificate file.
-  -P, --pfxPassword=<PFX-PASSWORD> The password of client certificate.
+  -F, --pfxFilepath=<PFX-FILEPATH> The path to client certificate file
+  -P, --pfxPassword=<PFX-PASSWORD> The password of client certificate
 ```
 
-* `domain` `user` `password` `app`オプションを省略した場合、標準入力を求められます。
-* アプリID（`app`オプション or 標準入力）はカンマ区切りで複数指定可能です。
-* ゲストスペース内のアプリ情報を取得する場合は`guest`オプションが必須です。
-* Basic認証を使用する場合は`basic`オプションが必須です。パスワードを省略した場合、標準入力を求められます。
-* クライアント証明書を使用する場合は`pfxFilepath` `pfxPassword`オプションが必須です。`pfxPassword`を省略した場合、標準入力を求められます。
-* `location`オプションを指定すると、kintone設定情報ファイルの保存フォルダを指定できます。（省略時はカレントディレクトリ）
-* `fileType`オプションに`js`を指定すると、kintone設定情報ファイルを`.json`ではなく`.js`フォーマットで扱います。
-* コマンドライン引数のほか、後述する`.ginuerc`や`.netrc`でもオプション指定が可能です
-  * `username`, `password`, `basic`, `pfxFilepath`, `pfxPassword`については環境変数でも設定可能です。
-  （`GINUE_USERNAME`, `GINUE_PASSWORD`, `GINUE_BASIC`, `GINUE_PFX_FILEPATH`, `GINUE_PFX_PASSWORD`）
-  * 優先順位は `環境変数 < .netrc < .ginuerc < 引数`
+* If `domain`, `user`, `password`, or `app` options are omitted, you will be prompted for input.
+* Multiple app IDs can be specified with commas (e.g., `-a 10,11,12`).
+* The `guest` option is required for apps in guest spaces.
+* Options can also be set via `.ginuerc` config file, `.netrc`, or environment variables.
+* Priority: `CLI args > .ginuerc > .netrc > environment variables`
 
-#### .ginuerc
+### .ginuerc
 
-コマンドを実行するディレクトリに`.ginuerc`という設定ファイルを作成すると、`ginue`実行時に自動的に読み込まれてオプション指定を省略できます。プロジェクト単位で`.ginuerc`を作成すると便利です。
+Create a `.ginuerc` config file in your project directory for automatic option loading. Supports JSON, JS, and YAML formats.
 
-* フォーマットはJSON/JS/YAMLの3種類に対応しています。
-  * .ginuerc.json
-  ```json
-  {
-    "location": "kintone-settings",
-    "domain": "ginue.cybozu.com",
-    "username": "Administrator",
-    "password": "myKintonePassword",
-    "app": [10, 11, 12],
-    "guest": 5
-  }
-  ```
-  * .ginuerc.js
-  ```js
-  module.exports = {
-    location: 'kintone-settings',
-    domain: 'ginue.cybozu.com',
-    username: 'Administrator',
-    password: 'myKintonePassword',
-    app: [10, 11, 12],
-    guest: 5,
-  }
-  ```
-  * .ginuerc.yml
-  ```yaml
-    location: kintone-settings
-    domain: ginue.cybozu.com
-    username: Administrator
-    password: myKintonePassword
-    app:
-      - 10
-      - 11
-      - 12
-    guest: 5
-  ```
-* `env`プロパティを使用すると、異なる環境のアプリをグルーピングできます。
-  * 各環境別にオブジェクトを作成し、プロパティは環境名として自由に設定します。(ex. `development`, `production`)
-  * `ginue pull`時には各環境ごとにディレクトリが作成され、配下にJSONファイルが保存されます。
-    * デフォルトでは環境名＝ディレクトリ名
-    * 各環境に`location`プロパティを指定すると、`location`の値＝ディレクトリ名
-    * トップレベルに`location`プロパティを指定すると、`location`のディレクトリ配下に、各環境のサブディレクトリを作成
-* `app`プロパティにオブジェクトを指定すると、アプリIDではなくアプリ名のディレクトリにJSONが保存されます。
-  * その場合、各種`ginue`コマンドの引数に`appName`オプションを指定することで、特定のアプリのみを処理できます。
+**.ginuerc.json**
+```json
+{
+  "location": "kintone-settings",
+  "domain": "example.cybozu.com",
+  "username": "Administrator",
+  "password": "myPassword",
+  "app": [10, 11, 12]
+}
+```
 
+**Multi-environment configuration:**
 ```json
 {
   "location": "kintone-settings",
   "env": {
     "development": {
-      "domain": "ginue-dev.cybozu.com",
-      "username": "Administrator",
-      "password": "myKintonePassword",
-      "app": {
-        "user": 128,
-        "order": 129,
-        "bill": 130
-      },
-      "basic": "Administrator:myBasicAuthPassword"
+      "domain": "dev.cybozu.com",
+      "app": { "user": 128, "order": 129 }
     },
     "production": {
-      "location": "__PRODUCTION__",
-      "domain": "ginue.cybozu.com",
-      "username": "Administrator",
-      "password": "myKintonePassword",
-      "app": {
-        "user": 10,
-        "order": 11,
-        "bill": 12
-      },
-      "guest": 5
+      "domain": "prod.cybozu.com",
+      "app": { "user": 10, "order": 11 }
     }
   }
 }
@@ -144,65 +99,59 @@ Gitライクな一連のコマンドを提供します。
 
 ## ginue pull
 
-* カレントにアプリID名のディレクトリが作成され、その中に全JSONファイルが保存されます。
-* APIのレスポンス上は全JSONに`revision`要素が含まれますが、保存される各JSONファイルでは`revision`要素が省略され、代わりに`revision.json`というファイルを単独で作成します。（更新時のdiffがシンプルになるため）
-* `preview`オプションを指定すると、運用環境ではなくテスト環境のJSONファイルを取得します。運用環境へ反映する前の状態を確認したい場合は有効にしてください。
-  * `.ginuerc`に`"preview": true`を設定すると常時有効になります。
+Fetches kintone app settings and saves them as JSON files.
 
-実行例
+* Creates a directory per app containing all settings JSON files.
+* The `revision` field is extracted to a separate `revision.json` file for cleaner diffs.
+* Use `--preview` to fetch settings from the test environment instead of production.
 
-```
-$ ginue pull -d ginue.cybozu.com -g 5 -a 10,11,12 -u Administrator
-$ ginue pull -d ginue.cybozu.com -b Administrator -a 10,11,12 -u Administrator -l kintone-settings
-$ ginue pull -A user --preview
+```bash
+ginue pull -d example.cybozu.com -a 10,11,12 -u Administrator
+ginue pull -A user --preview
 ```
 
 ## ginue push
 
-* `ginue pull`で保存済みのJSONファイルを、kintoneにアップロードします。
-* 環境名を単独で指定すれば同じ環境にアップロードします。
-* 環境名をコロン区切りで`<from>:<to>`のように書くと、ローカルの`<from>`ディレクトリ配下に保存されたJSONファイルを`<to>`環境にアップロードします。
-* 実行後はkintoneのテスト環境が変更された状態になるので、kintoneの設定画面で「アプリを更新」「変更を中止」ボタンをクリックするか、`ginue deploy` `ginue reset`コマンドを使用してください。
+Uploads local JSON settings to kintone's test environment.
 
-実行例
+* Push to the same environment: `ginue push development`
+* Push across environments: `ginue push development:production`
+* After pushing, use kintone's UI to "Update App" or "Discard Changes", or use `ginue deploy` / `ginue reset`.
 
-```
-$ ginue push development
-$ ginue push development:production
-$ ginue push development:production -A user
+```bash
+ginue push development
+ginue push development:production
+ginue push development:production -A user
 ```
 
 ## ginue deploy
 
-* アプリの設定の運用環境への反映を行います。
+Deploys settings from the test environment to production.
 
-実行例
-
-```
-$ ginue deploy development
-$ ginue deploy development -A user
+```bash
+ginue deploy development
+ginue deploy development -A user
 ```
 
 ## ginue reset
 
-* アプリの設定の変更をキャンセルします。
+Cancels pending changes in the test environment.
 
-実行例
-
-```
-$ ginue reset development
-$ ginue reset development -A user
+```bash
+ginue reset development
+ginue reset development -A user
 ```
 
 ## ginue erd
 
-* ⚠️実験的機能です。仕様は大きく変更される可能性があります。
-* `ginue pull`で保存済みのJSONファイルからkintoneアプリのルックアップ関係を解析して、ER図を作成します。
-* 各`env`ディレクトリの直下に、PlantUML形式のファイル`erd.pu`を保存します。
-* 画像ファイルは作成しないので、任意の方法でPlantUMLをレンダリングしてください。
+⚠️ Experimental feature.
 
-実行例
+Generates an ER diagram (PlantUML format) from lookup field relationships.
 
+```bash
+ginue erd development
 ```
-$ ginue erd development
-```
+
+## License
+
+MIT
