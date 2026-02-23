@@ -180,6 +180,7 @@ const parseArgumentOptions = () => {
       'appName',
       'pfxFilepath',
       'pfxPassword',
+      'dry-run',
     ],
     alias: {
       v: 'version',
@@ -253,6 +254,7 @@ const pluckOpts = (firstObj: any, secondObj?: any) => {
     downloadJs: obj.downloadJs,
     pfxFilepath: obj.pfxFilepath,
     pfxPassword: obj.pfxPassword,
+    dryRunOutput: obj['dry-run'],
   }
 
   // Basic認証のパスワード有無でプロパティ名を変えておく
@@ -357,7 +359,9 @@ export const createOptionValues = async () => {
     opts.type = argv.type
   }
 
-  if (['push', 'reset', 'deploy'].includes(argv.type)) {
+  // dry-runの場合は確認不要（実際にpushしないため）
+  const isDryRun = argv['dry-run']
+  if (['push', 'reset', 'deploy'].includes(argv.type) && !isDryRun) {
     const { isConfirmed } = await inquirer.prompt([
       {
         name: 'isConfirmed',

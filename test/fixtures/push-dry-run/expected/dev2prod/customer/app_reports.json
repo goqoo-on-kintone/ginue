@@ -1,0 +1,30 @@
+{
+  "reports": {
+    "取引顧客別割合": {
+      "id": "11124977",
+      "chartType": "COLUMN",
+      "chartMode": "STACKED",
+      "name": "取引顧客別割合",
+      "index": "0",
+      "groups": [
+        {
+          "code": "業種"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "COUNT"
+        }
+      ],
+      "filterCond": "",
+      "sorts": [
+        {
+          "by": "TOTAL",
+          "order": "DESC"
+        }
+      ],
+      "periodicReport": null
+    }
+  },
+  "app": 222
+}

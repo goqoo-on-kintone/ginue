@@ -1,0 +1,229 @@
+{
+  "reports": {
+    "FY2025-月別売上実績（件数）": {
+      "id": "13311779",
+      "chartType": "COLUMN",
+      "chartMode": "STACKED",
+      "name": "FY2025-月別売上実績（件数）",
+      "index": "3",
+      "groups": [
+        {
+          "code": "受注予定日",
+          "per": "MONTH"
+        },
+        {
+          "code": "確度"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "COUNT"
+        }
+      ],
+      "filterCond": "受注予定日 >= \"2025-04-01\" and 受注予定日 <= \"2026-03-31\" and 商談フェーズ in (\"受注\")",
+      "sorts": [
+        {
+          "by": "GROUP1",
+          "order": "ASC"
+        },
+        {
+          "by": "GROUP2",
+          "order": "DESC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "FY2025-月別売上見込（金額）": {
+      "id": "13311775",
+      "chartType": "COLUMN",
+      "chartMode": "STACKED",
+      "name": "FY2025-月別売上見込（金額）",
+      "index": "0",
+      "groups": [
+        {
+          "code": "受注予定日",
+          "per": "MONTH"
+        },
+        {
+          "code": "確度"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "SUM",
+          "code": "売上"
+        }
+      ],
+      "filterCond": "受注予定日 >= \"2025-04-01\" and 受注予定日 <= \"2026-03-31\" and 商談フェーズ in (\"商談予定\", \"提案中\", \"内示\", \"受注\")",
+      "sorts": [
+        {
+          "by": "GROUP1",
+          "order": "ASC"
+        },
+        {
+          "by": "GROUP2",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "担当別売上": {
+      "id": "11119139",
+      "chartType": "PIVOT_TABLE",
+      "name": "担当別売上",
+      "index": "5",
+      "groups": [
+        {
+          "code": "受注予定日",
+          "per": "MONTH"
+        },
+        {
+          "code": "主担当"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "SUM",
+          "code": "売上"
+        }
+      ],
+      "filterCond": "",
+      "sorts": [
+        {
+          "by": "GROUP2",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "FY2025-月別売上実績（金額）": {
+      "id": "5520180",
+      "chartType": "COLUMN",
+      "chartMode": "STACKED",
+      "name": "FY2025-月別売上実績（金額）",
+      "index": "2",
+      "groups": [
+        {
+          "code": "受注予定日",
+          "per": "MONTH"
+        },
+        {
+          "code": "確度"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "SUM",
+          "code": "売上"
+        }
+      ],
+      "filterCond": "受注予定日 >= \"2025-04-01\" and 受注予定日 <= \"2026-03-31\" and 商談フェーズ in (\"受注\")",
+      "sorts": [
+        {
+          "by": "GROUP1",
+          "order": "ASC"
+        },
+        {
+          "by": "GROUP2",
+          "order": "DESC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "FY2025-月別売上見込（件数）": {
+      "id": "13311777",
+      "chartType": "COLUMN",
+      "chartMode": "STACKED",
+      "name": "FY2025-月別売上見込（件数）",
+      "index": "1",
+      "groups": [
+        {
+          "code": "受注予定日",
+          "per": "MONTH"
+        },
+        {
+          "code": "確度"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "COUNT"
+        }
+      ],
+      "filterCond": "受注予定日 >= \"2025-04-01\" and 受注予定日 <= \"2026-03-31\" and 商談フェーズ in (\"商談予定\", \"提案中\", \"内示\", \"受注\")",
+      "sorts": [
+        {
+          "by": "GROUP1",
+          "order": "ASC"
+        },
+        {
+          "by": "GROUP2",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "製品別売上": {
+      "id": "11118469",
+      "chartType": "COLUMN",
+      "chartMode": "STACKED",
+      "name": "製品別売上",
+      "index": "4",
+      "groups": [
+        {
+          "code": "提案商品"
+        },
+        {
+          "code": "確度"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "SUM",
+          "code": "売上"
+        }
+      ],
+      "filterCond": "",
+      "sorts": [
+        {
+          "by": "TOTAL",
+          "order": "DESC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "担当×製品別売上": {
+      "id": "11119141",
+      "chartType": "PIVOT_TABLE",
+      "name": "担当×製品別売上",
+      "index": "6",
+      "groups": [
+        {
+          "code": "受注予定日",
+          "per": "MONTH"
+        },
+        {
+          "code": "主担当"
+        },
+        {
+          "code": "提案商品"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "SUM",
+          "code": "売上"
+        }
+      ],
+      "filterCond": "",
+      "sorts": [
+        {
+          "by": "GROUP2",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    }
+  },
+  "app": 333
+}

@@ -1,0 +1,289 @@
+{
+  "properties": {
+    "カテゴリー": {
+      "type": "CATEGORY",
+      "code": "カテゴリー",
+      "label": "カテゴリー",
+      "enabled": false
+    },
+    "ステータス": {
+      "type": "STATUS",
+      "code": "ステータス",
+      "label": "ステータス",
+      "enabled": false
+    },
+    "タイトル": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "タイトル",
+      "label": "タイトル",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "レコード番号": {
+      "type": "RECORD_NUMBER",
+      "code": "レコード番号",
+      "label": "活動履歴No.",
+      "noLabel": false
+    },
+    "会社名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "会社名",
+      "label": "会社名",
+      "noLabel": false,
+      "required": false,
+      "lookup": {
+        "relatedApp": {
+          "app": 222,
+          "code": ""
+        },
+        "relatedKeyField": "会社名",
+        "fieldMappings": [
+          {
+            "field": "顧客No",
+            "relatedField": "顧客No"
+          }
+        ],
+        "lookupPickerFields": [
+          "会社名",
+          "都道府県",
+          "業種"
+        ],
+        "filterCond": "",
+        "sort": "顧客No desc"
+      }
+    },
+    "作成日時": {
+      "type": "CREATED_TIME",
+      "code": "作成日時",
+      "label": "作成日時",
+      "noLabel": false
+    },
+    "作成者": {
+      "type": "CREATOR",
+      "code": "作成者",
+      "label": "作成者",
+      "noLabel": false
+    },
+    "作業者": {
+      "type": "STATUS_ASSIGNEE",
+      "code": "作業者",
+      "label": "作業者",
+      "enabled": false
+    },
+    "内容": {
+      "type": "MULTI_LINE_TEXT",
+      "code": "内容",
+      "label": "内容",
+      "noLabel": false,
+      "required": false,
+      "defaultValue": ""
+    },
+    "対応日付": {
+      "type": "DATE",
+      "code": "対応日付",
+      "label": "対応日付",
+      "noLabel": false,
+      "required": false,
+      "unique": false,
+      "defaultValue": "",
+      "defaultNowValue": true
+    },
+    "対応種別": {
+      "type": "DROP_DOWN",
+      "code": "対応種別",
+      "label": "対応種別",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "電話": {
+          "label": "電話",
+          "index": "0"
+        },
+        "メール": {
+          "label": "メール",
+          "index": "1"
+        },
+        "商談（初回）": {
+          "label": "商談（初回）",
+          "index": "2"
+        },
+        "商談（2回目以降）": {
+          "label": "商談（2回目以降）",
+          "index": "3"
+        },
+        "その他": {
+          "label": "その他",
+          "index": "4"
+        }
+      },
+      "defaultValue": ""
+    },
+    "対応者": {
+      "type": "USER_SELECT",
+      "code": "対応者",
+      "label": "対応者",
+      "noLabel": false,
+      "required": false,
+      "entities": [],
+      "defaultValue": [
+        {
+          "type": "FUNCTION",
+          "code": "LOGINUSER()"
+        }
+      ]
+    },
+    "所属組織": {
+      "type": "ORGANIZATION_SELECT",
+      "code": "所属組織",
+      "label": "所属組織",
+      "noLabel": false,
+      "required": false,
+      "entities": [],
+      "defaultValue": [
+        {
+          "type": "FUNCTION",
+          "code": "PRIMARY_ORGANIZATION()"
+        }
+      ]
+    },
+    "更新日時": {
+      "type": "UPDATED_TIME",
+      "code": "更新日時",
+      "label": "更新日時",
+      "noLabel": false
+    },
+    "更新者": {
+      "type": "MODIFIER",
+      "code": "更新者",
+      "label": "更新者",
+      "noLabel": false
+    },
+    "案件No": {
+      "type": "NUMBER",
+      "code": "案件No",
+      "label": "案件No.",
+      "noLabel": false,
+      "required": false,
+      "minValue": "",
+      "maxValue": "",
+      "digit": false,
+      "unique": false,
+      "defaultValue": "",
+      "displayScale": "",
+      "unit": "",
+      "unitPosition": "BEFORE"
+    },
+    "案件名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "案件名",
+      "label": "案件名",
+      "noLabel": false,
+      "required": false,
+      "lookup": {
+        "relatedApp": {
+          "app": 333,
+          "code": ""
+        },
+        "relatedKeyField": "案件名",
+        "fieldMappings": [
+          {
+            "field": "案件No",
+            "relatedField": "案件No_"
+          }
+        ],
+        "lookupPickerFields": [
+          "会社名",
+          "案件名",
+          "主担当",
+          "提案商品",
+          "売上",
+          "商談フェーズ"
+        ],
+        "filterCond": "",
+        "sort": "案件No_ desc"
+      }
+    },
+    "案件情報": {
+      "type": "REFERENCE_TABLE",
+      "code": "案件情報",
+      "label": "案件情報",
+      "noLabel": false,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 333,
+          "code": ""
+        },
+        "condition": {
+          "field": "案件No",
+          "relatedField": "案件No_"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "受注予定日",
+          "商談フェーズ",
+          "提案商品",
+          "売上"
+        ],
+        "sort": "案件No_ desc",
+        "size": "5"
+      }
+    },
+    "添付ファイル": {
+      "type": "FILE",
+      "code": "添付ファイル",
+      "label": "添付ファイル",
+      "noLabel": false,
+      "required": false,
+      "thumbnailSize": "150"
+    },
+    "関連活動履歴": {
+      "type": "REFERENCE_TABLE",
+      "code": "関連活動履歴",
+      "label": "関連活動履歴",
+      "noLabel": true,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 111,
+          "code": ""
+        },
+        "condition": {
+          "field": "案件No",
+          "relatedField": "案件No"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "対応日付",
+          "対応者",
+          "案件名",
+          "対応種別",
+          "内容",
+          "添付ファイル"
+        ],
+        "sort": "レコード番号 desc",
+        "size": "10"
+      }
+    },
+    "顧客No": {
+      "type": "NUMBER",
+      "code": "顧客No",
+      "label": "顧客No.",
+      "noLabel": false,
+      "required": false,
+      "minValue": "",
+      "maxValue": "",
+      "digit": false,
+      "unique": false,
+      "defaultValue": "",
+      "displayScale": "",
+      "unit": "",
+      "unitPosition": "BEFORE"
+    }
+  },
+  "app": 111
+}

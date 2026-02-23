@@ -1,0 +1,45 @@
+{
+  "enable": false,
+  "states": {
+    "完了": {
+      "name": "完了",
+      "index": "2",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    },
+    "未処理": {
+      "name": "未処理",
+      "index": "0",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    },
+    "処理中": {
+      "name": "処理中",
+      "index": "1",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    }
+  },
+  "actions": [
+    {
+      "name": "処理開始",
+      "from": "未処理",
+      "to": "処理中",
+      "filterCond": "",
+      "type": "PRIMARY"
+    },
+    {
+      "name": "完了する",
+      "from": "処理中",
+      "to": "完了",
+      "filterCond": "",
+      "type": "PRIMARY"
+    }
+  ]
+}

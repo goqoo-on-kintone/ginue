@@ -1,0 +1,588 @@
+{
+  "properties": {
+    "FAX": {
+      "type": "LINK",
+      "code": "FAX",
+      "label": "FAX",
+      "noLabel": false,
+      "required": false,
+      "protocol": "CALL",
+      "minLength": "",
+      "maxLength": "",
+      "unique": false,
+      "defaultValue": ""
+    },
+    "Webサイト": {
+      "type": "LINK",
+      "code": "Webサイト",
+      "label": "Webサイト",
+      "noLabel": false,
+      "required": false,
+      "protocol": "WEB",
+      "minLength": "",
+      "maxLength": "",
+      "unique": false,
+      "defaultValue": ""
+    },
+    "カテゴリー": {
+      "type": "CATEGORY",
+      "code": "カテゴリー",
+      "label": "カテゴリー",
+      "enabled": false
+    },
+    "ステータス": {
+      "type": "STATUS",
+      "code": "ステータス",
+      "label": "ステータス",
+      "enabled": false
+    },
+    "会社名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "会社名",
+      "label": "会社名",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "64",
+      "expression": "",
+      "hideExpression": false,
+      "unique": true,
+      "defaultValue": ""
+    },
+    "住所": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "住所",
+      "label": "住所",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "作成日時": {
+      "type": "CREATED_TIME",
+      "code": "作成日時",
+      "label": "作成日時",
+      "noLabel": false
+    },
+    "作成者": {
+      "type": "CREATOR",
+      "code": "作成者",
+      "label": "作成者",
+      "noLabel": false
+    },
+    "作業者": {
+      "type": "STATUS_ASSIGNEE",
+      "code": "作業者",
+      "label": "作業者",
+      "enabled": false
+    },
+    "建物名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "建物名",
+      "label": "建物名",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "担当者一覧": {
+      "type": "REFERENCE_TABLE",
+      "code": "担当者一覧",
+      "label": "担当者一覧",
+      "noLabel": false,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 444,
+          "code": ""
+        },
+        "condition": {
+          "field": "顧客No",
+          "relatedField": "顧客No_"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "お名前",
+          "部署",
+          "役職",
+          "電話番号",
+          "携帯番号",
+          "メールアドレス"
+        ],
+        "sort": "担当者No_ desc",
+        "size": "5"
+      }
+    },
+    "支払日": {
+      "type": "DROP_DOWN",
+      "code": "支払日",
+      "label": "支払日",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "翌月1日": {
+          "label": "翌月1日",
+          "index": "0"
+        },
+        "翌月10日": {
+          "label": "翌月10日",
+          "index": "1"
+        },
+        "翌月15日": {
+          "label": "翌月15日",
+          "index": "2"
+        },
+        "翌月20日": {
+          "label": "翌月20日",
+          "index": "3"
+        },
+        "翌月25日": {
+          "label": "翌月25日",
+          "index": "4"
+        },
+        "翌月末日": {
+          "label": "翌月末日",
+          "index": "5"
+        }
+      },
+      "defaultValue": ""
+    },
+    "更新日時": {
+      "type": "UPDATED_TIME",
+      "code": "更新日時",
+      "label": "更新日時",
+      "noLabel": false
+    },
+    "更新者": {
+      "type": "MODIFIER",
+      "code": "更新者",
+      "label": "更新者",
+      "noLabel": false
+    },
+    "案件一覧": {
+      "type": "REFERENCE_TABLE",
+      "code": "案件一覧",
+      "label": "案件一覧",
+      "noLabel": false,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 333,
+          "code": ""
+        },
+        "condition": {
+          "field": "顧客No",
+          "relatedField": "顧客No_"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "受注予定日",
+          "主担当",
+          "案件名",
+          "提案商品",
+          "商談フェーズ",
+          "売上"
+        ],
+        "sort": "受注予定日 desc",
+        "size": "5"
+      }
+    },
+    "業種": {
+      "type": "DROP_DOWN",
+      "code": "業種",
+      "label": "業種",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "農業": {
+          "label": "農業",
+          "index": "0"
+        },
+        "林業、狩猟業": {
+          "label": "林業、狩猟業",
+          "index": "1"
+        },
+        "漁業": {
+          "label": "漁業",
+          "index": "2"
+        },
+        "鉱業": {
+          "label": "鉱業",
+          "index": "3"
+        },
+        "建設業": {
+          "label": "建設業",
+          "index": "4"
+        },
+        "製造業": {
+          "label": "製造業",
+          "index": "5"
+        },
+        "卸売業、小売業、飲食店": {
+          "label": "卸売業、小売業、飲食店",
+          "index": "6"
+        },
+        "金融業、保険業": {
+          "label": "金融業、保険業",
+          "index": "7"
+        },
+        "不動産業": {
+          "label": "不動産業",
+          "index": "8"
+        },
+        "運輸・通信業": {
+          "label": "運輸・通信業",
+          "index": "9"
+        },
+        "電気・ガス・水道・熱供給業": {
+          "label": "電気・ガス・水道・熱供給業",
+          "index": "10"
+        },
+        "サービス業": {
+          "label": "サービス業",
+          "index": "11"
+        },
+        "公務": {
+          "label": "公務",
+          "index": "12"
+        },
+        "その他": {
+          "label": "その他",
+          "index": "13"
+        }
+      },
+      "defaultValue": ""
+    },
+    "活動履歴一覧": {
+      "type": "REFERENCE_TABLE",
+      "code": "活動履歴一覧",
+      "label": "活動履歴一覧",
+      "noLabel": false,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 111,
+          "code": ""
+        },
+        "condition": {
+          "field": "顧客No",
+          "relatedField": "顧客No"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "対応日付",
+          "対応者",
+          "案件名",
+          "対応種別",
+          "内容"
+        ],
+        "sort": "対応日付 desc",
+        "size": "20"
+      }
+    },
+    "締め日": {
+      "type": "DROP_DOWN",
+      "code": "締め日",
+      "label": "締め日",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "5日": {
+          "label": "5日",
+          "index": "0"
+        },
+        "10日": {
+          "label": "10日",
+          "index": "1"
+        },
+        "15日": {
+          "label": "15日",
+          "index": "2"
+        },
+        "20日": {
+          "label": "20日",
+          "index": "3"
+        },
+        "25日": {
+          "label": "25日",
+          "index": "4"
+        },
+        "末日": {
+          "label": "末日",
+          "index": "5"
+        }
+      },
+      "defaultValue": ""
+    },
+    "郵便番号": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "郵便番号",
+      "label": "〒",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "都道府県": {
+      "type": "DROP_DOWN",
+      "code": "都道府県",
+      "label": "都道府県",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "北海道": {
+          "label": "北海道",
+          "index": "0"
+        },
+        "青森県": {
+          "label": "青森県",
+          "index": "1"
+        },
+        "岩手県": {
+          "label": "岩手県",
+          "index": "2"
+        },
+        "宮城県": {
+          "label": "宮城県",
+          "index": "3"
+        },
+        "秋田県": {
+          "label": "秋田県",
+          "index": "4"
+        },
+        "山形県": {
+          "label": "山形県",
+          "index": "5"
+        },
+        "福島県": {
+          "label": "福島県",
+          "index": "6"
+        },
+        "茨城県": {
+          "label": "茨城県",
+          "index": "7"
+        },
+        "栃木県": {
+          "label": "栃木県",
+          "index": "8"
+        },
+        "群馬県": {
+          "label": "群馬県",
+          "index": "9"
+        },
+        "埼玉県": {
+          "label": "埼玉県",
+          "index": "10"
+        },
+        "千葉県": {
+          "label": "千葉県",
+          "index": "11"
+        },
+        "東京都": {
+          "label": "東京都",
+          "index": "12"
+        },
+        "神奈川県": {
+          "label": "神奈川県",
+          "index": "13"
+        },
+        "新潟県": {
+          "label": "新潟県",
+          "index": "14"
+        },
+        "富山県": {
+          "label": "富山県",
+          "index": "15"
+        },
+        "石川県": {
+          "label": "石川県",
+          "index": "16"
+        },
+        "福井県": {
+          "label": "福井県",
+          "index": "17"
+        },
+        "山梨県": {
+          "label": "山梨県",
+          "index": "18"
+        },
+        "長野県": {
+          "label": "長野県",
+          "index": "19"
+        },
+        "岐阜県": {
+          "label": "岐阜県",
+          "index": "20"
+        },
+        "静岡県": {
+          "label": "静岡県",
+          "index": "21"
+        },
+        "愛知県": {
+          "label": "愛知県",
+          "index": "22"
+        },
+        "三重県": {
+          "label": "三重県",
+          "index": "23"
+        },
+        "滋賀県": {
+          "label": "滋賀県",
+          "index": "24"
+        },
+        "京都府": {
+          "label": "京都府",
+          "index": "25"
+        },
+        "大阪府": {
+          "label": "大阪府",
+          "index": "26"
+        },
+        "兵庫県": {
+          "label": "兵庫県",
+          "index": "27"
+        },
+        "奈良県": {
+          "label": "奈良県",
+          "index": "28"
+        },
+        "和歌山県": {
+          "label": "和歌山県",
+          "index": "29"
+        },
+        "鳥取県": {
+          "label": "鳥取県",
+          "index": "30"
+        },
+        "島根県": {
+          "label": "島根県",
+          "index": "31"
+        },
+        "岡山県": {
+          "label": "岡山県",
+          "index": "32"
+        },
+        "広島県": {
+          "label": "広島県",
+          "index": "33"
+        },
+        "山口県": {
+          "label": "山口県",
+          "index": "34"
+        },
+        "徳島県": {
+          "label": "徳島県",
+          "index": "35"
+        },
+        "香川県": {
+          "label": "香川県",
+          "index": "36"
+        },
+        "愛媛県": {
+          "label": "愛媛県",
+          "index": "37"
+        },
+        "高知県": {
+          "label": "高知県",
+          "index": "38"
+        },
+        "福岡県": {
+          "label": "福岡県",
+          "index": "39"
+        },
+        "佐賀県": {
+          "label": "佐賀県",
+          "index": "40"
+        },
+        "長崎県": {
+          "label": "長崎県",
+          "index": "41"
+        },
+        "熊本県": {
+          "label": "熊本県",
+          "index": "42"
+        },
+        "大分県": {
+          "label": "大分県",
+          "index": "43"
+        },
+        "宮崎県": {
+          "label": "宮崎県",
+          "index": "44"
+        },
+        "鹿児島県": {
+          "label": "鹿児島県",
+          "index": "45"
+        },
+        "沖縄県": {
+          "label": "沖縄県",
+          "index": "46"
+        }
+      },
+      "defaultValue": ""
+    },
+    "電話番号": {
+      "type": "LINK",
+      "code": "電話番号",
+      "label": "電話番号",
+      "noLabel": false,
+      "required": false,
+      "protocol": "CALL",
+      "minLength": "",
+      "maxLength": "",
+      "unique": false,
+      "defaultValue": ""
+    },
+    "顧客No": {
+      "type": "RECORD_NUMBER",
+      "code": "顧客No",
+      "label": "顧客No.",
+      "noLabel": false
+    },
+    "顧客ランク": {
+      "type": "RADIO_BUTTON",
+      "code": "顧客ランク",
+      "label": "顧客ランク",
+      "noLabel": false,
+      "required": true,
+      "options": {
+        "A": {
+          "label": "A",
+          "index": "0"
+        },
+        "B": {
+          "label": "B",
+          "index": "1"
+        },
+        "C": {
+          "label": "C",
+          "index": "2"
+        },
+        "D": {
+          "label": "D",
+          "index": "3"
+        }
+      },
+      "defaultValue": "A",
+      "align": "HORIZONTAL"
+    },
+    "顧客情報メモ欄": {
+      "type": "MULTI_LINE_TEXT",
+      "code": "顧客情報メモ欄",
+      "label": "顧客情報メモ欄",
+      "noLabel": false,
+      "required": false,
+      "defaultValue": ""
+    }
+  },
+  "app": 222
+}

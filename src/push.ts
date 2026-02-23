@@ -1,5 +1,8 @@
+import fs from 'fs'
+import path from 'path'
 import inquirer from 'inquirer'
-import { loadRequiedFile, createFilePath } from './util'
+import mkdirp from 'mkdirp'
+import { loadRequiedFile, createFilePath, prettyln } from './util'
 import { sendKintoneInfo, fetchKintoneInfo } from './client'
 import { convertAppSettingsJson, convertAppFormFieldsJson } from './converter'
 import type { BaseOpts, FormFields, FormLayout, KintoneInfo, Ktn, Opts } from './types'
@@ -228,5 +231,18 @@ export const ginuePush = async (ktn: Ktn, opts: Opts, pushTarget: BaseOpts) => {
 
   kintoneInfo.app = ktn.appId!
   ktn.environment = opts.pushTarget ? opts.pushTarget.environment : opts.environment
+
+  // dry-run: 実際にpushせずファイル出力
+  if (opts.dryRunOutput) {
+    const outputDir = path.join(opts.dryRunOutput, ktn.environment || '', ktn.appName || '')
+    mkdirp.sync(outputDir)
+    // preview/を除去してファイル名を生成（diff -rで比較しやすくするため）
+    const fileName = ktn.command!.replace(/^preview\//, '').replace(/\//g, '_')
+    const outputPath = path.join(outputDir, fileName)
+    fs.writeFileSync(outputPath, prettyln(kintoneInfo))
+    console.info(`[DRY-RUN] ${outputPath}`)
+    return
+  }
+
   await execPush(ktn, kintoneInfo)
 }

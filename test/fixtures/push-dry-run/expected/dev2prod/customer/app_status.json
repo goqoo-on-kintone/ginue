@@ -1,0 +1,75 @@
+{
+  "enable": false,
+  "states": {
+    "完了": {
+      "name": "完了",
+      "index": "3",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    },
+    "追加確認中": {
+      "name": "追加確認中",
+      "index": "2",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    },
+    "未処理": {
+      "name": "未処理",
+      "index": "0",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    },
+    "処理中": {
+      "name": "処理中",
+      "index": "1",
+      "assignee": {
+        "type": "ONE",
+        "entities": []
+      }
+    }
+  },
+  "actions": [
+    {
+      "name": "処理開始",
+      "from": "未処理",
+      "to": "処理中",
+      "filterCond": "",
+      "type": "PRIMARY"
+    },
+    {
+      "name": "完了する",
+      "from": "処理中",
+      "to": "完了",
+      "filterCond": "",
+      "type": "PRIMARY"
+    },
+    {
+      "name": "差し戻す",
+      "from": "処理中",
+      "to": "未処理",
+      "filterCond": "",
+      "type": "PRIMARY"
+    },
+    {
+      "name": "追加確認依頼",
+      "from": "処理中",
+      "to": "追加確認中",
+      "filterCond": "",
+      "type": "PRIMARY"
+    },
+    {
+      "name": "完了",
+      "from": "追加確認中",
+      "to": "完了",
+      "filterCond": "",
+      "type": "PRIMARY"
+    }
+  ],
+  "app": 222
+}

@@ -1,0 +1,296 @@
+{
+  "properties": {
+    "お名前": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "お名前",
+      "label": "お名前",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "姓&\" \"&名",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "お名前_フリガナ": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "お名前_フリガナ",
+      "label": "お名前（フリガナ）",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "姓_フリガナ&\" \"&名_フリガナ",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "カテゴリー": {
+      "type": "CATEGORY",
+      "code": "カテゴリー",
+      "label": "カテゴリー",
+      "enabled": false
+    },
+    "ステータス": {
+      "type": "STATUS",
+      "code": "ステータス",
+      "label": "ステータス",
+      "enabled": false
+    },
+    "メールアドレス": {
+      "type": "LINK",
+      "code": "メールアドレス",
+      "label": "メールアドレス",
+      "noLabel": false,
+      "required": false,
+      "protocol": "MAIL",
+      "minLength": "",
+      "maxLength": "",
+      "unique": false,
+      "defaultValue": ""
+    },
+    "作成日時": {
+      "type": "CREATED_TIME",
+      "code": "作成日時",
+      "label": "作成日時",
+      "noLabel": false
+    },
+    "作成者": {
+      "type": "CREATOR",
+      "code": "作成者",
+      "label": "作成者",
+      "noLabel": false
+    },
+    "作業者": {
+      "type": "STATUS_ASSIGNEE",
+      "code": "作業者",
+      "label": "作業者",
+      "enabled": false
+    },
+    "備考": {
+      "type": "MULTI_LINE_TEXT",
+      "code": "備考",
+      "label": "備考",
+      "noLabel": false,
+      "required": false,
+      "defaultValue": ""
+    },
+    "同一企業担当者": {
+      "type": "REFERENCE_TABLE",
+      "code": "同一企業担当者",
+      "label": "関連担当者情報",
+      "noLabel": true,
+      "referenceTable": {
+        "relatedApp": {
+          "app": "<APP_ID>",
+          "code": ""
+        },
+        "condition": {
+          "field": "顧客No_",
+          "relatedField": "顧客No_"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "お名前",
+          "部署",
+          "役職",
+          "携帯番号",
+          "メールアドレス"
+        ],
+        "sort": "担当者No_ desc",
+        "size": "5"
+      }
+    },
+    "名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "名",
+      "label": "名",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "名_フリガナ": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "名_フリガナ",
+      "label": "名（フリガナ）",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "姓": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "姓",
+      "label": "姓",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "姓_フリガナ": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "姓_フリガナ",
+      "label": "姓（フリガナ）",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "役職": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "役職",
+      "label": "役職",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "担当者No_": {
+      "type": "RECORD_NUMBER",
+      "code": "担当者No_",
+      "label": "担当者No.",
+      "noLabel": false
+    },
+    "携帯番号": {
+      "type": "LINK",
+      "code": "携帯番号",
+      "label": "携帯番号",
+      "noLabel": false,
+      "required": false,
+      "protocol": "CALL",
+      "minLength": "",
+      "maxLength": "",
+      "unique": false,
+      "defaultValue": ""
+    },
+    "更新日時": {
+      "type": "UPDATED_TIME",
+      "code": "更新日時",
+      "label": "更新日時",
+      "noLabel": false
+    },
+    "更新者": {
+      "type": "MODIFIER",
+      "code": "更新者",
+      "label": "更新者",
+      "noLabel": false
+    },
+    "決裁権": {
+      "type": "RADIO_BUTTON",
+      "code": "決裁権",
+      "label": "決裁権",
+      "noLabel": false,
+      "required": true,
+      "options": {
+        "なし": {
+          "label": "なし",
+          "index": "0"
+        },
+        "あり": {
+          "label": "あり",
+          "index": "1"
+        }
+      },
+      "defaultValue": "なし",
+      "align": "HORIZONTAL"
+    },
+    "添付ファイル_名刺等": {
+      "type": "FILE",
+      "code": "添付ファイル_名刺等",
+      "label": "添付ファイル（名刺等）",
+      "noLabel": false,
+      "required": false,
+      "thumbnailSize": "150"
+    },
+    "部署": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "部署",
+      "label": "部署",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "電話番号": {
+      "type": "LINK",
+      "code": "電話番号",
+      "label": "電話番号",
+      "noLabel": false,
+      "required": false,
+      "protocol": "CALL",
+      "minLength": "",
+      "maxLength": "",
+      "unique": false,
+      "defaultValue": ""
+    },
+    "顧客No_": {
+      "type": "NUMBER",
+      "code": "顧客No_",
+      "label": "顧客No.",
+      "noLabel": false,
+      "required": false,
+      "minValue": "",
+      "maxValue": "",
+      "digit": false,
+      "unique": false,
+      "defaultValue": "",
+      "displayScale": "",
+      "unit": "",
+      "unitPosition": "BEFORE"
+    },
+    "顧客名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "顧客名",
+      "label": "顧客名",
+      "noLabel": false,
+      "required": false,
+      "lookup": {
+        "relatedApp": {
+          "app": "<APP_ID>",
+          "code": ""
+        },
+        "relatedKeyField": "会社名",
+        "fieldMappings": [
+          {
+            "field": "顧客No_",
+            "relatedField": "顧客No"
+          }
+        ],
+        "lookupPickerFields": [
+          "顧客No",
+          "会社名",
+          "都道府県",
+          "業種"
+        ],
+        "filterCond": "",
+        "sort": "顧客No desc"
+      }
+    }
+  }
+}

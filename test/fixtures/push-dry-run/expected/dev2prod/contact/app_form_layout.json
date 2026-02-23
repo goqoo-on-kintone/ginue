@@ -1,0 +1,263 @@
+{
+  "layout": [
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><font size=\"4\"><span style=\"font-weight:700\"><font color=\"#38761d\">❚</font><font color=\"#3d85c6\"> </font><font color=\"#000000\">顧客名</font></span></font></div>",
+          "elementId": "",
+          "size": {
+            "width": "136"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "顧客名",
+          "size": {
+            "width": "521"
+          }
+        },
+        {
+          "type": "NUMBER",
+          "code": "顧客No_",
+          "size": {
+            "width": "87"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><font size=\"4\"><span style=\"font-weight:700\"><font color=\"#38761d\">❚</font><font color=\"#3d85c6\"> </font></span></font><font size=\"4\" color=\"#000000\"><span style=\"font-weight:700\">担当者情報</span></font></div>",
+          "elementId": "",
+          "size": {
+            "width": "136"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "姓",
+          "size": {
+            "width": "152"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "名",
+          "size": {
+            "width": "152"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "お名前",
+          "size": {
+            "width": "304"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "姓_フリガナ",
+          "size": {
+            "width": "152"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "名_フリガナ",
+          "size": {
+            "width": "152"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "お名前_フリガナ",
+          "size": {
+            "width": "304"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "部署",
+          "size": {
+            "width": "304"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "役職",
+          "size": {
+            "width": "304"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LINK",
+          "code": "電話番号",
+          "size": {
+            "width": "304"
+          }
+        },
+        {
+          "type": "LINK",
+          "code": "携帯番号",
+          "size": {
+            "width": "304"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LINK",
+          "code": "メールアドレス",
+          "size": {
+            "width": "304"
+          }
+        },
+        {
+          "type": "RADIO_BUTTON",
+          "code": "決裁権",
+          "size": {
+            "width": "304"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "MULTI_LINE_TEXT",
+          "code": "備考",
+          "size": {
+            "width": "617",
+            "innerHeight": "125"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "FILE",
+          "code": "添付ファイル_名刺等",
+          "size": {
+            "width": "304"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><font size=\"4\"><span style=\"font-weight:700\"><font color=\"#38761d\">❚</font><font color=\"#3d85c6\"> </font></span></font><font size=\"4\" color=\"#000000\"><span style=\"font-weight:700\">同一企業担当者</span></font></div>",
+          "elementId": "",
+          "size": {
+            "width": "208"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "REFERENCE_TABLE",
+          "code": "同一企業担当者"
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "HR",
+          "elementId": "",
+          "size": {
+            "width": "645"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "RECORD_NUMBER",
+          "code": "担当者No_",
+          "size": {
+            "width": "120"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "CREATED_TIME",
+          "code": "作成日時",
+          "size": {
+            "width": "201"
+          }
+        },
+        {
+          "type": "CREATOR",
+          "code": "作成者",
+          "size": {
+            "width": "201"
+          }
+        },
+        {
+          "type": "UPDATED_TIME",
+          "code": "更新日時",
+          "size": {
+            "width": "201"
+          }
+        },
+        {
+          "type": "MODIFIER",
+          "code": "更新者",
+          "size": {
+            "width": "201"
+          }
+        }
+      ]
+    }
+  ],
+  "app": 444
+}

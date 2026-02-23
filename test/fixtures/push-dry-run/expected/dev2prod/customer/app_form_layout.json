@@ -1,0 +1,263 @@
+{
+  "layout": [
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><span style=\"font-weight:700;font-size:large\"><font color=\"#0b5394\">❚</font> 基本<font color=\"#000000\">情報</font></span></div>",
+          "elementId": "",
+          "size": {
+            "width": "118"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "会社名",
+          "size": {
+            "width": "372"
+          }
+        },
+        {
+          "type": "RADIO_BUTTON",
+          "code": "顧客ランク",
+          "size": {
+            "width": "372"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "郵便番号",
+          "size": {
+            "width": "120"
+          }
+        },
+        {
+          "type": "DROP_DOWN",
+          "code": "都道府県",
+          "size": {
+            "width": "116"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "住所",
+          "size": {
+            "width": "311"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "建物名",
+          "size": {
+            "width": "197"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LINK",
+          "code": "電話番号",
+          "size": {
+            "width": "372"
+          }
+        },
+        {
+          "type": "LINK",
+          "code": "FAX",
+          "size": {
+            "width": "372"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LINK",
+          "code": "Webサイト",
+          "size": {
+            "width": "372"
+          }
+        },
+        {
+          "type": "DROP_DOWN",
+          "code": "業種",
+          "size": {
+            "width": "372"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "MULTI_LINE_TEXT",
+          "code": "顧客情報メモ欄",
+          "size": {
+            "width": "744",
+            "innerHeight": "125"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><span style=\"font-weight:700;font-size:large\"><font color=\"#0b5394\">❚</font> 請求<font color=\"#000000\">情報</font></span></div>",
+          "elementId": "",
+          "size": {
+            "width": "118"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "DROP_DOWN",
+          "code": "締め日",
+          "size": {
+            "width": "349"
+          }
+        },
+        {
+          "type": "DROP_DOWN",
+          "code": "支払日",
+          "size": {
+            "width": "371"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SPACER",
+          "elementId": "tab",
+          "size": {
+            "width": "744",
+            "height": "28"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><span style=\"font-weight:700;font-size:large\"><font color=\"#0b5394\">❚</font> 関連<font color=\"#000000\">情報</font></span></div>",
+          "elementId": "",
+          "size": {
+            "width": "154"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "REFERENCE_TABLE",
+          "code": "担当者一覧"
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "REFERENCE_TABLE",
+          "code": "案件一覧"
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "REFERENCE_TABLE",
+          "code": "活動履歴一覧"
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "HR",
+          "elementId": "",
+          "size": {
+            "width": "809"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "RECORD_NUMBER",
+          "code": "顧客No",
+          "size": {
+            "width": "120"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "CREATED_TIME",
+          "code": "作成日時",
+          "size": {
+            "width": "196"
+          }
+        },
+        {
+          "type": "CREATOR",
+          "code": "作成者",
+          "size": {
+            "width": "224"
+          }
+        },
+        {
+          "type": "UPDATED_TIME",
+          "code": "更新日時",
+          "size": {
+            "width": "196"
+          }
+        },
+        {
+          "type": "MODIFIER",
+          "code": "更新者",
+          "size": {
+            "width": "224"
+          }
+        }
+      ]
+    }
+  ],
+  "app": 222
+}

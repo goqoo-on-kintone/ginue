@@ -1,0 +1,365 @@
+{
+  "properties": {
+    "アクション内容": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "アクション内容",
+      "label": "アクション内容",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "",
+      "expression": "",
+      "hideExpression": false,
+      "unique": false,
+      "defaultValue": ""
+    },
+    "アクション担当者": {
+      "type": "USER_SELECT",
+      "code": "アクション担当者",
+      "label": "アクション担当者",
+      "noLabel": false,
+      "required": false,
+      "entities": [],
+      "defaultValue": [
+        {
+          "type": "FUNCTION",
+          "code": "LOGINUSER()"
+        }
+      ]
+    },
+    "カテゴリー": {
+      "type": "CATEGORY",
+      "code": "カテゴリー",
+      "label": "カテゴリー",
+      "enabled": false
+    },
+    "ステータス": {
+      "type": "STATUS",
+      "code": "ステータス",
+      "label": "ステータス",
+      "enabled": false
+    },
+    "主担当": {
+      "type": "USER_SELECT",
+      "code": "主担当",
+      "label": "主担当",
+      "noLabel": false,
+      "required": false,
+      "entities": [],
+      "defaultValue": [
+        {
+          "type": "FUNCTION",
+          "code": "LOGINUSER()"
+        }
+      ]
+    },
+    "主担当組織": {
+      "type": "ORGANIZATION_SELECT",
+      "code": "主担当組織",
+      "label": "主担当組織",
+      "noLabel": false,
+      "required": false,
+      "entities": [],
+      "defaultValue": [
+        {
+          "type": "FUNCTION",
+          "code": "PRIMARY_ORGANIZATION()"
+        }
+      ]
+    },
+    "会社名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "会社名",
+      "label": "会社名",
+      "noLabel": false,
+      "required": false,
+      "lookup": {
+        "relatedApp": {
+          "app": 222,
+          "code": ""
+        },
+        "relatedKeyField": "会社名",
+        "fieldMappings": [
+          {
+            "field": "顧客No_",
+            "relatedField": "顧客No"
+          }
+        ],
+        "lookupPickerFields": [
+          "会社名",
+          "都道府県",
+          "業種"
+        ],
+        "filterCond": "",
+        "sort": "顧客No desc"
+      }
+    },
+    "作成日時": {
+      "type": "CREATED_TIME",
+      "code": "作成日時",
+      "label": "作成日時",
+      "noLabel": false
+    },
+    "作成者": {
+      "type": "CREATOR",
+      "code": "作成者",
+      "label": "作成者",
+      "noLabel": false
+    },
+    "作業者": {
+      "type": "STATUS_ASSIGNEE",
+      "code": "作業者",
+      "label": "作業者",
+      "enabled": false
+    },
+    "初回商談日": {
+      "type": "DATE",
+      "code": "初回商談日",
+      "label": "初回商談日",
+      "noLabel": false,
+      "required": false,
+      "unique": false,
+      "defaultValue": "",
+      "defaultNowValue": true
+    },
+    "受注予定日": {
+      "type": "DATE",
+      "code": "受注予定日",
+      "label": "受注予定日",
+      "noLabel": false,
+      "required": false,
+      "unique": false,
+      "defaultValue": "",
+      "defaultNowValue": false
+    },
+    "同一顧客向け案件": {
+      "type": "REFERENCE_TABLE",
+      "code": "同一顧客向け案件",
+      "label": "関連レコード一覧",
+      "noLabel": true,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 333,
+          "code": ""
+        },
+        "condition": {
+          "field": "顧客No_",
+          "relatedField": "顧客No_"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "主担当",
+          "受注予定日",
+          "提案商品",
+          "売上"
+        ],
+        "sort": "案件No_ desc",
+        "size": "5"
+      }
+    },
+    "商談フェーズ": {
+      "type": "DROP_DOWN",
+      "code": "商談フェーズ",
+      "label": "商談フェーズ",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "商談予定": {
+          "label": "商談予定",
+          "index": "0"
+        },
+        "提案中": {
+          "label": "提案中",
+          "index": "1"
+        },
+        "内示": {
+          "label": "内示",
+          "index": "2"
+        },
+        "受注": {
+          "label": "受注",
+          "index": "3"
+        },
+        "失注": {
+          "label": "失注",
+          "index": "4"
+        },
+        "保留/中止": {
+          "label": "保留/中止",
+          "index": "5"
+        }
+      },
+      "defaultValue": ""
+    },
+    "売上": {
+      "type": "NUMBER",
+      "code": "売上",
+      "label": "売上",
+      "noLabel": false,
+      "required": false,
+      "minValue": "",
+      "maxValue": "",
+      "digit": true,
+      "unique": false,
+      "defaultValue": "",
+      "displayScale": "",
+      "unit": "¥",
+      "unitPosition": "BEFORE"
+    },
+    "契約書_申込書": {
+      "type": "FILE",
+      "code": "契約書_申込書",
+      "label": "契約書/申込書",
+      "noLabel": false,
+      "required": false,
+      "thumbnailSize": "150"
+    },
+    "提案商品": {
+      "type": "DROP_DOWN",
+      "code": "提案商品",
+      "label": "提案商品",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "商品A": {
+          "label": "商品A",
+          "index": "0"
+        },
+        "商品B": {
+          "label": "商品B",
+          "index": "1"
+        },
+        "商品C": {
+          "label": "商品C",
+          "index": "2"
+        },
+        "その他": {
+          "label": "その他",
+          "index": "3"
+        }
+      },
+      "defaultValue": ""
+    },
+    "更新日時": {
+      "type": "UPDATED_TIME",
+      "code": "更新日時",
+      "label": "更新日時",
+      "noLabel": false
+    },
+    "更新者": {
+      "type": "MODIFIER",
+      "code": "更新者",
+      "label": "更新者",
+      "noLabel": false
+    },
+    "案件No_": {
+      "type": "RECORD_NUMBER",
+      "code": "案件No_",
+      "label": "案件No.",
+      "noLabel": false
+    },
+    "案件名": {
+      "type": "SINGLE_LINE_TEXT",
+      "code": "案件名",
+      "label": "案件名",
+      "noLabel": false,
+      "required": false,
+      "minLength": "",
+      "maxLength": "64",
+      "expression": "",
+      "hideExpression": false,
+      "unique": true,
+      "defaultValue": ""
+    },
+    "次回アクション日": {
+      "type": "DATE",
+      "code": "次回アクション日",
+      "label": "次回アクション日",
+      "noLabel": false,
+      "required": false,
+      "unique": false,
+      "defaultValue": "",
+      "defaultNowValue": false
+    },
+    "活動履歴": {
+      "type": "REFERENCE_TABLE",
+      "code": "活動履歴",
+      "label": "活動履歴",
+      "noLabel": true,
+      "referenceTable": {
+        "relatedApp": {
+          "app": 111,
+          "code": ""
+        },
+        "condition": {
+          "field": "案件No_",
+          "relatedField": "案件No"
+        },
+        "filterCond": "",
+        "displayFields": [
+          "対応日付",
+          "対応者",
+          "対応種別",
+          "内容",
+          "添付ファイル"
+        ],
+        "sort": "対応日付 desc",
+        "size": "20"
+      }
+    },
+    "確度": {
+      "type": "DROP_DOWN",
+      "code": "確度",
+      "label": "確度",
+      "noLabel": false,
+      "required": false,
+      "options": {
+        "100%": {
+          "label": "100%",
+          "index": "0"
+        },
+        "80%": {
+          "label": "80%",
+          "index": "1"
+        },
+        "60%": {
+          "label": "60%",
+          "index": "2"
+        },
+        "40%": {
+          "label": "40%",
+          "index": "3"
+        },
+        "20%": {
+          "label": "20%",
+          "index": "4"
+        }
+      },
+      "defaultValue": ""
+    },
+    "詳細": {
+      "type": "MULTI_LINE_TEXT",
+      "code": "詳細",
+      "label": "詳細",
+      "noLabel": false,
+      "required": false,
+      "defaultValue": ""
+    },
+    "顧客No_": {
+      "type": "NUMBER",
+      "code": "顧客No_",
+      "label": "顧客No.",
+      "noLabel": false,
+      "required": false,
+      "minValue": "",
+      "maxValue": "",
+      "digit": false,
+      "unique": false,
+      "defaultValue": "",
+      "displayScale": "",
+      "unit": "",
+      "unitPosition": "BEFORE"
+    }
+  },
+  "app": 333
+}
