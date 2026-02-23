@@ -4,6 +4,7 @@ module.exports = {
     'jest/globals': true,
   },
   root: true,
+  ignorePatterns: ['test/deno-poc/'],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'jest'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:jest/recommended', 'prettier'],

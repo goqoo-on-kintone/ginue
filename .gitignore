@@ -8,3 +8,6 @@ dist
 test/fixtures/e2e/.ginuerc.js
 test/fixtures/e2e/output*
 test/fixtures/e2e/dry-run-output
+
+# Deno検証用バイナリ
+test/deno-poc/*-bin
