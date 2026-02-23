@@ -13,7 +13,8 @@ const createPfxAgent = (pfx?: PfxOption) =>
       })
     : undefined
 
-export const createAgent = ({ proxy, pfx }: AgentOptions = {}) => {
+// 戻り値型をanyにして、proxy-agentの型エクスポート問題を回避
+export const createAgent = ({ proxy, pfx }: AgentOptions = {}): any => {
   const proxyAgent = createProxyAgent(proxy)
   const pfxAgent = createPfxAgent(pfx)
 

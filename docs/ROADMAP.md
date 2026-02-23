@@ -1,5 +1,24 @@
 # Ginue Go言語リライト TODO
 
+## バージョン
+
+- **v2**: JavaScript版（メンテナンスモード）
+- **v3**: TypeScript版（v3.0が最初で最後の機能リリース、パッチは必要に応じて）
+- **v4**: Go版（本計画）
+
+## v3.0 リリース準備（TypeScript最終版）
+
+- [x] README.md 英語版作成
+- [x] README.ja.md 日本語版整備
+- [x] 全機能のドキュメント化（ginue diff, --oauth, --preview, --alt, --downloadJs, --proxy）
+- [x] テストコード追加（util.ts, converter.ts）
+- [x] package.json testスクリプト設定
+- [x] バージョン番号を3.0.0に更新
+- [x] CHANGELOGまたはリリースノート作成
+- [ ] npm publish
+
+---
+
 ## 概要
 
 ginue、gyuma、twins-diff の3ツールをGoで書き直し、単一バイナリ配布を実現する。
