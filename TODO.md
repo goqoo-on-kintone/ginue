@@ -38,18 +38,20 @@ ginue deploy production
 
 - [x] Go HTTPサーバー + API実装
 - [x] React UIビルド → go:embed組み込み
-- [x] 差分ロジック（go-diff利用）
+- [x] 差分ロジック（フロントエンドのreact-diff-viewer-continuedで処理）
 - [x] 単独CLI作成
 - [x] pkg/diffとしてライブラリ化
 
 ## Phase 1: gyuma Go化（1-2週間）
 
-- [x] OAuth 2.0 + PKCE フロー実装
-- [ ] ローカルコールバックサーバー
+- [x] OAuth 2.0 フロー実装
+- [x] ローカルコールバックサーバー
 - [x] トークン管理
-- [ ] プロキシ/クライアント証明書対応
 - [x] 単独CLI作成
-- [ ] pkg/oauthとしてライブラリ化
+- [ ] pkg/oauthとしてライブラリ化（ginue統合に必須）
+
+※ プロキシ/クライアント証明書対応 → Phase 3でまとめて対応
+※ PKCE対応 → 将来対応（kintone OAuthはPKCE無しでも動作）
 
 ## Phase 2: Ginue基盤（1週間）
 
@@ -163,7 +165,6 @@ ginue-go/
 | YAML | gopkg.in/yaml.v3 |
 | プロンプト | manifoldco/promptui |
 | .netrc | bgentry/go-netrc |
-| 差分 | sergi/go-diff |
 | ブラウザ起動 | pkg/browser |
 
 ## 注意点
