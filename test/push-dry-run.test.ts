@@ -37,7 +37,7 @@ const APP_IDS = {
 // 基本のオプション設定
 const createOpts = (appName: string, dryRunOutput: string): Opts => ({
   location: BASE_DIR,
-  envLocation: 'input/development',
+  envLocation: 'input/dev',
   environment: 'dev',
   pushTarget: {
     environment: 'prod',
