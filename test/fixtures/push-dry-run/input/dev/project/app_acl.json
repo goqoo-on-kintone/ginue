@@ -1,0 +1,32 @@
+{
+  "rights": [
+    {
+      "entity": {
+        "type": "CREATOR",
+        "code": null
+      },
+      "includeSubs": false,
+      "appEditable": true,
+      "recordViewable": true,
+      "recordAddable": true,
+      "recordEditable": true,
+      "recordDeletable": true,
+      "recordImportable": true,
+      "recordExportable": true
+    },
+    {
+      "entity": {
+        "type": "GROUP",
+        "code": "everyone"
+      },
+      "includeSubs": false,
+      "appEditable": false,
+      "recordViewable": true,
+      "recordAddable": true,
+      "recordEditable": true,
+      "recordDeletable": true,
+      "recordImportable": false,
+      "recordExportable": false
+    }
+  ]
+}

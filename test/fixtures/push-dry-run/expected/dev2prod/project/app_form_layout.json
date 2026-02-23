@@ -1,0 +1,311 @@
+{
+  "layout": [
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><span style=\"font-weight:700;font-size:large\"><font color=\"#cc0000\">❚</font> 案件<font color=\"#000000\">情報</font></span></div>",
+          "elementId": "",
+          "size": {
+            "width": "118"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "案件名",
+          "size": {
+            "width": "344"
+          }
+        },
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "会社名",
+          "size": {
+            "width": "344"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "DROP_DOWN",
+          "code": "確度",
+          "size": {
+            "width": "177"
+          }
+        },
+        {
+          "type": "DROP_DOWN",
+          "code": "商談フェーズ",
+          "size": {
+            "width": "167"
+          }
+        },
+        {
+          "type": "DATE",
+          "code": "受注予定日",
+          "size": {
+            "width": "153"
+          }
+        },
+        {
+          "type": "NUMBER",
+          "code": "売上",
+          "size": {
+            "width": "191"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "DROP_DOWN",
+          "code": "提案商品",
+          "size": {
+            "width": "344"
+          }
+        },
+        {
+          "type": "DATE",
+          "code": "初回商談日",
+          "size": {
+            "width": "344"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "ORGANIZATION_SELECT",
+          "code": "主担当組織",
+          "size": {
+            "width": "344"
+          }
+        },
+        {
+          "type": "USER_SELECT",
+          "code": "主担当",
+          "size": {
+            "width": "344"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "MULTI_LINE_TEXT",
+          "code": "詳細",
+          "size": {
+            "width": "688",
+            "innerHeight": "125"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "FILE",
+          "code": "契約書_申込書",
+          "size": {
+            "width": "688"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "DATE",
+          "code": "次回アクション日",
+          "size": {
+            "width": "148"
+          }
+        },
+        {
+          "type": "USER_SELECT",
+          "code": "アクション担当者",
+          "size": {
+            "width": "344"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "アクション内容",
+          "size": {
+            "width": "688"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><font color=\"#000000\" style=\"font-size:x-small\">↑次回予定</font><font color=\"#000000\" style=\"font-size:x-small\">日の前日9:00にアクション担当者へリマインド通知する設定になっています</font></div><div><div><font size=\"1\"><font color=\"#000000\">　参考ヘルプリンク&#xff1a;<a href=\"https://jp.cybozu.help/k/ja/id/040564.html\" target=\"_blank\" rel=\"nofollow noopener noreferrer\"><b>リマインダーの条件通知</b></a></font></font></div></div>",
+          "elementId": "",
+          "size": {
+            "width": "455"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SPACER",
+          "elementId": "tab",
+          "size": {
+            "width": "688",
+            "height": "28"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><span style=\"font-weight:700;font-size:large\"><font color=\"#cc0000\">❚</font> 活動履歴</span></div>",
+          "elementId": "",
+          "size": {
+            "width": "118"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "REFERENCE_TABLE",
+          "code": "活動履歴"
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "LABEL",
+          "label": "<div><span style=\"font-weight:700;font-size:large\"><font color=\"#cc0000\">❚</font> 同一顧客向け案件</span></div>",
+          "elementId": "",
+          "size": {
+            "width": "190"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "REFERENCE_TABLE",
+          "code": "同一顧客向け案件"
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "SPACER",
+          "elementId": "tab_0",
+          "size": {
+            "width": "688",
+            "height": "28"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "HR",
+          "elementId": "",
+          "size": {
+            "width": "750"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "RECORD_NUMBER",
+          "code": "案件No_",
+          "size": {
+            "width": "117"
+          }
+        },
+        {
+          "type": "NUMBER",
+          "code": "顧客No_",
+          "size": {
+            "width": "107"
+          }
+        }
+      ]
+    },
+    {
+      "type": "ROW",
+      "fields": [
+        {
+          "type": "CREATOR",
+          "code": "作成者",
+          "size": {
+            "width": "223"
+          }
+        },
+        {
+          "type": "CREATED_TIME",
+          "code": "作成日時",
+          "size": {
+            "width": "196"
+          }
+        },
+        {
+          "type": "MODIFIER",
+          "code": "更新者",
+          "size": {
+            "width": "229"
+          }
+        },
+        {
+          "type": "UPDATED_TIME",
+          "code": "更新日時",
+          "size": {
+            "width": "196"
+          }
+        }
+      ]
+    }
+  ],
+  "app": 333
+}

@@ -34,6 +34,7 @@ export type BaseOpts = Partial<{
   acl: boolean
   field_acl: boolean
   downloadJs: boolean
+  dryRunOutput: string // dry-run出力先ディレクトリ（隠し機能）
 
   commands: Commands
   exclude: keyof Commands | (keyof Commands)[]

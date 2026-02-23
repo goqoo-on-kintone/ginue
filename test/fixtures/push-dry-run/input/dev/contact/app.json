@@ -1,0 +1,18 @@
+{
+  "appId": "268",
+  "code": "",
+  "name": "担当者管理",
+  "description": "<div>各企業に紐づく担当者情報を管理するアプリです。<div><div></div><div>顧客管理アプリの顧客No&#xff08;レコード番号&#xff09;に紐づけてデータを入力することで、</div></div><div>各企業の担当者情報を一画面で確認することができます。</div><div>&#xff0a;参考ヘルプページ&#xff1a;<a href=\"https://jp.cybozu.help/k/ja/id/040631.html\" target=\"_blank\" rel=\"nofollow noopener noreferrer\"><b>アプリ間でデータを連携する</b></a></div><div></div></div>",
+  "createdAt": "2026-02-20T23:04:49.000Z",
+  "creator": {
+    "code": "akaza",
+    "name": "akaza"
+  },
+  "modifiedAt": "2026-02-21T12:58:11.000Z",
+  "modifier": {
+    "code": "akaza",
+    "name": "akaza"
+  },
+  "spaceId": "50",
+  "threadId": "51"
+}

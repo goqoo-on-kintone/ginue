@@ -1,0 +1,18 @@
+{
+  "appId": "266",
+  "code": "",
+  "name": "顧客管理",
+  "description": "<div>顧客情報を入力するアプリです。顧客No&#xff08;レコード番号&#xff09;に紐づいている<div>担当者・案件・活動履歴の情報を一画面で確認することができます。</div><div>&#xff0a;参考ヘルプページ&#xff1a;<a href=\"https://jp.cybozu.help/k/ja/id/040553.html\" target=\"_blank\" rel=\"nofollow noopener noreferrer\"><b>関連レコード一覧とは</b></a></div></div>",
+  "createdAt": "2026-02-20T23:04:49.000Z",
+  "creator": {
+    "code": "akaza",
+    "name": "akaza"
+  },
+  "modifiedAt": "2026-02-23T12:47:26.000Z",
+  "modifier": {
+    "code": "akaza",
+    "name": "akaza"
+  },
+  "spaceId": "50",
+  "threadId": "51"
+}

@@ -1,0 +1,92 @@
+{
+  "reports": {
+    "【グラフ】担当者毎×対応種別（当月）": {
+      "id": "13311738",
+      "chartType": "COLUMN",
+      "chartMode": "NORMAL",
+      "name": "【グラフ】担当者毎×対応種別（当月）",
+      "index": "1",
+      "groups": [
+        {
+          "code": "対応者"
+        },
+        {
+          "code": "対応種別"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "COUNT"
+        }
+      ],
+      "filterCond": "対応日付 = THIS_MONTH()",
+      "sorts": [
+        {
+          "by": "GROUP2",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "【表】担当者毎×活動量（当月）": {
+      "id": "13311740",
+      "chartType": "PIVOT_TABLE",
+      "name": "【表】担当者毎×活動量（当月）",
+      "index": "2",
+      "groups": [
+        {
+          "code": "対応種別"
+        },
+        {
+          "code": "対応者"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "COUNT"
+        }
+      ],
+      "filterCond": "対応日付 = THIS_MONTH()",
+      "sorts": [
+        {
+          "by": "GROUP1",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    },
+    "【グラフ】月毎×対応種別": {
+      "id": "13311755",
+      "chartType": "COLUMN",
+      "chartMode": "NORMAL",
+      "name": "【グラフ】月毎×対応種別",
+      "index": "0",
+      "groups": [
+        {
+          "code": "対応日付",
+          "per": "MONTH"
+        },
+        {
+          "code": "対応種別"
+        }
+      ],
+      "aggregations": [
+        {
+          "type": "COUNT"
+        }
+      ],
+      "filterCond": "",
+      "sorts": [
+        {
+          "by": "GROUP1",
+          "order": "ASC"
+        },
+        {
+          "by": "GROUP2",
+          "order": "ASC"
+        }
+      ],
+      "periodicReport": null
+    }
+  }
+}

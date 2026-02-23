@@ -1,0 +1,29 @@
+{
+  "name": "案件管理",
+  "description": "<div>案件情報を登録するアプリです。</div><div>　・案件情報を保存した後、レコード詳細画面で「活動履歴を登録する」をクリックすると、</div><div>　　活動履歴アプリに遷移して案件の活動履歴を入力できます。</div><div>　・当月・来月の受注予定や製品別の提案状況などを一覧やグラフで確認することができます。</div><div>　　一覧やグラフは様々な表示条件で設定可能です。参考ヘルプページ&#xff1a;<b><a href=\"https://jp.cybozu.help/k/ja/id/040605.html\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">一覧設定</a></b>・<a href=\"https://jp.cybozu.help/k/ja/id/040577.html\" target=\"_blank\" rel=\"nofollow noopener noreferrer\"><b>グラフ設定</b></a></div>",
+  "icon": {
+    "type": "FILE",
+    "file": {
+      "fileKey": "20260220230455BDF79E9BD401490181CB4DB6D94501CF104",
+      "name": "syorui.png",
+      "contentType": "image/png",
+      "size": "3413"
+    }
+  },
+  "theme": "RED",
+  "titleField": {
+    "selectionMode": "MANUAL",
+    "code": "会社名"
+  },
+  "enableThumbnails": true,
+  "enableBulkDeletion": false,
+  "enableComments": true,
+  "enableDuplicateRecord": true,
+  "enableInlineRecordEditing": true,
+  "numberPrecision": {
+    "digits": "16",
+    "decimalPlaces": "4",
+    "roundingMode": "HALF_EVEN"
+  },
+  "firstMonthOfFiscalYear": "4"
+}

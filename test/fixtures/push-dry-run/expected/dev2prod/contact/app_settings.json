@@ -1,0 +1,20 @@
+{
+  "description": "<div>各企業に紐づく担当者情報を管理するアプリです。<div><div></div><div>顧客管理アプリの顧客No&#xff08;レコード番号&#xff09;に紐づけてデータを入力することで、</div></div><div>各企業の担当者情報を一画面で確認することができます。</div><div>&#xff0a;参考ヘルプページ&#xff1a;<a href=\"https://jp.cybozu.help/k/ja/id/040631.html\" target=\"_blank\" rel=\"nofollow noopener noreferrer\"><b>アプリ間でデータを連携する</b></a></div><div></div></div>",
+  "theme": "GREEN",
+  "titleField": {
+    "selectionMode": "MANUAL",
+    "code": "顧客名"
+  },
+  "enableThumbnails": true,
+  "enableBulkDeletion": false,
+  "enableComments": true,
+  "enableDuplicateRecord": true,
+  "enableInlineRecordEditing": true,
+  "numberPrecision": {
+    "digits": "16",
+    "decimalPlaces": "4",
+    "roundingMode": "HALF_EVEN"
+  },
+  "firstMonthOfFiscalYear": "4",
+  "app": 444
+}

@@ -1,12 +1,12 @@
-# Ginue Go言語リライト TODO
+# Ginue ロードマップ
 
 ## バージョン
 
-- **v2**: JavaScript版（メンテナンスモード）
-- **v3**: TypeScript版（v3.0が最初で最後の機能リリース、パッチは必要に応じて）
-- **v4**: Go版（本計画）
+- **v2**: Node.js（JavaScript）版 - メンテナンスモード
+- **v3**: Node.js（TypeScript）版 - 現行、早い段階でv4にアップデート予定
+- **v4**: 次世代版（Node.js, Deno, or Golang） - 検討中
 
-## v3.0 リリース準備（TypeScript最終版）
+## v3.0.x 改善（完了）
 
 - [x] README.md 英語版作成
 - [x] README.ja.md 日本語版整備
@@ -15,11 +15,81 @@
 - [x] package.json testスクリプト設定
 - [x] バージョン番号を3.0.0に更新
 - [x] CHANGELOGまたはリリースノート作成
+- [x] `--dry-run`オプション追加（pushせずに変換後JSONを確認）
+- [x] E2Eテスト追加（24テストケース、全コマンドをカバー）
+- [x] push変換ロジックのユニットテスト追加
 - [ ] npm publish
 
 ---
 
-## 概要
+## v4の方向性検討
+
+### Go言語への移行（当初の計画）
+
+ginue、gyuma、twins-diff の3ツールをGoで書き直し、単一バイナリ配布を実現する。
+
+**課題:**
+- `.ginuerc.js`の動的設定が使えなくなる（JSON/YAMLのみに制限）
+- 開発コスト（8-11週間）
+- kintone開発者（JS/TS経験者）からのコントリビューションが減少
+
+**`.ginuerc.js`対応案（esbuild方式）:**
+
+esbuildなどGo/Rust製CLIツールのnpm配布で採用されている方式。npm版とbrew版で設定ファイル対応を分ける。
+
+```
+npm版:
+  ginue (Node.jsラッパー)
+    → .ginuerc.js を読み込み、JSON化
+    → ginue-bin (Goバイナリ) に渡す
+
+brew版:
+  ginue (Goバイナリ直接)
+    → .ginuerc.json / .ginuerc.yml のみ対応
+```
+
+- npm版: Node.jsラッパーが`.ginuerc.js`を読み込み、設定をGoバイナリに渡す
+- brew版: Goバイナリ単体で配布、JSON/YAML設定のみ対応
+
+この方式なら、npm経由のユーザーは従来通り`.ginuerc.js`が使え、brewユーザーはシングルバイナリの恩恵を受けられる。
+
+### Deno移行（代替案）
+
+**検証結果:** `deno compile`でシングルバイナリを生成しつつ、`.ginuerc.js`の動的読み込みが可能であることを確認。
+
+```typescript
+// CommonJS形式をeval方式でエミュレート
+const content = await Deno.readTextFile(configPath)
+const module = { exports: {} }
+const process = { env: Deno.env.toObject() }
+const fn = new Function('module', 'exports', 'process', content)
+fn(module, exports, process)
+```
+
+**メリット:**
+- シングルバイナリ配布（Go同様）
+- `.ginuerc.js`の動的設定を維持可能
+- TypeScriptコードの多くを流用可能
+
+**検証用POC:** `test/deno-poc/`
+
+### 結論
+
+以下の3つが現実的な選択肢:
+
+1. **Node.js/TypeScript継続**: 現行コードベースの改善を続ける
+2. **Deno移行**: シングルバイナリ＋`.ginuerc.js`の両立が可能
+3. **Go移行（esbuild方式）**: npm版は`.ginuerc.js`対応、brew版はJSON/YAMLのみ
+
+v4の具体的な方針は今後決定。
+
+---
+
+## Go版の詳細計画（参考）
+
+以下はGo移行を進める場合の詳細計画。
+
+### 概要
 
 ginue、gyuma、twins-diff の3ツールをGoで書き直し、単一バイナリ配布を実現する。
 
@@ -41,6 +111,16 @@ github.com/goqoo-on-kintone/gyuma/        # → Go版への移行案内
 | gyuma | TypeScript (OAuth) | Ginueに内蔵 + 単独配布 |
 | twins-diff | TypeScript 343行 | Ginueに内蔵 + 単独配布 |
 
+## バージョン
+
+Go版は **v4.0.0** からスタート（v3は欠番）
+
+```
+v2.x    JavaScript正式版（メンテナンスモード）
+v3.x    TypeScriptベータ版（@next、廃止予定）
+v4.x    Go版 ← 新規
+```
+
 ## 最終成果物
 
 ```bash
@@ -55,20 +135,22 @@ ginue deploy production
 
 ## Phase 0: twins-diff Go化（3-5日）
 
-- [ ] Go HTTPサーバー + API実装
-- [ ] React UIビルド → go:embed組み込み
-- [ ] 差分ロジック（go-diff利用）
-- [ ] 単独CLI作成
-- [ ] pkg/diffとしてライブラリ化
+- [x] Go HTTPサーバー + API実装
+- [x] React UIビルド → go:embed組み込み
+- [x] 差分ロジック（フロントエンドのreact-diff-viewer-continuedで処理）
+- [x] 単独CLI作成
+- [x] pkg/diffとしてライブラリ化
 
 ## Phase 1: gyuma Go化（1-2週間）
 
-- [ ] OAuth 2.0 + PKCE フロー実装
-- [ ] ローカルコールバックサーバー
-- [ ] トークン管理
-- [ ] プロキシ/クライアント証明書対応
-- [ ] 単独CLI作成
-- [ ] pkg/oauthとしてライブラリ化
+- [x] OAuth 2.0 フロー実装
+- [x] ローカルコールバックサーバー
+- [x] トークン管理
+- [x] 単独CLI作成
+- [ ] pkg/oauthとしてライブラリ化（ginue統合に必須）
+
+※ プロキシ/クライアント証明書対応 → Phase 3でまとめて対応
+※ PKCE対応 → 将来対応（kintone OAuthはPKCE無しでも動作）
 
 ## Phase 2: Ginue基盤（1週間）
 
@@ -182,12 +264,11 @@ ginue-go/
 | YAML | gopkg.in/yaml.v3 |
 | プロンプト | manifoldco/promptui |
 | .netrc | bgentry/go-netrc |
-| 差分 | sergi/go-diff |
 | ブラウザ起動 | pkg/browser |
 
 ## 注意点
 
-- .ginuerc.js 形式は非対応（JSON/YAMLに移行）
+- .ginuerc.js 形式: npm版は対応可（esbuild方式）、brew版は非対応（JSON/YAMLのみ）
 - twins-diffのReact UIはビルド済みをgo:embedで組み込み
 
 ## 推定工数

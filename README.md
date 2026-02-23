@@ -6,12 +6,11 @@ A CLI tool to manage kintone app settings via the kintone REST API with a Git-li
 
 > **📢 Notice**
 >
-> v3.0 is the first and final feature release of the TypeScript version. Bug fix patches (v3.0.x) may be released as needed.
-> Development will continue with v4, rewritten in Go, distributed as a single binary without requiring Node.js.
+> v3.x will be upgraded to v4 soon.
 >
-> - v2: JavaScript version (maintenance mode)
-> - **v3: TypeScript version (current)**
-> - v4: Go version (in development)
+> - v2: Node.js (JavaScript) version - maintenance mode
+> - **v3: Node.js (TypeScript) version - current**
+> - v4: Next version (Node.js, Deno, or Golang) - under consideration
 
 ## Installation
 
@@ -123,6 +122,18 @@ Uploads local JSON settings to kintone's test environment.
 * Push to the same environment: `ginue push development`
 * Push across environments: `ginue push development:production`
 * After pushing, use kintone's UI to "Update App" or "Discard Changes", or use `ginue deploy` / `ginue reset`.
+
+### --dry-run option
+
+Use `--dry-run=<OUTPUT-DIR>` to preview the transformed JSON without actually pushing to kintone. This is useful for verifying changes before pushing, especially when pushing across environments.
+
+```bash
+# Preview transformed JSON
+ginue push development:production --dry-run=./dry-run-output
+
+# Then verify with diff
+diff -r ./kintone-settings/development ./dry-run-output/production
+```
 
 ```bash
 ginue push development
