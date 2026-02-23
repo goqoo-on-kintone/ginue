@@ -2,16 +2,15 @@
 
 [English](/README.md) | 日本語
 
-[kintone REST API](https://developer.cybozu.io/hc/ja/articles/201941834)でkintoneアプリの設定情報を編集するためのCLI版ツールです。
+[kintone REST API](https://cybozu.dev/ja/kintone/docs/rest-api/)でkintoneアプリの設定情報を編集するためのCLI版ツールです。
 
 > **📢 お知らせ**
 >
-> v3.0はTypeScript版の最初で最後の機能リリースです。バグ修正パッチ（v3.0.x）は必要に応じてリリースします。
-> 今後はGo言語で書き直したv4の開発を進めます。v4ではNode.js不要のシングルバイナリ配布を予定しています。
+> v3.xは早い段階でv4にアップデート予定です。
 >
-> - v2: JavaScript版（メンテナンスモード）
-> - **v3: TypeScript版（現行）**
-> - v4: Go版（開発中）
+> - v2: Node.js（JavaScript）版 - メンテナンスモード
+> - **v3: Node.js（TypeScript）版 - 現行**
+> - v4: 次世代版（Node.js, Deno, or Golang） - 検討中
 
 ## インストール方法
 
@@ -178,6 +177,18 @@ $ ginue pull -A user --preview
 * 環境名を単独で指定すれば同じ環境にアップロードします。
 * 環境名をコロン区切りで`<from>:<to>`のように書くと、ローカルの`<from>`ディレクトリ配下に保存されたJSONファイルを`<to>`環境にアップロードします。
 * 実行後はkintoneのテスト環境が変更された状態になるので、kintoneの設定画面で「アプリを更新」「変更を中止」ボタンをクリックするか、`ginue deploy` `ginue reset`コマンドを使用してください。
+
+### --dry-run オプション
+
+`--dry-run=<OUTPUT-DIR>`を指定すると、実際にkintoneへpushせずに、変換後のJSONファイルを指定ディレクトリに出力します。特に環境間pushの場合、事前に変換内容を確認するのに便利です。
+
+```
+$ # 変換後JSONをプレビュー
+$ ginue push development:production --dry-run=./dry-run-output
+
+$ # diffで変換内容を確認
+$ diff -r ./kintone-settings/development ./dry-run-output/production
+```
 
 実行例
 

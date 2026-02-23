@@ -31,8 +31,20 @@ yarn apis:diff     # 差分確認
 
 ```
 test/
-├── util.test.ts       # trim, pretty, createBase64Account, createBaseDirPath
-└── converter.test.ts  # convertAppSettingsJson, convertAppFormFieldsJson, convertAppIdToName
+├── util.test.ts           # trim, pretty, createBase64Account, createBaseDirPath
+├── converter.test.ts      # convertAppSettingsJson, convertAppFormFieldsJson, convertAppIdToName
+├── e2e/
+│   └── commands.e2e.test.ts  # E2Eテスト（pull/push/deploy/reset、24テストケース）
+├── fixtures/
+│   ├── push/              # push変換テスト用フィクスチャ
+│   └── e2e/               # E2Eテスト用設定（.ginuerc.js等）
+└── deno-poc/              # Deno移行検証用POC
+```
+
+**E2Eテスト実行:**
+```bash
+yarn test:e2e    # E2Eテストのみ
+yarn test:all    # ユニット + E2E
 ```
 
 ## アーキテクチャ

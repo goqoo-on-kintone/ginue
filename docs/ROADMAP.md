@@ -1,12 +1,12 @@
-# Ginue Go言語リライト TODO
+# Ginue ロードマップ
 
 ## バージョン
 
-- **v2**: JavaScript版（メンテナンスモード）
-- **v3**: TypeScript版（v3.0が最初で最後の機能リリース、パッチは必要に応じて）
-- **v4**: Go版（本計画）
+- **v2**: Node.js（JavaScript）版 - メンテナンスモード
+- **v3**: Node.js（TypeScript）版 - 現行、早い段階でv4にアップデート予定
+- **v4**: 次世代版（Node.js, Deno, or Golang） - 検討中
 
-## v3.0 リリース準備（TypeScript最終版）
+## v3.0.x 改善（完了）
 
 - [x] README.md 英語版作成
 - [x] README.ja.md 日本語版整備
@@ -15,11 +15,55 @@
 - [x] package.json testスクリプト設定
 - [x] バージョン番号を3.0.0に更新
 - [x] CHANGELOGまたはリリースノート作成
+- [x] `--dry-run`オプション追加（pushせずに変換後JSONを確認）
+- [x] E2Eテスト追加（24テストケース、全コマンドをカバー）
+- [x] push変換ロジックのユニットテスト追加
 - [ ] npm publish
 
 ---
 
-## 概要
+## v4の方向性検討
+
+### Go言語への移行（当初の計画）
+
+ginue、gyuma、twins-diff の3ツールをGoで書き直し、単一バイナリ配布を実現する。
+
+**課題:**
+- `.ginuerc.js`の動的設定が使えなくなる（JSON/YAMLのみに制限）
+- 開発コスト（8-11週間）
+- kintone開発者（JS/TS経験者）からのコントリビューションが減少
+
+### Deno移行（代替案）
+
+**検証結果:** `deno compile`でシングルバイナリを生成しつつ、`.ginuerc.js`の動的読み込みが可能であることを確認。
+
+```typescript
+// CommonJS形式をeval方式でエミュレート
+const content = await Deno.readTextFile(configPath)
+const module = { exports: {} }
+const process = { env: Deno.env.toObject() }
+const fn = new Function('module', 'exports', 'process', content)
+fn(module, exports, process)
+```
+
+**メリット:**
+- シングルバイナリ配布（Go同様）
+- `.ginuerc.js`の動的設定を維持可能
+- TypeScriptコードの多くを流用可能
+
+**検証用POC:** `test/deno-poc/`
+
+### 結論
+
+Node.js/TypeScriptの開発継続とDeno移行の両方が現実的な選択肢。v4の具体的な方針は今後決定。
+
+---
+
+## Go版の詳細計画（参考）
+
+以下はGo移行を進める場合の詳細計画。
+
+### 概要
 
 ginue、gyuma、twins-diff の3ツールをGoで書き直し、単一バイナリ配布を実現する。
 
