@@ -7,7 +7,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --testPathIgnorePatterns=e2e",
+    "test:e2e": "jest --testPathPattern=e2e --runInBand",
+    "test:all": "jest --runInBand",
     "apis:all": "curl https://$KINTONE_SUBDOMAIN.cybozu.com/k/v1/apis.json|jq '.apis|keys|map(select(.|test(\"app/|field/acl/|record/acl/\"))|select(.|test(\"preview/|/put\")|not)|sub(\"/get\";\".json\"))|sort' > apis/all.json",
     "apis:ginue": "cat lib/commands.json|jq '.|keys' > apis/ginue.json",
     "apis:diff": "yarn apis:all && yarn apis:ginue && diff -u apis/*"
