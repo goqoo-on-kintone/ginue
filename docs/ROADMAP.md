@@ -13,7 +13,7 @@
 - [x] 全機能のドキュメント化（ginue diff, --oauth, --preview, --alt, --downloadJs, --proxy）
 - [x] テストコード追加（util.ts, converter.ts）
 - [x] package.json testスクリプト設定
-- [ ] バージョン番号を3.0.0に更新
+- [x] バージョン番号を3.0.0に更新
 - [x] CHANGELOGまたはリリースノート作成
 - [ ] npm publish
 

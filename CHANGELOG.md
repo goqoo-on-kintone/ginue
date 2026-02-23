@@ -4,7 +4,7 @@ English | [日本語](/CHANGELOG.ja.md)
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.0] - 2024-XX-XX
+## [3.0.0] - 2025-02-23
 
 The first and final feature release of the TypeScript version. Bug fix patches (v3.0.x) may be released as needed. v4 onwards will be rewritten in Go.
 
