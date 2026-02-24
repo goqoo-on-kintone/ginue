@@ -96,14 +96,52 @@ const result = spawnSync('gyuma', ['--domain', domain, '--scope', scope], {
 const accessToken = result.stdout.toString().trim()
 ```
 
-### twins-diff：stdio をすべて継承する
+### twins-diff / 任意の diff ツール：`[from, to]` を引数として渡す
+
+twins-diff の最新版（Go 版）は `[from, to]` の位置引数に対応している。  
+WinMerge・Kaleidoscope・meld など主要な GUI diff ツールも同じインターフェースなので、**分岐なしで統一できる**。
 
 ```ts
 import { spawnSync } from 'child_process'
 
-spawnSync('twins-diff', [], {
+const diffTool = opts.diffTool ?? 'twins-diff'
+spawnSync(diffTool, [from, to], { stdio: 'inherit' })
+```
+
+#### 設定例（.ginuerc.js）
+
+```js
+module.exports = {
+  // デフォルトは twins-diff
+  // diff: { tool: 'twins-diff' },
+
+  // macOS：Kaleidoscope
+  // diff: { tool: 'ksdiff' },
+
+  // macOS：FileMerge
+  // diff: { tool: 'opendiff' },
+
+  // Windows：WinMerge
+  // diff: { tool: 'winmerge' },
+
+  // クロスプラットフォーム：meld
+  // diff: { tool: 'meld' },
+}
+```
+
+#### 現行（v3）からの変更点
+
+v3 では twins-diff を `node_modules/.bin/` からフルパスで呼び、引数なしで起動していた。  
+v4 では PATH から探す方式に変更し、`[from, to]` を引数として渡す。
+
+```ts
+// ❌ v3：node_modules 前提・引数なし・クエリパラメータで渡す独自方式
+spawnSync(path.resolve(__dirname, `../node_modules/.bin/twins-diff`), [], {
   stdio: 'inherit',
 })
+
+// ✅ v4：PATH から探す・[from, to] を引数として渡す業界標準方式
+spawnSync(diffTool, [from, to], { stdio: 'inherit' })
 ```
 
 ---
@@ -113,6 +151,6 @@ spawnSync('twins-diff', [], {
 | ツール | 使用タイミング |
 |---|---|
 | `gyuma` | `--oauth` オプション使用時 |
-| `twins-diff` | `ginue diff` コマンド使用時 |
+| `twins-diff`（または任意の diff ツール） | `ginue diff` コマンド使用時 |
 
 いずれも「その機能を使わない場合はツールのインストール不要」という設計を維持する。
