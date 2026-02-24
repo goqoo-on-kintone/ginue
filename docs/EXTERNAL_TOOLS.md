@@ -6,35 +6,44 @@ ginue および goqoo ファミリーのツールから gyuma（kintone OAuth）
 
 ---
 
-## 決定事項：外部ツールは依存パッケージではなく外部コマンドとして呼び出す
+## 方針
 
-### 方針
+### gyuma：外部コマンドとして呼び出す（確定）
 
-gyuma・twins-diff ともに、使いたいユーザーが個別にインストールする。  
-ginue/goqoo 自体はこれらに依存しない。
+OAuthを使うユーザーだけが個別にインストールする。ginue は gyuma に依存しない。
 
 ```bash
-# OAuth を使いたいユーザーだけが入れる
 npm install -g gyuma
 # または
 brew install gyuma
+```
 
-# diff を使いたいユーザーだけが入れる
+**理由：**
+- OAuthを使わないユーザーへの影響をゼロにする
+- gyuma のバージョン管理を ginue のリリースサイクルから切り離せる
+
+### twins-diff：外部コマンド or バンドル（検討中）
+
+`ginue diff` を使うユーザーは全員 twins-diff が必要になるため、バンドルも選択肢として残している。
+
+**外部コマンド方式（gyuma と同じ扱い）**
+```bash
 npm install -g twins-diff
 # または
 brew install twins-diff
 ```
+- 他の diff ツール（WinMerge・Kaleidoscope など）への差し替えが容易
+- ginue のパッケージサイズへの影響ゼロ
 
-### 理由
-
-- 機能を使わないユーザーに Goバイナリを押し付けない
-- 各ツールのバージョン管理を ginue のリリースサイクルから切り離せる
-- Goバイナリを含む optionalDependencies は node_modules のサイズが大きく、不要なユーザーへの影響が大きい
+**バンドル方式（optionalDependencies）**
+- `ginue diff` がインストール直後から使える
+- 代替ツールの選択肢がほぼない（同コンセプトのツールが twins-diff 以外にほぼ存在しない）ため、バンドルの妥当性が高い
+- Go + embedded React のバイナリサイズはプラットフォームあたり 8MB 前後の見込み
 
 ### 現行からの変更点
 
 現行の twins-diff は `node_modules/.bin/` からフルパスで呼んでいる（依存パッケージ前提）。  
-v4 ではこれを PATH から探す方式に変更する。
+v4 ではこれを PATH から探す方式に変更する（バンドルする場合も同様）。
 
 ```ts
 // ❌ 現行（v3）：依存パッケージ前提
