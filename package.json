@@ -1,6 +1,6 @@
 {
   "name": "ginue",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "ginue is the CLI tool to get settings of kintone via kintone REST API.",
   "bin": {
     "ginue": "./dist/cli.js"
@@ -56,7 +56,7 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "gyuma": "^0.6.1",
+    "gyuma": "^0.6.2",
     "https": "^1.0.0",
     "inquirer": "^8.0.0",
     "lodash": "^4.17.21",
