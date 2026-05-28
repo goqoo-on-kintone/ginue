@@ -3,6 +3,7 @@ node_modules
 .env
 apis
 dist
+.DS_Store
 
 # E2Eテスト
 test/fixtures/e2e/.ginuerc.js
