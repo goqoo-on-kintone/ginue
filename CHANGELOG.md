@@ -4,6 +4,14 @@ English | [日本語](/CHANGELOG.ja.md)
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1] - 2026-05-28
+
+### Bug Fixes
+
+- **Windows installation**: Upgraded `gyuma` to 0.6.2. gyuma's `preinstall` no longer runs `typesync || true`, so ginue now installs normally on Windows.
+
+---
+
 ## [3.1.0] - 2025-02-24
 
 v3.0.0で「最初で最後の機能リリース」と言ったな、あれは嘘だ。
