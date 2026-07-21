@@ -35,7 +35,6 @@ const commands = {
     hasPreview: true,
     langParam: 'lang',
     methods: ['GET', 'PUT'],
-    skipOauth: true,
   },
   'app/settings.json': {
     appParam: 'app',
