@@ -4,6 +4,18 @@ English | [日本語](/CHANGELOG.ja.md)
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.0] - 2026-07-21
+
+### Features
+
+- **Reports over OAuth**: `reports.json` now supports OAuth 2.0 authentication. Removed the `skipOauth` flag so reports settings are no longer skipped when authenticating with OAuth.
+
+### Internal
+
+- **Dependency**: Upgraded `gyuma` to 0.6.3.
+
+---
+
 ## [3.1.1] - 2026-05-28
 
 ### Bug Fixes
